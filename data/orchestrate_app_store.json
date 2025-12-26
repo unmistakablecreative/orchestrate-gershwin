@@ -1,0 +1,60 @@
+{
+  "entries": {
+    "nylasinbox": {
+      "label": "Nylas Inbox",
+      "description": "Read, send, and manage emails directly inside your system using structured API control.",
+      "priority": 1,
+      "referral_unlock_cost": 10,
+      "requires_credentials": true,
+      "credential_fields": ["api_key", "grant_id"],
+      "unlock_message": "✅ Nylas Inbox unlocked! Set your credentials with: set_credentials nylasinbox",
+      "post_unlock_nudge": "💡 Tip: Unlock convertkit_tool next to automate your email marketing workflows"
+    },
+    "notion_tool": {
+      "label": "Notion",
+      "description": "Create pages, update tasks, or search workspace content using Orchestrate-powered flows.",
+      "priority": 2,
+      "referral_unlock_cost": 3,
+      "requires_credentials": true,
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Notion unlocked! Set your API key with: set_credentials notion_tool",
+      "post_unlock_nudge": "💡 Tip: Combine Notion with outline_editor for powerful documentation workflows"
+    },
+    "convertkit_tool": {
+      "label": "ConvertKit",
+      "description": "Create, update, and analyze email broadcasts and subscriber activity inside OrchestrateOS.",
+      "priority": 3,
+      "referral_unlock_cost": 10,
+      "requires_credentials": true,
+      "credential_fields": ["api_key", "api_secret"],
+      "unlock_message": "✅ ConvertKit unlocked! Set your credentials with: set_credentials convertkit_tool",
+      "post_unlock_nudge": "💡 Tip: Use with nylasinbox for complete email workflow automation"
+    },
+    "gamma_tool": {
+      "label": "Gamma",
+      "description": "Generate slide decks automatically from structured text using the Gamma API – no design skills needed.",
+      "priority": 4,
+      "referral_unlock_cost": 25,
+      "requires_credentials": true,
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Gamma unlocked! Set your API key with: set_credentials gamma_tool",
+      "post_unlock_nudge": "💡 Tip: Combine with outline_editor to turn documents into presentations automatically"
+    },
+    "claude_assistant": {
+      "label": "Claude Assistant",
+      "description": "AUTONOMOUS TASK EXECUTION - Assign complex tasks (code rewrites, refactoring, doc generation) and Claude executes them while you sleep. Requires: Claude Pro/Team subscription (uses your existing plan, no API costs). One-time auth setup. Wake up to completed work. 🤯",
+      "priority": 5,
+      "referral_unlock_cost": 3,
+      "requires_credentials": false,
+      "requires_subscription": true,
+      "subscription_type": "Claude Pro or Team",
+      "setup_script": "setup_claude_auth.sh",
+      "unlock_message": "✅ Claude Assistant unlocked!\n\n🔐 AUTHENTICATION REQUIRED:\nRun this command to authenticate with your Claude subscription:\n\nbash auth/claude_setup.sh\n\nThis will open your browser for one-time authentication.\nAfter authentication, you can assign tasks and Claude will execute them autonomously in the background.\n\n💡 Example task: curl -X POST http://localhost:8000/execute_task -H 'Content-Type: application/json' -d '{\"tool_name\":\"claude_assistant\",\"action\":\"assign_task\",\"params\":{\"task_id\":\"test_001\",\"description\":\"Create a hello world script\"}}'",
+      "post_unlock_nudge": "💡 Power user tip: Claude Assistant works great with outline_editor for autonomous documentation workflows"
+    }
+  },
+  "display_mode": "table",
+  "theme": "dark",
+  "legend": true,
+  "sort_by": "custom"
+}

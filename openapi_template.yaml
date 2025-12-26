@@ -1,0 +1,183 @@
+openapi: 3.1.0
+info:
+  title: Orchestrate Task Execution API
+  description: "Strictly defined YAML for executing tasks without stripping or mangling params, with dashboard optimization."
+  version: 1.4.0
+
+servers:
+  - url: https://$DOMAIN
+    description: Dev tunnel for FastAPI (localhost:5001)
+
+paths:
+  /execute_task:
+    post:
+      operationId: executeTask
+      summary: Execute a tool task
+      description: Sends a task execution request with `params` defined strictly.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tool_name
+                - action
+                - params
+              properties:
+                tool_name:
+                  type: string
+                  description: Name of the tool.
+                  example: json_manager
+                action:
+                  type: string
+                  description: The action to perform.
+                  example: create_file
+                params:
+                  type: object
+                  description: A strictly defined object for task parameters.
+                  required:
+                    - filename
+                  properties:
+                    filename:
+                      type: string
+                      example: sandbox/testfile.json
+                  additionalProperties: false
+      responses:
+        '200':
+          description: Task executed successfully
+        '400':
+          description: Invalid payload (missing fields or param error)
+        '500':
+          description: Execution failure (script error, validation fail)
+
+  /get_supported_actions:
+    get:
+      operationId: getSupportedActions
+      summary: Returns supported tool+action schema with dashboard data
+      description: Reads and returns system_settings.ndjson as an array of tool-action mappings plus pre-formatted dashboard data.
+      responses:
+        '200':
+          description: Supported actions and dashboard retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  supported_actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tool:
+                          type: string
+                        action:
+                          type: string
+                        script_path:
+                          type: string
+                        params:
+                          type: array
+                          items:
+                            type: string
+                        example:
+                          type: object
+                  dashboard:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      dashboard_data:
+                        type: object
+                        additionalProperties: true
+        '500':
+          description: Failed to load system settings
+
+  /get_dashboard_file/{file_key}:
+    get:
+      operationId: getDashboardFile
+      summary: Get additional dashboard files on demand
+      description: Load specific dashboard files when the main dashboard doesn't include them.
+      parameters:
+        - name: file_key
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: ["full_dashboard", "phrase_promotions", "runtime_contract", "tool_build_protocol", "podcast_prep_rules", "thread_log_full", "ideas_and_reminders_full"]
+      responses:
+        '200':
+          description: Dashboard file retrieved
+        '404':
+          description: File key not found
+        '500':
+          description: Failed to load file
+
+  /load_memory:
+    post:
+      operationId: loadMemory
+      summary: Load memory into working_memory.json
+      description: Merges content from files listed in memory_index.json and writes to working_memory.json.
+      responses:
+        '200':
+          description: Memory successfully loaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  loaded:
+                    type: integer
+                    example: 3
+                  memory:
+                    type: object
+                    additionalProperties: true
+        '500':
+          description: File access or memory merge failure
+
+  /:
+    get:
+      operationId: healthCheck
+      summary: Ping the API
+      description: Confirms the API is running and reachable.
+      responses:
+        '200':
+          description: API is online
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Jarvis core is online.
+
+components:
+  schemas:
+    ExecuteTaskRequest:
+      type: object
+      required:
+        - tool_name
+        - action
+        - params
+      properties:
+        tool_name:
+          type: string
+          example: json_manager
+        action:
+          type: string
+          example: create_file
+        params:
+          type: object
+          required:
+            - filename
+          properties:
+            filename:
+              type: string
+              example: sandbox/testfile.json
+          additionalProperties: false

@@ -1,0 +1,32 @@
+{
+  "understand_tasks": {
+    "title": "Understand how tasks work",
+    "description": "This task was added automatically. Try updating its title, status, or content.",
+    "status": "active",
+    "tags": ["onboarding", "example"]
+  },
+  "add_your_own": {
+    "title": "Add your own task",
+    "description": "Just say what you want to do — Orchestrate will structure it for you.",
+    "status": "pending",
+    "tags": ["onboarding", "interaction"]
+  },
+  "explore_notes": {
+    "title": "Switch to notes and log an insight",
+    "description": "Try capturing an idea, learning, or quote as a note.",
+    "status": "pending",
+    "tags": ["notes", "memory"]
+  },
+  "drop_a_file": {
+    "title": "Drop a file into the Drop Zone",
+    "description": "Use your desktop Drop Zone folder. Orchestrate can read it.",
+    "status": "pending",
+    "tags": ["file", "dropzone"]
+  },
+  "run_a_tool": {
+    "title": "Run any tool from the Command Center",
+    "description": "Say what you want to do — resize an image, scan a file, log a note.",
+    "status": "pending",
+    "tags": ["tooling", "exploration"]
+  }
+}

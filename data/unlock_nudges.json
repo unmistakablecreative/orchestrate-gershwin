@@ -1,0 +1,223 @@
+{
+    "entries": {
+        "outline_editor": {
+            "used_tools": [
+                "read_file",
+                "json_manager"
+            ],
+            "locked_tool": "outline_editor",
+            "unlock_cost": 2,
+            "message": {
+                "headline": "\ud83d\udee0\ufe0f You're using Read File + JSON Manager",
+                "nudge": "You\u2019ve already processed multiple files and structured entries \u2014 but you're still copying data manually.",
+                "recommendation": "\ud83d\ude80 Unlock Outline Editor to instantly generate linked, editable documents from your JSON entries.",
+                "bonus_combo": {
+                    "tools": [
+                        "ideogram_tool"
+                    ],
+                    "value_add": "Generate illustrated content blocks directly from your structured notes."
+                },
+                "referral_cta": "You're 1 referral away from unlocking it. Want to activate it now?"
+            }
+        },
+        "ideogram_tool": {
+            "used_tools": [
+                "read_file",
+                "outline_editor"
+            ],
+            "locked_tool": "ideogram_tool",
+            "unlock_cost": 8,
+            "message": {
+                "headline": "\ud83c\udfa8 You\u2019ve built content \u2014 now visualize it",
+                "nudge": "You're already drafting docs using Outline. Why stop at words?",
+                "recommendation": "Unlock Ideogram to generate images directly from your content or metadata.",
+                "bonus_combo": {
+                    "tools": [
+                        "blog_assembler_tool"
+                    ],
+                    "value_add": "Create illustrated blog posts directly from source files."
+                },
+                "referral_cta": "Just 1 more referral unlocks image generation."
+            }
+        },
+        "composer": {
+            "used_tools": [
+                "outline_editor",
+                "buffer_engine"
+            ],
+            "locked_tool": "composer",
+            "unlock_cost": 12,
+            "message": {
+                "headline": "\ud83e\udd16 You\u2019re creating content and scheduling it",
+                "nudge": "You\u2019ve got a flow \u2014 now make it automatic.",
+                "recommendation": "Unlock Composer to automate chained tasks like blog\u2192tweet\u2192publish.",
+                "bonus_combo": {
+                    "tools": [
+                        "blog_assembler_tool"
+                    ],
+                    "value_add": "Auto-assemble and dispatch longform + social queues in one click."
+                },
+                "referral_cta": "Composer is 1 unlock away. Ready to automate?"
+            }
+        },
+        "code_editor": {
+            "used_tools": [
+                "composer",
+                "dispatcher"
+            ],
+            "locked_tool": "code_editor",
+            "unlock_cost": 24,
+            "message": {
+                "headline": "\ud83d\udcbb You\u2019re orchestrating logic \u2014 now go lower",
+                "nudge": "You\u2019ve reached the automation layer. Why not edit the tools themselves?",
+                "recommendation": "Unlock Code Editor to modify, extend, and patch your own tools live.",
+                "bonus_combo": {
+                    "tools": [
+                        "terminal"
+                    ],
+                    "value_add": "Deploy, debug, and hot-patch tools directly in the runtime."
+                },
+                "referral_cta": "The toolbuilder tier is right here \u2014 1 referral left."
+            }
+        },
+        "universal_integrator": {
+            "used_tools": [
+                "composer",
+                "code_editor",
+                "json_manager"
+            ],
+            "locked_tool": "universal_integrator",
+            "unlock_cost": 32,
+            "message": {
+                "headline": "\ud83c\udf10 You\u2019re working across tools",
+                "nudge": "Ready to call any API, trigger any webhook, and connect anything to anything?",
+                "recommendation": "Unlock Universal Integrator to turn Orchestrate into your personal API gateway.",
+                "bonus_combo": {
+                    "tools": [
+                        "readwise_tool",
+                        "evernote_adapter"
+                    ],
+                    "value_add": "Pipe knowledge into memory, trigger workflows externally, and ingest from anywhere."
+                },
+                "referral_cta": "This is the final unlock. You\u2019re 1 referral from root access."
+            }
+        },
+        "readwise_tool": {
+            "used_tools": [
+                "json_manager"
+            ],
+            "locked_tool": "readwise_tool",
+            "unlock_cost": 4,
+            "message": {
+                "headline": "\ud83d\udcda You\u2019re managing data \u2014 want to feed it smarter?",
+                "nudge": "You\u2019ve created structured entries. Now enrich them with synced highlights.",
+                "recommendation": "Unlock Readwise Tool to import highlights from your reading list.",
+                "bonus_combo": {
+                    "tools": [
+                        "mem_tool"
+                    ],
+                    "value_add": "Auto-store key passages as Mems linked to your JSON stack."
+                },
+                "referral_cta": "You\u2019re 1 referral from pulling your reading into Orchestrate."
+            }
+        },
+        "mem_tool": {
+            "used_tools": [
+                "read_file",
+                "json_manager"
+            ],
+            "locked_tool": "mem_tool",
+            "unlock_cost": 4,
+            "message": {
+                "headline": "\ud83e\udde0 Capture what matters \u2014 permanently",
+                "nudge": "You\u2019ve structured and stored data. But what about raw insights?",
+                "recommendation": "Unlock Mem Tool to create searchable, personal memory objects.",
+                "bonus_combo": {
+                    "tools": [
+                        "readwise_tool"
+                    ],
+                    "value_add": "Store synced quotes as internal reflections automatically."
+                },
+                "referral_cta": "1 referral unlocks your personal memory engine."
+            }
+        },
+        "buffer_engine": {
+            "used_tools": [
+                "outline_editor"
+            ],
+            "locked_tool": "buffer_engine",
+            "unlock_cost": 6,
+            "message": {
+                "headline": "\ud83d\udcc5 You've written content \u2014 now schedule it",
+                "nudge": "You\u2019re generating posts manually. What if they published themselves?",
+                "recommendation": "Unlock Buffer Engine to schedule and publish content across platforms.",
+                "bonus_combo": {
+                    "tools": [
+                        "composer"
+                    ],
+                    "value_add": "Automate your entire content pipeline from write \u2192 queue \u2192 publish."
+                },
+                "referral_cta": "Unlock scheduling with 1 more referral."
+            }
+        },
+        "blog_assembler_tool": {
+            "used_tools": [
+                "read_file",
+                "outline_editor"
+            ],
+            "locked_tool": "blog_assembler_tool",
+            "unlock_cost": 6,
+            "message": {
+                "headline": "\ud83d\udcdd You\u2019ve got pieces \u2014 want the full post?",
+                "nudge": "You\u2019ve got exports, drafts, and markdown. But no unified article.",
+                "recommendation": "Unlock Blog Assembler to stitch structured content into a full publishable blog.",
+                "bonus_combo": {
+                    "tools": [
+                        "ideogram_tool",
+                        "buffer_engine"
+                    ],
+                    "value_add": "Illustrate and schedule your article instantly after assembly."
+                },
+                "referral_cta": "1 referral unlocks your blog compiler."
+            }
+        },
+        "github_tool_universal": {
+            "used_tools": [
+                "code_editor"
+            ],
+            "locked_tool": "github_tool_universal",
+            "unlock_cost": 8,
+            "message": {
+                "headline": "\ud83d\udcc1 You\u2019re writing tools \u2014 want to ship them?",
+                "nudge": "You\u2019ve edited code. Now it\u2019s time to version, push, and track it.",
+                "recommendation": "Unlock GitHub Universal to sync any Orchestrate project to a real repo.",
+                "bonus_combo": {
+                    "tools": [
+                        "composer"
+                    ],
+                    "value_add": "Chain commits, generate readmes, and version logic with Composer."
+                },
+                "referral_cta": "Git integration is 1 referral away."
+            }
+        },
+        "terminal": {
+            "used_tools": [
+                "code_editor"
+            ],
+            "locked_tool": "terminal",
+            "unlock_cost": 14,
+            "message": {
+                "headline": "\ud83d\udda5\ufe0f You\u2019re editing logic \u2014 now run it at shell level",
+                "nudge": "You\u2019ve touched the tools. Ready to launch them like a real dev?",
+                "recommendation": "Unlock Terminal to run, debug, and execute anything from within Orchestrate.",
+                "bonus_combo": {
+                    "tools": [
+                        "universal_integrator"
+                    ],
+                    "value_add": "Trigger shell-level commands as part of any API logic chain."
+                },
+                "referral_cta": "Power tools await \u2014 just 1 referral needed."
+            }
+        }
+    }
+}

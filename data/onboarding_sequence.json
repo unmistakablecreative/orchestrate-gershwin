@@ -1,0 +1,178 @@
+{
+  "entries": {
+    "meta": {
+      "render": "guided",
+      "start_step": "intro",
+      "flow_control": true,
+      "advance_on": ["user_input", "action_success"],
+      "enforce_sequence": true,
+      "note": "Step-by-step onboarding. Do not render all steps. Follow 'next' chaining only."
+    },
+    "intro": {
+      "title": "👋 Welcome to OrchestrateOS",
+      "narration": "Let me show you what this can do in about 2 minutes.",
+      "next": "step_1"
+    },
+    "steps": {
+      "step_1": {
+        "title": "🧑‍💼 What's Your Name?",
+        "narration": "What should I call you?",
+        "prompt": "Type your name:",
+        "action_template": {
+          "tool": "json_manager",
+          "action": "add_json_entry",
+          "params": {
+            "filename": "secondbrain.json",
+            "entry_key": "user_profile",
+            "entry_data": {
+              "full_name": "{{user_input}}"
+            }
+          }
+        },
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "title": "🎯 What Are You Working On?",
+        "narration": "Give me a project. I'll build your workspace.",
+        "prompt": "What's the project? (e.g. Product Launch, Trip to Japan, Q4 Planning)",
+        "action_template": {
+          "tool": "json_manager",
+          "action": "create_json_file",
+          "params": {
+            "filename": "{{user_input | slug}}.json"
+          }
+        },
+        "requires_user_input": true,
+        "next": "step_2b"
+      },
+      "step_2b": {
+        "title": "📋 Building Your Project Structure",
+        "narration": "Creating tasks for {{previous_input}}...",
+        "action": {
+          "tool": "json_manager",
+          "action": "batch_add_entries",
+          "params": {
+            "filename": "{{previous_input | slug}}.json",
+            "entries": {
+              "project_info": {
+                "name": "{{previous_input}}",
+                "created": "{{timestamp}}",
+                "status": "active"
+              },
+              "task_1": {
+                "title": "Define objectives",
+                "status": "pending",
+                "priority": "high"
+              },
+              "task_2": {
+                "title": "Identify stakeholders",
+                "status": "pending",
+                "priority": "medium"
+              },
+              "task_3": {
+                "title": "Set timeline and milestones",
+                "status": "pending",
+                "priority": "medium"
+              },
+              "task_4": {
+                "title": "Gather resources",
+                "status": "pending",
+                "priority": "low"
+              }
+            }
+          }
+        },
+        "narration_after": "✅ Created {{previous_input}} workspace with 4 starter tasks:\n\n- Define objectives (high priority)\n- Identify stakeholders\n- Set timeline and milestones\n- Gather resources\n\nYou can add, update, or remove tasks anytime.",
+        "next": "step_3"
+      },
+      "step_3": {
+        "title": "📥 Drop a File",
+        "narration": "Got any files for this project? Drop them here:\n\n**~/Documents/Orchestrate/dropzone**\n\nI'll auto-parse PDFs, Word docs, CSVs, spreadsheets—whatever you have.",
+        "prompt": "Say 'ready' when you've dropped something, or 'skip' to continue.",
+        "requires_user_input": true,
+        "next": "step_4"
+      },
+      "step_4": {
+        "title": "🔍 Scanning Dropzone",
+        "narration": "Checking what you dropped in...",
+        "action": {
+          "tool": "file_ops_tool",
+          "action": "find_file",
+          "params": {
+            "filename_fragment": "*"
+          }
+        },
+        "skip_if": "{{user_input == 'skip'}}",
+        "next": "step_4b"
+      },
+      "step_4b": {
+        "title": "📄 Reading Your File",
+        "narration": "Extracting content...",
+        "action_template": {
+          "tool": "file_ops_tool",
+          "action": "read_file",
+          "params": {
+            "filename_fragment": "{{found_file}}"
+          }
+        },
+        "narration_after": "✅ File parsed. Content extracted and ready to use.",
+        "skip_if": "{{user_input == 'skip'}}",
+        "next": "step_5"
+      },
+      "step_5": {
+        "title": "💡 Capture an Insight",
+        "narration": "What's one thing you want to remember? Could be about your project, something you learned, anything.",
+        "prompt": "Type your insight:",
+        "action_template": {
+          "tool": "json_manager",
+          "action": "add_json_entry",
+          "params": {
+            "filename": "secondbrain.json",
+            "entry_key": "insight_{{timestamp}}",
+            "entry_data": {
+              "content": "{{user_input}}",
+              "tags": ["insight", "onboarding"],
+              "created": "{{timestamp}}"
+            }
+          }
+        },
+        "requires_user_input": true,
+        "next": "step_6"
+      },
+      "step_6": {
+        "title": "✅ Workspace Live",
+        "narration": "Done. You now have:\n\n- **Project structure** with tasks\n- **File parsed** and indexed\n- **Insight saved** to your knowledge base\n\nAll coordinated. No copy/paste. No manual setup. That's OrchestrateOS.",
+        "next": "step_7"
+      },
+      "step_7": {
+        "title": "🪙 Your Credits",
+        "narration": "Let's see what you have to work with.",
+        "action": {
+          "tool": "check_credits",
+          "action": "get_balance",
+          "params": {}
+        },
+        "next": "step_8"
+      },
+      "step_8": {
+        "title": "🔓 Unlock Outline Editor",
+        "narration": "You have 3 credits. Here's why Outline Editor is worth 2 of them:\n\n**The problem:** AI writes something good. You copy. You paste. You format. You save. Every. Single. Time.\n\n**With Outline Editor:** Say 'turn this into a document' and it's done. No copying. No pasting. It just appears in your workspace, structured and saved.\n\nYou can also:\n- Create docs from scratch: 'write me an outline about X'\n- Build collections of related documents\n- Edit sections without losing structure\n\n**The cost:** $10/month subscription at https://www.getoutline.com/ unlocks the API. But think about it—how many hours do you waste copy/pasting AI output? How much is that time worth? This pays for itself the first week.\n\nSay 'unlock outline editor' to activate it (uses 2 credits), or 'skip' for now.",
+        "prompt": "Unlock now or skip?",
+        "requires_user_input": true,
+        "next": "outro"
+      }
+    },
+    "outro": {
+      "title": "🚀 You're Set",
+      "narration": "Your workspace is live. Say 'show my workspace' to see everything, or tell me what you want to work on.",
+      "action": {
+        "tool": "json_manager",
+        "action": "list_json_entries",
+        "params": {
+          "filename": "secondbrain.json"
+        }
+      }
+    }
+  }
+}

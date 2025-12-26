@@ -1,0 +1,10 @@
+{
+  "results": {
+    "test_format_001": {
+      "status": "error",
+      "completed_at": "2025-11-13T03:07:07.886798",
+      "error": "Exit code 1",
+      "stderr": ""
+    }
+  }
+}

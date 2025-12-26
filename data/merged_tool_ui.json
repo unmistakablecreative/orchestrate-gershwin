@@ -1,0 +1,106 @@
+[
+  {
+    "name": "file_finder",
+    "label": "Find File",
+    "description": "Instantly locate any system file using smart keyword search \u2014 no path memory needed.",
+    "priority": 1,
+    "referral_unlock_cost": 0,
+    "locked": true
+  },
+  {
+    "name": "read_file",
+    "label": "Read File",
+    "description": "View any file\u2019s full contents instantly, cleanly formatted for direct use or review.",
+    "priority": 2,
+    "referral_unlock_cost": 0,
+    "locked": true
+  },
+  {
+    "name": "json_manager",
+    "label": "JSON Manager",
+    "description": "Easily edit structured data \u2014 add, update, or delete entries without breaking format.",
+    "priority": 3,
+    "referral_unlock_cost": 0,
+    "locked": true
+  },
+  {
+    "name": "system_settings",
+    "label": "System Settings",
+    "description": "Control core system behavior \u2014 manage tool registry, unlock logic, and execution routing.",
+    "priority": 4,
+    "referral_unlock_cost": 0,
+    "locked": true
+  },
+  {
+    "name": "terminal",
+    "label": "Terminal Tool",
+    "description": "Run safe shell commands from inside GPT \u2014 test, debug, or inspect the environment live.",
+    "priority": 5,
+    "referral_unlock_cost": 14,
+    "locked": true
+  },
+  {
+    "name": "mash_tool",
+    "label": "MASH",
+    "description": "Play a nostalgic logic game that generates randomized future outcomes for fun or storytelling.",
+    "priority": 6,
+    "referral_unlock_cost": 0,
+    "locked": true
+  },
+  {
+    "name": "buffer_engine",
+    "label": "Buffer Engine",
+    "description": "Draft, schedule, and auto-publish content to social channels \u2014 no manual posting needed.",
+    "priority": 7,
+    "referral_unlock_cost": 6,
+    "locked": true
+  },
+  {
+    "name": "article_builder_tool",
+    "label": "Article Builder",
+    "description": "Turn structured outlines into fully formatted, image-injected blog articles.",
+    "priority": 8,
+    "referral_unlock_cost": 6,
+    "locked": true
+  },
+  {
+    "name": "outline_editor",
+    "label": "Outline Editor",
+    "description": "Build, manage, and publish clean content documents with deep structure and backlinks.",
+    "priority": 9,
+    "referral_unlock_cost": 2,
+    "locked": true
+  },
+  {
+    "name": "mem_tool",
+    "label": "Mem",
+    "description": "Send notes, ideas, or transcripts directly into Mem \u2014 perfect for cross-app capture.",
+    "priority": 10,
+    "referral_unlock_cost": 4,
+    "locked": true
+  },
+  {
+    "name": "github_tool_universal",
+    "label": "GitHub",
+    "description": "Push updates, clone repos, or commit changes \u2014 all through GPT-managed automation.",
+    "priority": 11,
+    "referral_unlock_cost": 8,
+    "locked": true
+  },
+  {
+    "name": "ideogram_tool",
+    "label": "Ideogram",
+    "description": "Generate beautiful AI-driven visuals from simple prompts \u2014 great for headers or assets.",
+    "priority": 12,
+    "referral_unlock_cost": 8,
+    "locked": true
+  },
+  {
+    "name": "code_editor",
+    "label": "Code Editor",
+    "description": "Create, patch, or inject code into live tools \u2014 works with blueprints or raw scripts.",
+    "priority": 13,
+    "referral_unlock_cost": 24,
+    "locked": true
+  }
+]

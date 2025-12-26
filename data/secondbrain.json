@@ -1,0 +1,53 @@
+{
+  "entries": {
+    "user_profile": {},
+    "projects": {
+      "second_brain_setup": {
+        "title": "Set up your Second Brain",
+        "description": "Walk through onboarding and tool scaffolding.",
+        "tasks": ["understand_tasks", "add_note"],
+        "status": "active"
+      }
+    },
+    "areas": {
+      "personal_productivity": {
+        "title": "Personal Productivity",
+        "description": "Systems and habits to improve daily execution.",
+        "responsibilities": ["maintain task flow", "review notes weekly"]
+      }
+    },
+    "resources": {
+      "notes_on_parastructure": {
+        "title": "Notes on PARA Structure",
+        "body": "PARA stands for Projects, Areas, Resources, Archives — a simple framework for organizing digital life.",
+        "tags": ["para", "organization"]
+      }
+    },
+    "archives": {
+      "old_project_x": {
+        "title": "Archived Project X",
+        "description": "Former project, kept for reference.",
+        "status": "archived"
+      }
+    },
+    "tasks": {
+      "understand_tasks": {
+        "title": "Understand how tasks work",
+        "status": "active",
+        "tags": ["tutorial", "core"]
+      },
+      "add_note": {
+        "title": "Try adding a note",
+        "status": "pending",
+        "tags": ["interactive"]
+      }
+    },
+    "notes": {
+      "starter_note": {
+        "title": "Log your thoughts",
+        "body": "Jot anything down — tasks, insights, ideas.",
+        "tags": ["starter", "note"]
+      }
+    }
+  }
+}

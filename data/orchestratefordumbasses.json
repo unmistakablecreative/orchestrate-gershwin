@@ -1,0 +1,124 @@
+{
+    "entries": {
+        "protocol_v1": {
+            "global_rules": [
+                "NEVER use json_manager on any file in /compositions \u2014 use only composer.* actions",
+                "NEVER call outline_editor.update_doc unless you've fetched the current content via get_doc",
+                "NEVER patch or overwrite main() directly \u2014 wrap all main blocks in def main():",
+                "DO NOT modify .ndjson or credential files unless explicitly authorized",
+                "ALWAYS check that a file exists before reading or writing to it",
+                "DO NOT assume any default value for outline API params \u2014 always provide doc_id, title, content"
+            ],
+            "tool_rules": {
+                "composer": {
+                    "safe_actions": [
+                        "create_composer_batch",
+                        "add_composer_action",
+                        "insert_composer_action",
+                        "update_composer_action",
+                        "batch_update_composer_actions",
+                        "remove_composer_action",
+                        "read_composer_action",
+                        "validate_composer_batch"
+                    ],
+                    "forbidden": [
+                        "json_manager access",
+                        "manual file modification"
+                    ],
+                    "special_conditions": [
+                        "Must run validate_composer_batch before dispatch",
+                        "Dispatch ONLY through dispatcher.dispatch_batch"
+                    ]
+                },
+                "code_editor": {
+                    "safe_actions": [
+                        "patch_code_function_in_file",
+                        "patch_shell_function_in_file",
+                        "compile_blueprint_to_script_file",
+                        "read_code_file",
+                        "read_function_from_blueprint"
+                    ],
+                    "forbidden": [
+                        "patching without reading first",
+                        "blind blueprint overwrite"
+                    ],
+                    "special_conditions": [
+                        "Blueprint must contain router or 'main' block to be runnable",
+                        "Never modify protected files"
+                    ]
+                },
+                "outline_editor": {
+                    "safe_actions": [
+                        "get_doc",
+                        "create_doc",
+                        "update_doc",
+                        "append_section",
+                        "patch_section"
+                    ],
+                    "forbidden": [
+                        "update_doc without fetching current state"
+                    ],
+                    "special_conditions": [
+                        "All create/update actions must include parentDocumentId, even if null",
+                        "update_doc fully overwrites \u2014 use append if needed"
+                    ]
+                },
+                "json_manager": {
+                    "safe_actions": [
+                        "read_json_file",
+                        "read_json_entry",
+                        "add_json_entry",
+                        "update_json_entry",
+                        "batch_update_json_entries"
+                    ],
+                    "forbidden": [
+                        "modifying any file in /compositions",
+                        "modifying any code_blueprints"
+                    ],
+                    "special_conditions": [
+                        "Safe for basic data updates only \u2014 never use for tool definitions"
+                    ]
+                }
+            },
+            "file_rules": {
+                "system_settings.ndjson": {
+                    "writable": false,
+                    "notes": "Locked file \u2014 contains global tool registry. Modify only with system_settings.py"
+                },
+                "compositions/*.json": {
+                    "writable": false,
+                    "notes": "Use only composer.* tools to edit. Never use json_manager."
+                },
+                "code_blueprints/*.json": {
+                    "writable": true,
+                    "notes": "Only edit using code_editor.* blueprint functions."
+                },
+                "working_memory.json": {
+                    "writable": true,
+                    "notes": "Auto-generated. Safe to rebuild via build_working_memory"
+                },
+                "credentials.json": {
+                    "writable": false,
+                    "notes": "Set values via system_settings.set_credential only."
+                }
+            },
+            "routing_contracts": {
+                "all_tools": {
+                    "entrypoint": "main",
+                    "requires_router": true,
+                    "comments": "All tools must respond to action + --params CLI routing or dispatch will fail."
+                },
+                "composer": {
+                    "entrypoint": "main",
+                    "requires_router": true,
+                    "comments": "Each action must be routed via argument dispatch. No static execution allowed."
+                },
+                "code_editor": {
+                    "entrypoint": "main",
+                    "requires_router": true,
+                    "comments": "Must support router logic or CLI patching will break."
+                }
+            }
+        }
+    }
+}

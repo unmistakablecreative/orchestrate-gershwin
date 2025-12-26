@@ -1,0 +1,21 @@
+{
+    "executions": [
+        {
+            "tool": "claude_assistant",
+            "action": "assign_task",
+            "params": {
+                "task_id": "test_format_001",
+                "description": "Test task to verify JSON formatting",
+                "priority": "high"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "message": "\u2705 Task 'test_format_001' assigned to Claude Code queue",
+                "task_id": "test_format_001",
+                "batch_id": "batch_20251110_182929_test_for",
+                "next_step": "Task will be processed in current session"
+            }
+        }
+    ]
+}

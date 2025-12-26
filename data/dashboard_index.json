@@ -1,0 +1,35 @@
+{
+  "dashboard_items": [
+    {
+      "key": "toolkit",
+      "source": "file",
+      "file": "system_settings.ndjson",
+      "formatter": "toolkit_list",
+      "display_type": "table",
+      "limit": 50
+    },
+    {
+      "key": "app_store",
+      "source": "file",
+      "file": "data/orchestrate_app_store.json",
+      "formatter": "app_store_list",
+      "display_type": "list",
+      "limit": 10
+    },
+    {
+      "key": "working_memory",
+      "source": "file",
+      "file": "data/working_memory.json",
+      "formatter": "raw_json",
+      "display_type": "json",
+      "description": "You can add anything here and it persists across threads. Use json_manager to edit."
+    },
+    {
+      "key": "unlock_messages",
+      "source": "file",
+      "file": "data/unlock_messages.json",
+      "formatter": "raw_json",
+      "display_type": "json"
+    }
+  ]
+}

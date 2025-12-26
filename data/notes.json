@@ -1,0 +1,19 @@
+{
+  "entries": {
+    "how_notes_work": {
+      "title": "📓 How Notes Work in Orchestrate",
+      "body": "Notes are your system-wide scratchpad — for ideas, concepts, insights, fragments, or anything you want to remember or reuse. Think of it like your always-on second brain.\n\nYou don’t need to organize your notes manually. Just add them, and Orchestrate will help retrieve or connect them later using tags, keywords, and file search.",
+      "tags": ["system", "onboarding", "notes"]
+    },
+    "capturing_notes": {
+      "title": "✍️ Capturing Notes",
+      "body": "To capture a note, just say something like:\n\n`Save a note about [insight]`\n\nBehind the scenes, Orchestrate will call `json_manager.add_json_entry` and log your thought to `notes.json`. You don’t need to format it — the system handles it for you.",
+      "tags": ["capture", "example", "notes"]
+    },
+    "retrieving_notes": {
+      "title": "🔍 Retrieving Notes",
+      "body": "You can retrieve notes by asking about topics you've saved, or by using tools like `search_json_entries`, `list_json_entries`, or `read_json_entry`. You can also search by tag — for example, 'insight' or 'creative'.\n\nTry: `Search notes for insights about risk`",
+      "tags": ["retrieval", "search", "notes"]
+    }
+  }
+}

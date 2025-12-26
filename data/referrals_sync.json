@@ -1,0 +1,12 @@
+{
+    "entries": {
+        "referral_test": {
+            "name": "Referral Test",
+            "watch_file": "referrals.json",
+            "trigger": "on_save",
+            "action": {
+                "type": "create_referral_zip"
+            }
+        }
+    }
+}

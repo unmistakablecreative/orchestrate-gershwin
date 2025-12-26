@@ -1,0 +1,14 @@
+{
+  "data/secondbrain.json": {
+    "type": "data",
+    "description": "Your central task and project workspace — where active work lives.",
+    "intents": ["show tasks", "add project", "edit workspace"],
+    "tags": ["tasks", "projects", "actions"]
+  },
+  "data/master_index.json": {
+    "type": "config",
+    "description": "This is your system’s GPS. It tells Orchestrate which files exist, what they’re for, and how to respond to user instructions.",
+    "intents": ["list memory", "explain system map", "guide routing"],
+    "tags": ["index", "memory", "orchestrate"]
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "entries": {
+    "code_editor.create_code_blueprint": {
+      "tool": "code_editor",
+      "action": "create_code_blueprint",
+      "aliases": ["create a new tool", "start a new tool", "initialize code blueprint"],
+      "display_name": "🛠️ Create Tool Blueprint"
+    },
+    "code_editor.patch_code_function_in_file": {
+      "tool": "code_editor",
+      "action": "patch_code_function_in_file",
+      "aliases": ["update this function", "patch the logic here", "replace what this function does"],
+      "display_name": "🩹 Patch Code Function"
+    },
+    "system_settings.add_action": {
+      "tool": "system_settings",
+      "action": "add_action",
+      "aliases": ["register this action", "make it available to the system", "add tool action"],
+      "display_name": "🧩 Register Action"
+    },
+    "composer.add_composer_action": {
+      "tool": "composer",
+      "action": "add_composer_action",
+      "aliases": ["insert this into flow", "add step to workflow", "link in composer"],
+      "display_name": "🎼 Add to Composer"
+    },
+    "terminal.run_terminal_command": {
+      "tool": "terminal",
+      "action": "run_terminal_command",
+      "aliases": ["run this command", "execute in shell", "send to terminal"],
+      "display_name": "💻 Terminal Run"
+    },
+    "json_manager.create_json_file": {
+      "tool": "json_manager",
+      "action": "create_json_file",
+      "aliases": ["create a file", "start json log", "init json doc"],
+      "display_name": "📄 Create JSON File"
+    },
+    "json_manager.add_json_entry": {
+      "tool": "json_manager",
+      "action": "add_json_entry",
+      "aliases": ["add note", "insert entry", "log to json"],
+      "display_name": "➕ Add JSON Entry"
+    },
+    "json_manager.update_json_entry": {
+      "tool": "json_manager",
+      "action": "update_json_entry",
+      "aliases": ["update entry", "modify task", "change field"],
+      "display_name": "✏️ Update Entry"
+    },
+    "json_manager.add_field_to_json_entry": {
+      "tool": "json_manager",
+      "action": "add_field_to_json_entry",
+      "aliases": ["tag it", "add metadata", "attach label"],
+      "display_name": "🏷️ Add Field"
+    },
+    "json_manager.search_json_entries": {
+      "tool": "json_manager",
+      "action": "search_json_entries",
+      "aliases": ["search notes", "find entries", "filter by keyword"],
+      "display_name": "🔍 Search Entries"
+    },
+    "file_finder.search_files": {
+      "tool": "file_finder",
+      "action": "search_files",
+      "aliases": ["find file", "lookup filename", "search file system"],
+      "display_name": "🗂️ File Finder"
+    },
+    "read_file.read_file": {
+      "tool": "read_file",
+      "action": "read_file",
+      "aliases": ["open file", "read doc", "show contents"],
+      "display_name": "📖 Read File"
+    },
+    "outline_editor.append_section": {
+      "tool": "outline_editor",
+      "action": "append_section",
+      "aliases": ["add section", "append to doc", "continue writing"],
+      "display_name": "🧱 Append Section"
+    },
+    "buffer_engine.post_to_platform": {
+      "tool": "buffer_engine",
+      "action": "post_to_platform",
+      "aliases": ["share online", "publish post", "send to socials"],
+      "display_name": "📤 Post to Platform"
+    },
+    "mem_tool.create_mem": {
+      "tool": "mem_tool",
+      "action": "create_mem",
+      "aliases": ["remember this", "save to memory", "log insight"],
+      "display_name": "🧠 Save Memory"
+    },
+    "universal_integrator.main": {
+      "tool": "universal_integrator",
+      "action": "main",
+      "aliases": ["call api", "send webhook", "connect external"],
+      "display_name": "🔌 API Call"
+    }
+  }
+}

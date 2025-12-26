@@ -1,0 +1,196 @@
+#!/bin/bash
+
+# Capture the current directory (where referrer.txt would be) FIRST
+REFERRER_DIR="$(pwd)"
+
+# Calculate the DMG root directory (where entrypoint.sh and support files are)
+APP_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
+
+export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+# Prompt for Ngrok credentials using macOS GUI
+NGROK_TOKEN=$(/usr/bin/osascript -e 'Tell application "System Events" to display dialog "Enter your ngrok token:" default answer "" with hidden answer with title "Orchestrate Setup"' -e 'text returned of result')
+NGROK_DOMAIN=$(/usr/bin/osascript -e 'Tell application "System Events" to display dialog "Enter your ngrok domain (e.g. clever-bear.ngrok-free.app):" default answer "" with hidden answer with title "Orchestrate Setup"' -e 'text returned of result')
+
+echo ""
+echo "🚀 Launching Orchestrate. Please wait..."
+
+# Stop any running container
+if docker ps -a --format '{{.Names}}' | grep -q "^orchestrate_instance$"; then
+  echo "🧹 Cleaning up existing container..."
+  docker rm -f orchestrate_instance > /dev/null
+fi
+
+# Pull Docker image
+echo "📦 Pulling Orchestrate runtime image..."
+docker pull orchestrateos/orchestrate:latest
+
+# Launch container
+docker run -d -p 8000:8000 \
+  -v "$APP_DIR":/app \
+  -v "$HOME/Documents/Orchestrate":/orchestrate_user \
+  -v "$HOME/.orchestrate_state":/container_state \
+  -e NGROK_TOKEN="$NGROK_TOKEN" \
+  -e NGROK_DOMAIN="$NGROK_DOMAIN" \
+  -e NETLIFY_AUTH_TOKEN="nfp_r8tSoSiTr4uc6ianfngVq9Mjpxgj4N3md542" \
+  --name orchestrate_instance \
+  orchestrateos/orchestrate:latest > /dev/null
+
+sleep 10
+
+# === Install Claude Code CLI ===
+echo ""
+echo "📦 Installing Claude Code CLI..."
+
+CLAUDE_INSTALLED=false
+
+# Try Homebrew first
+if command -v brew >/dev/null 2>&1; then
+  echo "   Using Homebrew..."
+  if brew install --cask claude-code 2>&1 | tee /tmp/claude_install.log | grep -qE "(successfully installed|already installed)"; then
+    CLAUDE_INSTALLED=true
+    echo "   ✅ Installed via Homebrew"
+  else
+    echo "   ⚠️  Homebrew install failed, trying direct download..."
+  fi
+fi
+
+# Fallback to direct install if brew failed or unavailable
+if [ "$CLAUDE_INSTALLED" = false ]; then
+  echo "   Using direct download..."
+  if curl -fsSL https://claude.ai/install.sh | bash; then
+    CLAUDE_INSTALLED=true
+    echo "   ✅ Installed via direct download"
+  else
+    echo "   ❌ Direct install failed"
+  fi
+fi
+
+# Verify installation
+if command -v claude >/dev/null 2>&1 || [ -f "$HOME/.local/bin/claude" ]; then
+  CLAUDE_INSTALLED=true
+  CLAUDE_PATH=$(command -v claude || echo "$HOME/.local/bin/claude")
+  echo "   ✅ Claude Code verified at: $CLAUDE_PATH"
+else
+  echo "   ❌ Claude Code installation failed"
+  echo "   Manual install: https://docs.claude.com/en/docs/claude-code/installation"
+fi
+
+# === Install Python Dependencies ===
+echo ""
+echo "📦 Installing Python dependencies..."
+
+PYTHON_BIN=$(which python3)
+echo "   Using Python: $PYTHON_BIN ($($PYTHON_BIN --version))"
+
+# Install watchdog
+echo "   Installing watchdog module..."
+if $PYTHON_BIN -m pip install watchdog -q 2>&1; then
+  echo "   ✅ watchdog installed"
+else
+  echo "   ⚠️  watchdog install failed (may need permissions)"
+fi
+
+# Verify
+if $PYTHON_BIN -c "import watchdog" 2>/dev/null; then
+  echo "   ✅ Dependencies verified"
+else
+  echo "   ⚠️  Some dependencies missing - autonomous execution may not work"
+fi
+
+# === Copy and Start Queue Watcher ===
+echo ""
+echo "⚡ Setting up autonomous execution watcher..."
+DMG_MOUNT="$(cd "$(dirname "$0")/../../.." && pwd)"
+WATCHER_SOURCE="$DMG_MOUNT/claude_queue_watcher.py"
+WATCHER_DEST="$HOME/Documents/Orchestrate/claude_queue_watcher.py"
+
+if [ -f "$WATCHER_SOURCE" ]; then
+  cp "$WATCHER_SOURCE" "$WATCHER_DEST"
+  chmod +x "$WATCHER_DEST"
+
+  # Start watcher with unbuffered output
+  nohup $PYTHON_BIN -u "$WATCHER_DEST" > "$HOME/Documents/Orchestrate/watcher.log" 2>&1 &
+  WATCHER_PID=$!
+
+  # Wait and verify it started
+  sleep 2
+  if ps -p $WATCHER_PID > /dev/null 2>&1; then
+    echo "   ✅ Watcher started (PID: $WATCHER_PID)"
+    echo "   📝 Logs: tail -f ~/Documents/Orchestrate/watcher.log"
+  else
+    echo "   ⚠️  Watcher may not have started - check logs"
+  fi
+else
+  echo "   ⚠️  Watcher script not found (autonomous execution disabled)"
+fi
+
+# === Create authentication reminder file ===
+cat > "$HOME/Documents/Orchestrate/CLAUDE_AUTH_REQUIRED.txt" << 'EOF'
+╔════════════════════════════════════════════════════════════════╗
+║                CLAUDE ASSISTANT SETUP REQUIRED                 ║
+╚════════════════════════════════════════════════════════════════╝
+
+The claude_assistant tool enables AUTONOMOUS TASK EXECUTION.
+
+What this means:
+  - Assign complex tasks (code rewrites, refactoring, etc.)
+  - Claude executes them autonomously while you sleep
+  - Wake up to completed work
+
+Requirements:
+  1. Active Claude Pro or Team subscription
+  2. One-time authentication setup
+
+How to set up:
+  1. Run: claude
+  2. Type: /login
+  3. Follow authentication in your browser
+  4. Done! Works for both interactive and autonomous mode
+
+Cost:
+  - Uses your existing Claude subscription
+  - No additional API costs
+  - Pay for what you already have
+
+To unlock claude_assistant:
+  1. Go to your Custom GPT
+  2. Say: "Unlock claude_assistant"
+  3. You'll be prompted to authenticate
+  4. Test it: "Assign a task to Claude: create a test file at /tmp/test.txt"
+
+═══════════════════════════════════════════════════════════════
+
+When you unlock claude_assistant for the first time, a browser
+window will open for authentication. This is a ONE-TIME setup.
+
+After that, assign tasks and watch the magic happen.
+
+═══════════════════════════════════════════════════════════════
+EOF
+
+# === Launch Terminal Wizard ===
+echo ""
+echo "🎉 OrchestrateOS is running!"
+echo ""
+echo "Your system is connected at: https://$NGROK_DOMAIN"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Now let's set up your Custom GPT..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+sleep 2
+
+# Calculate DMG mount point from script location (go up 3 levels to DMG root)
+DMG_MOUNT="$(cd "$(dirname "$0")/../../.." && pwd)"
+WIZARD_SCRIPT="$DMG_MOUNT/setup_wizard.sh"
+
+echo "🔍 Looking for wizard at: $WIZARD_SCRIPT"
+
+if [ ! -f "$WIZARD_SCRIPT" ]; then
+  echo "⚠️  Wizard script not found at $WIZARD_SCRIPT"
+  echo "Manual setup: Check ~/Documents/Orchestrate/ for config files"
+else
+  echo "✅ Launching wizard..."
+  # Launch wizard in a new Terminal window
+  osascript -e "tell application \"Terminal\" to do script \"'$WIZARD_SCRIPT' '$NGROK_DOMAIN'\""
+fi

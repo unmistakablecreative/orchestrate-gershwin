@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(data/claude_task_queue.json)",
+      "Edit(data/claude_task_results.json)",
+      "Edit(credentials.json)",
+      "Write(data/claude_task_queue.json)",
+      "Write(data/claude_task_results.json)",
+      "Write(credentials.json)",
+      "Bash(python3 tools/*.py:*)",
+      "Bash(python tools/*.py:*)"
+    ],
+    "allow": [
+      "Bash(python3 execution_hub.py:*)",
+      "Bash(python execution_hub.py:*)",
+      "Read(data/**)",
+      "Read(tools/**)",
+      "Read(.claude/**)",
+      "Read(tests/**)",
+      "Write(/orchestrate_user/**)",
+      "Write(data/**)",
+      "Write(/opt/orchestrate-core-runtime/data/**)"
+    ]
+  },
+  "env": {
+    "ORCHESTRATE_RUNTIME_DIR": "/opt/orchestrate-core-runtime",
+    "ORCHESTRATE_USER_DIR": "/orchestrate_user",
+    "ORCHESTRATE_DATA_DIR": "/opt/orchestrate-core-runtime/data",
+    "ORCHESTRATE_TASK_QUEUE": "/opt/orchestrate-core-runtime/data/claude_task_queue.json",
+    "ORCHESTRATE_TASK_RESULTS": "/opt/orchestrate-core-runtime/data/claude_task_results.json"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "_instructions": "You can store anything here that you want the system to remember each time you load OrchestrateOS. Use json_manager to add entries. Examples: project context, recurring tasks, important links, preferences, etc.",
+  "example_entry": {
+    "type": "project_context",
+    "description": "This is an example. Delete it and add your own entries using json_manager."
+  }
+}

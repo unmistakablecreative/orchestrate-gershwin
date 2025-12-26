@@ -1,0 +1,72 @@
+{
+  "commands": {
+    "Load OrchestrateOS": {
+      "run": [
+        {
+          "tool": "${SAFE_DOMAIN}__jit_plugin",
+          "action": "executeTask",
+          "params": {
+            "tool_name": "system_control",
+            "action": "load_orchestrate_os",
+            "params": {}
+          }
+        },
+        {
+          "tool": "${SAFE_DOMAIN}__jit_plugin",
+          "action": "loadMemory"
+        },
+        {
+          "tool": "${SAFE_DOMAIN}__jit_plugin",
+          "action": "getSupportedActions"
+        },
+        {
+          "tool": "${SAFE_DOMAIN}__jit_plugin",
+          "action": "getDashboardFile",
+          "params": {
+            "file_key": "full_dashboard"
+          }
+        }
+      ],
+      "post_process": "render_dashboard_from_server",
+      "display": {
+        "style": "pre_formatted",
+        "theme": "light",
+        "layout": "dashboard",
+        "render_mode": "server_side"
+      },
+      "instructions": {
+        "rendering": "Display the pre-formatted dashboard data exactly as returned from the server. Render as normal text/markdown, NOT in code blocks. Show ALL dashboard sections including the full intent routes table with Tool and Action columns.",
+        "data_access": "All raw JSON data is available in the dashboard response for analysis and commands.",
+        "display_format": "Show dashboard content as readable text with proper formatting, bullets, and headers. Never wrap dashboard output in code blocks. ALWAYS render the intent_routes display_table.",
+        "intent_routes_mandatory": "The intent routes table MUST be displayed showing Icon | Intent | Description | Tool | Action columns. Do not skip or summarize this table."
+      },
+      "addendum": {
+        "DISPLAY_SERVER_FORMATTED_OUTPUT": true,
+        "NO_CLIENT_SIDE_RENDERING": true,
+        "NO_JSON_TO_MARKDOWN_CONVERSION": true,
+        "SHOW_PREFORMATTED_TABLES": true,
+        "RAW_DATA_AVAILABLE_FOR_COMMANDS": true,
+        "ALWAYS_RENDER_INTENT_ROUTES_TABLE": true,
+        "INTENT_ROUTES_TABLE_IS_MANDATORY": true,
+        "NO_SKIPPING_INTENT_ROUTES_DISPLAY": true,
+        "ALL_TOOL_REQUESTS_MUST_USE_EXECUTE_TASK": true,
+        "NO_IMPLIED_CAUSALITY_WITHOUT_SCHEMATIC_REFERENCE": true,
+        "FAILURES_MUST_REFERENCE_SCHEMA_DIRECTLY": true,
+        "DISABLE_SPECULATIVE_DIAGNOSTICS": true,
+        "SUPPRESS_GPT_INFERRED_REASONING": true,
+        "ENFORCE_SCHEMATIC_AUDIT_LOG": true,
+        "INCLUDE_EXECUTION_TRACE": true,
+        "BLOCK_PATTERN_MATCHING_IN_COMMAND_EXECUTION": true,
+        "DISALLOW_PARAM_INFERENCE_FROM_HISTORY": true,
+        "REQUIRE_SCHEMA_CONFIRMATION_BEFORE_TOOL_DISPATCH": true,
+        "ONLY_ALLOW_PARAMS_DECLARED_IN_SCHEMA": true,
+        "REQUIRE_EXECUTETASK_CALL_BEFORE_ERROR_REPORTING": true,
+        "BLOCK_FAKE_ENVIRONMENT_ERRORS": true,
+        "BLOCK_FAKE_CLIENT_ERRORS": true,
+        "DISALLOW_ERROR_MESSAGES_WITHOUT_EXECUTION_TRACE": true,
+        "ONLY_ALLOW_TOOL_ERRORS_IF_SOURCE_IS_EXECUTE_TASK": true,
+        "STRICT_EXECUTION_CHAIN_ENFORCEMENT": true
+      }
+    }
+  }
+}
