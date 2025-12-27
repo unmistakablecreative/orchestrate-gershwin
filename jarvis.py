@@ -1,7 +1,11 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from datetime import datetime
-import subprocess, json, os, logging
+import sys
+import subprocess
+import json
+import os
+import logging
 from fastapi.staticfiles import StaticFiles
 
 # === BASE DIR ===
@@ -34,7 +38,6 @@ else:
 
 # === System Identity Mount ===
 STATE_DIR = "/Library/Application Support/OrchestrateOS"
-# Try user-level path if system-level doesn't exist
 if not os.path.exists(STATE_DIR):
     STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 if os.path.exists(STATE_DIR):
@@ -98,7 +101,6 @@ def sync_repo_and_merge_registry():
             for entry in updated_registry:
                 f.write(json.dumps(entry) + "\n")
 
-        # Force update of update_messages.json
         repo_path = os.path.join(BASE_DIR, "data", "update_messages.json")
         git_path = os.path.join(BASE_DIR, ".git", "..", "data", "update_messages.json")
         if os.path.exists(git_path):
@@ -112,7 +114,8 @@ def sync_repo_and_merge_registry():
 
 # === Tool Executor ===
 def run_script(tool_name, action, params):
-    command = ["python3", EXEC_HUB_PATH, "execute_task", "--params", json.dumps({
+    python_exe = sys.executable
+    command = [python_exe, EXEC_HUB_PATH, "execute_task", "--params", json.dumps({
         "tool_name": tool_name,
         "action": action,
         "params": params
@@ -133,7 +136,6 @@ def startup_routines():
     except Exception as e:
         logging.warning(f"⚠️ Startup routines failed: {e}")
 
-    # === Start ngrok (if not already running) ===
     try:
         if os.path.exists(NGROK_CONFIG_PATH):
             with open(NGROK_CONFIG_PATH) as f:
@@ -151,7 +153,6 @@ def startup_routines():
     except Exception as e:
         logging.warning(f"⚠️ Ngrok relaunch failed: {e}")
 
-    # === Start Claude Queue Processor ===
     try:
         from claude_queue_processor import ClaudeQueueProcessor
         processor = ClaudeQueueProcessor()
@@ -160,10 +161,10 @@ def startup_routines():
     except Exception as e:
         logging.warning(f"⚠️ Claude queue processor failed to start: {e}")
 
-# === Start Referral Engine subprocess ===
 try:
+    python_exe = sys.executable
     referral_script = os.path.join(BASE_DIR, "tools", "referral_engine.py")
-    subprocess.Popen(["python3", referral_script])
+    subprocess.Popen([python_exe, referral_script])
     logging.info("📣 Referral engine launched unconditionally.")
 except Exception as e:
     logging.warning(f"⚠️ Failed to launch referral engine: {e}")
@@ -195,7 +196,6 @@ async def execute_task(request: Request):
         return JSONResponse(status_code=500, content={"error": "Execution failed", "details": str(e)})
 
 # === Supported Actions + Messages ===
-
 @app.get("/get_supported_actions")
 def get_supported_actions():
     try:
@@ -205,7 +205,6 @@ def get_supported_actions():
         with open(SYSTEM_REGISTRY, "r") as f:
             entries = [json.loads(line.strip()) for line in f if line.strip()]
 
-        # 🔓 Inject readable lock status for display
         for entry in entries:
             if entry.get("action") == "__tool__":
                 is_locked = entry.get("locked", True)
@@ -228,11 +227,6 @@ def get_supported_actions():
         logging.error(f"🚨 Failed to load registry or update messages: {e}")
         raise HTTPException(status_code=500, detail="Could not load registry or update messages.")
 
-
-
-
-
-
 # === Memory Loader ===
 @app.post("/load_memory")
 def load_memory():
@@ -254,25 +248,20 @@ def load_memory():
 DASHBOARD_INDEX_PATH = os.path.join(BASE_DIR, "data/dashboard_index.json")
 
 def load_dashboard_data():
-    """Load dashboard using config-driven approach"""
     try:
-        # Load dashboard configuration
         with open(DASHBOARD_INDEX_PATH, 'r', encoding='utf-8') as f:
             dashboard_config = json.load(f)
 
         dashboard_data = {}
 
-        # Process each dashboard item
         for item in dashboard_config.get("dashboard_items", []):
             key = item.get("key")
             source_type = item.get("source")
 
             try:
                 if source_type == "file":
-                    # Load from file
                     filepath = os.path.join(BASE_DIR, item.get("file"))
 
-                    # Handle NDJSON files (system_settings.ndjson)
                     if filepath.endswith('.ndjson'):
                         with open(filepath, 'r', encoding='utf-8') as f:
                             data = [json.loads(line.strip()) for line in f if line.strip()]
@@ -283,7 +272,6 @@ def load_dashboard_data():
                             dashboard_data[key] = data
 
                 elif source_type == "tool_action":
-                    # Load from tool execution
                     tool_name = item.get("tool")
                     action = item.get("action")
                     params = item.get("params", {})
@@ -293,7 +281,6 @@ def load_dashboard_data():
             except Exception as e:
                 dashboard_data[key] = {"error": f"Could not load {key}: {str(e)}"}
 
-        # Format the data for display using config
         formatted_output = format_dashboard_display(dashboard_data, dashboard_config)
 
         return {
@@ -305,20 +292,17 @@ def load_dashboard_data():
         return {"error": f"Failed to load dashboard: {str(e)}"}
 
 def format_dashboard_display(data, config):
-    """Convert JSON data to formatted output based on config"""
     formatted = {}
 
     for item in config.get("dashboard_items", []):
         key = item.get("key")
         formatter = item.get("formatter")
-        display_type = item.get("display_type")
 
         if key not in data:
             continue
 
         raw_data = data[key]
 
-        # Apply formatter (beta formatters: toolkit + app store)
         if formatter == "toolkit_list":
             formatted[key] = format_toolkit_list(raw_data, item.get("limit", 50))
         elif formatter == "app_store_list":
@@ -330,18 +314,14 @@ def format_dashboard_display(data, config):
         elif formatter == "ideas_list":
             formatted[key] = format_ideas_reminders(raw_data, item.get("limit", 10))
         else:
-            # Default: just pass through
             formatted[key] = raw_data
 
     return formatted
 
-# Dashboard formatters (beta formatters)
 def format_toolkit_list(data, limit=50):
-    """Format system_settings.ndjson as markdown table"""
     if not data:
         return {"display_table": "No tools available", "tools": []}
 
-    # Parse NDJSON - data could be list of objects or raw string
     if isinstance(data, str):
         entries = [json.loads(line.strip()) for line in data.split('\n') if line.strip()]
     elif isinstance(data, list):
@@ -349,19 +329,16 @@ def format_toolkit_list(data, limit=50):
     else:
         return {"display_table": "Error loading toolkit", "tools": []}
 
-    # Filter for actual tools (action: __tool__)
     tools = [e for e in entries if e.get("action") == "__tool__"]
 
     if not tools:
         return {"display_table": "No tools available", "tools": []}
 
-    # Sort: unlocked alphabetically, locked by cost
     unlocked = sorted([t for t in tools if not t.get("locked", True)],
                      key=lambda x: x.get("tool", "").lower())
     locked = sorted([t for t in tools if t.get("locked", True)],
                    key=lambda x: x.get("referral_unlock_cost", 999))
 
-    # Build markdown table
     table = "| Status | Tool | Description | Unlock Cost |\n"
     table += "|--------|------|-------------|-------------|\n"
 
@@ -379,7 +356,6 @@ def format_toolkit_list(data, limit=50):
     return {"display_table": table, "tools": tools}
 
 def format_app_store_list(data, limit=10):
-    """Format orchestrate_app_store.json as markdown table"""
     if not isinstance(data, dict):
         return {"display_table": "Error loading app store", "tools": {}}
 
@@ -387,10 +363,8 @@ def format_app_store_list(data, limit=10):
     if not entries:
         return {"display_table": "No tools available", "tools": {}}
 
-    # Sort by priority
     sorted_tools = sorted(entries.items(), key=lambda x: x[1].get("priority", 999))
 
-    # Build markdown table
     table = "| Tool | Cost | Description |\n"
     table += "|------|------|-------------|\n"
 
@@ -402,9 +376,7 @@ def format_app_store_list(data, limit=10):
 
     return {"display_table": table, "tools": entries}
 
-# Dashboard formatters (jarvis-local only, not used in beta)
 def format_calendar_events(data):
-    """Format calendar events as list with participants"""
     events = []
 
     if isinstance(data, dict):
@@ -424,25 +396,20 @@ def format_calendar_events(data):
             if isinstance(start_time, (int, float)):
                 start_time = datetime.fromtimestamp(start_time).strftime("%m/%d %H:%M")
 
-            # Extract participants and show who the meeting is with (excluding user)
             participants = event.get("participants", [])
-            user_email = "srinirao"  # Current user's email
+            user_email = "srinirao"
 
-            # Filter out the user's own email from participants
             other_participants = [
                 p for p in participants
                 if p.get("email") != user_email
             ]
 
-            # Build list of participant names to display
             participant_names = []
             for p in other_participants:
-                # Prefer name over email for display
                 name = p.get("name") or p.get("email", "")
                 if name:
                     participant_names.append(name)
 
-            # Format the event line with participants if any
             if participant_names:
                 participants_str = " + ".join(participant_names)
                 cal_list += f"• **{start_time}**: {title} (with {participants_str})\n"
@@ -454,7 +421,6 @@ def format_calendar_events(data):
         return "📅 **Calendar Events:** No upcoming events"
 
 def format_thread_log(data, limit=5):
-    """Format thread log as list"""
     if not isinstance(data, dict):
         return "📋 **Thread Log:** No entries"
 
@@ -470,7 +436,6 @@ def format_thread_log(data, limit=5):
         return "📋 **Thread Log:** No entries"
 
 def format_ideas_reminders(data, limit=10):
-    """Format ideas and reminders as list"""
     if not isinstance(data, dict):
         return "💡 **Ideas & Reminders:** No entries"
 
@@ -488,17 +453,12 @@ def format_ideas_reminders(data, limit=10):
     else:
         return "💡 **Ideas & Reminders:** No entries"
 
-# Dashboard endpoint
 @app.get("/get_dashboard_file/{file_key}")
 def get_dashboard_file(file_key: str):
-    """Load specific dashboard files when needed or full dashboard"""
-
-    # Special case: full dashboard
     if file_key == "full_dashboard":
         dashboard = load_dashboard_data()
         return dashboard
 
-    # Individual files
     file_map = {
         "phrase_promotions": "data/phrase_insight_promotions.json",
         "runtime_contract": "orchestrate_runtime_contract.json",
@@ -530,7 +490,6 @@ def get_dashboard_file(file_key: str):
             "details": str(e)
         })
 
-# === Health Check ===
 @app.get("/")
 def root():
     return {"status": "Jarvis core is online."}
