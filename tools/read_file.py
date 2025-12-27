@@ -17,8 +17,8 @@ from bs4 import BeautifulSoup
 
 
 ALLOWED_DIRS = {
-    'dropzone': '/orchestrate_user/dropzone',
-    'system_docs': '/opt/orchestrate-core-runtime/system_docs'
+    'dropzone': os.path.expanduser('~/Documents/Orchestrate/dropzone'),
+    'system_docs': '/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/system_docs'
 }
 
 

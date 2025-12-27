@@ -1,0 +1,7 @@
+{
+  "engines": [
+    "automation_engine.py",
+    "claude_execution_engine.py",
+    "buffer_engine.py"
+  ]
+}

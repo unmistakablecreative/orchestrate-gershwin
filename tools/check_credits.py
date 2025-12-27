@@ -12,7 +12,7 @@ import os
 import requests
 
 
-IDENTITY_PATH = "/container_state/system_identity.json"
+IDENTITY_PATH = "/Library/Application Support/OrchestrateOS/system_identity.json"
 BIN_ID = "68292fcf8561e97a50162139"
 API_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 HEADERS = {"X-Master-Key": API_KEY, "Content-Type": "application/json"}

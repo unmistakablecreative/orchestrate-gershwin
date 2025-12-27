@@ -26,12 +26,21 @@ REFERRAL_PATH = os.path.join(BASE_DIR, "container_state", "referrals.json")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # === Dropzone Mount ===
-DROPZONE_DIR = "/orchestrate_user/dropzone"
-app.mount("/dropzone", StaticFiles(directory=DROPZONE_DIR), name="dropzone")
+DROPZONE_DIR = os.path.expanduser("~/Documents/Orchestrate/dropzone")
+if os.path.exists(DROPZONE_DIR):
+    app.mount("/dropzone", StaticFiles(directory=DROPZONE_DIR), name="dropzone")
+else:
+    logging.warning(f"⚠️ Dropzone directory not found: {DROPZONE_DIR}")
 
 # === System Identity Mount ===
-STATE_DIR = "/container_state"
-app.mount("/state", StaticFiles(directory=STATE_DIR), name="state")
+STATE_DIR = "/Library/Application Support/OrchestrateOS"
+# Try user-level path if system-level doesn't exist
+if not os.path.exists(STATE_DIR):
+    STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
+if os.path.exists(STATE_DIR):
+    app.mount("/state", StaticFiles(directory=STATE_DIR), name="state")
+else:
+    logging.warning(f"⚠️ State directory not found, skipping mount")
 
 # === Merge Logic ===
 def merge_tool_ui_with_unlocks():

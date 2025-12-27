@@ -17,8 +17,8 @@ from bs4 import BeautifulSoup
 
 
 BASE_DIRECTORIES = [
-    "/orchestrate_user/dropzone",
-    "/opt/orchestrate-core-runtime/system_docs"
+    os.path.expanduser("~/Documents/Orchestrate/dropzone"),
+    "/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/system_docs"
 ]
 
 

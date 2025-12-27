@@ -12,10 +12,11 @@ from datetime import datetime
 
 import requests
 
-CREDENTIALS_PATH = "/container_state/system_identity.json"
+CREDENTIALS_PATH = "/Library/Application Support/OrchestrateOS/system_identity.json"
 JSONBIN_MASTER_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 REFERRALS_BIN = "694a185eae596e708fab9028"
-LEDGER_BIN = "68292fcf8561e97a50162139"
+# TEST LEDGER - Switch to production (68292fcf8561e97a50162139) before release
+LEDGER_BIN = "694f0af6ae596e708fb2bd68"
 
 
 def refer_user(params):

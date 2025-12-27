@@ -1,0 +1,8 @@
+{
+  "entry_added": {
+    "test": "key not in old_entry"
+  },
+  "entry_updated": {
+    "test": "key in old_entry and new_entry != old_entry"
+  }
+}

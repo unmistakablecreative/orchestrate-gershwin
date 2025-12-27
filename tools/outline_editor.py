@@ -140,7 +140,7 @@ def export_doc(params):
         markdown = raw.get('data', '')
     except json.JSONDecodeError:
         markdown = res.text
-    output_dir = os.path.join('/orchestrate_user/orchestrate_exports',
+    output_dir = os.path.join(os.path.expanduser('~/Documents/Orchestrate/orchestrate_exports'),
         'markdown')
     os.makedirs(output_dir, exist_ok=True)
     filepath = os.path.join(output_dir, filename)

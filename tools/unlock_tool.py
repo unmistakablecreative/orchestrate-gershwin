@@ -17,8 +17,8 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 RUNTIME_DIR = os.path.dirname(BASE_DIR)
 APP_STORE_PATH = os.path.join(RUNTIME_DIR, "data", "orchestrate_app_store.json")
-REFERRAL_PATH = "/container_state/referrals.json"
-IDENTITY_PATH = "/container_state/system_identity.json"
+REFERRAL_PATH = "/Library/Application Support/OrchestrateOS/referrals.json"
+IDENTITY_PATH = "/Library/Application Support/OrchestrateOS/system_identity.json"
 SYSTEM_REGISTRY = os.path.join(RUNTIME_DIR, "system_settings.ndjson")
 JSONBIN_ID = "68292fcf8561e97a50162139"
 JSONBIN_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"

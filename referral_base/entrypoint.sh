@@ -1,11 +1,11 @@
 #!/bin/bash
 
-export PYTHONPATH="$PYTHONPATH:/opt/orchestrate-core-runtime"
+export PYTHONPATH="$PYTHONPATH:/Applications/OrchestrateOS.app/Contents/Resources/orchestrate"
 
 
-USER_DIR="/orchestrate_user"
-STATE_DIR="/container_state"
-OUTPUT_DIR="/app"
+USER_DIR="$HOME/Documents/Orchestrate"
+STATE_DIR="/Library/Application Support/OrchestrateOS"
+OUTPUT_DIR="/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/app"
 RUNTIME_DIR="/tmp/runtime"
 
 mkdir -p "$USER_DIR/dropzone"
@@ -16,10 +16,10 @@ mkdir -p "$STATE_DIR"
 
 # Prompt if not passed in
 if [ -z "$NGROK_TOKEN" ]; then
-  read -p "🔐 Enter your ngrok authtoken: " NGROK_TOKEN
+  read -p "Enter your ngrok authtoken: " NGROK_TOKEN
 fi
 if [ -z "$NGROK_DOMAIN" ]; then
-  read -p "🌐 Enter your ngrok domain (e.g. clever-bear.ngrok-free.app): " NGROK_DOMAIN
+  read -p "Enter your ngrok domain (e.g. clever-bear.ngrok-free.app): " NGROK_DOMAIN
 fi
 
 export NGROK_TOKEN
@@ -30,7 +30,7 @@ export SAFE_DOMAIN=$(echo "$NGROK_DOMAIN" | sed 's|https://||g' | sed 's|[-.]|_|
 IDENTITY_FILE="$STATE_DIR/system_identity.json"
 
 if [ ! -f "$IDENTITY_FILE" ]; then
-  UUID=$(cat /proc/sys/kernel/random/uuid)
+  UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
   USER_ID="orch-${UUID}"
   TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
@@ -64,7 +64,7 @@ if [ ! -f "$IDENTITY_FILE" ]; then
   echo '{ "referral_count": 0, "referral_credits": 0, "tools_unlocked": ["json_manager"] }' > "$STATE_DIR/referrals.json"
 fi
 
-RUNTIME_DIR="/opt/orchestrate-core-runtime"
+RUNTIME_DIR="/Applications/OrchestrateOS.app/Contents/Resources/orchestrate"
 
 if [ ! -d "$RUNTIME_DIR/.git" ]; then
   git clone https://github.com/unmistakablecreative/orchestrate-core-runtime.git "$RUNTIME_DIR"
@@ -77,9 +77,9 @@ cd "$RUNTIME_DIR"
 envsubst < openapi_template.yaml > "$OUTPUT_DIR/openapi.yaml"
 envsubst < instructions_template.json > "$OUTPUT_DIR/custom_instructions.json"
 
-echo "📎 === CUSTOM INSTRUCTIONS ===" > "$OUTPUT_DIR/_paste_into_gpt.txt"
+echo "=== CUSTOM INSTRUCTIONS ===" > "$OUTPUT_DIR/_paste_into_gpt.txt"
 cat "$OUTPUT_DIR/custom_instructions.json" >> "$OUTPUT_DIR/_paste_into_gpt.txt"
-echo -e "\n\n📎 === OPENAPI.YAML ===" >> "$OUTPUT_DIR/_paste_into_gpt.txt"
+echo -e "\n\n=== OPENAPI.YAML ===" >> "$OUTPUT_DIR/_paste_into_gpt.txt"
 cat "$OUTPUT_DIR/openapi.yaml" >> "$OUTPUT_DIR/_paste_into_gpt.txt"
 
 ngrok config add-authtoken "$NGROK_TOKEN"
