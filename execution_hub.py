@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import subprocess
 import argparse
@@ -16,6 +17,12 @@ if not os.path.exists(EXECUTION_LOG):
         json.dump({"executions": []}, f, indent=4)
 
 
+def get_python_executable():
+    """Get the correct Python executable path"""
+    # Use the same Python that's running this script
+    return sys.executable
+
+
 def execute_tool(tool_name, action, params):
     registry = load_registry()
     if tool_name not in registry:
@@ -27,7 +34,7 @@ def execute_tool(tool_name, action, params):
     if tool_info.get("locked", False):
         return {
             "status": "locked",
-            "message": "Just enter the name and email of someone you want to refer.\nWhen they install Orchestrate, you’ll get instant unlock credits — and you can use those to unlock this tool."
+            "message": "Just enter the name and email of someone you want to refer.\nWhen they install Orchestrate, you'll get instant unlock credits — and you can use those to unlock this tool."
         }
 
     if not script_path or not os.path.isfile(script_path):
@@ -41,7 +48,8 @@ def execute_tool(tool_name, action, params):
     except ContractViolation as e:
         return {"status": "error", "message": str(e)}
 
-    command = ["python3", script_path, action, "--params", json.dumps(validated_params)]
+    python_exe = get_python_executable()
+    command = [python_exe, script_path, action, "--params", json.dumps(validated_params)]
 
     try:
         result = subprocess.run(command, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT, check=True)
@@ -60,7 +68,6 @@ def execute_tool(tool_name, action, params):
     except subprocess.CalledProcessError as e:
         log_execution(tool_name, action, validated_params, "failure", e.stderr.strip())
         return {"status": "error", "message": "Execution failed", "details": e.stderr.strip()}
-
 
 
 def load_registry():
@@ -90,8 +97,6 @@ def load_registry():
     return tools
 
 
-
-
 def log_execution(tool_name, action, params, status, output):
     with open(EXECUTION_LOG, "r", encoding="utf-8") as f:
         log_data = json.load(f)
@@ -106,6 +111,7 @@ def log_execution(tool_name, action, params, status, output):
 
     with open(EXECUTION_LOG, "w", encoding="utf-8") as f:
         json.dump(log_data, f, indent=4)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Orchestrate Execution Hub")
@@ -130,6 +136,7 @@ def main():
             print(json.dumps({"status": "error", "message": str(e)}, indent=4))
     else:
         print(json.dumps({"status": "error", "message": "❌ Invalid action."}, indent=4))
+
 
 if __name__ == "__main__":
     main()
