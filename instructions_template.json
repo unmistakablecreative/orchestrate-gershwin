@@ -6,9 +6,22 @@
           "tool": "${SAFE_DOMAIN}__jit_plugin",
           "action": "executeTask",
           "params": {
-            "tool_name": "system_control",
-            "action": "load_orchestrate_os",
-            "params": {}
+            "tool_name": "json_manager",
+            "action": "read_json_file",
+            "params": {
+              "filename": "boot_flags.json"
+            }
+          }
+        },
+        {
+          "tool": "${SAFE_DOMAIN}__jit_plugin",
+          "action": "executeTask",
+          "params": {
+            "tool_name": "json_manager",
+            "action": "read_json_file",
+            "params": {
+              "filename": "secondbrain.json"
+            }
           }
         },
         {
@@ -28,6 +41,34 @@
         }
       ],
       "post_process": "render_dashboard_from_server",
+      "boot_flags_logic": {
+        "onboarding_complete_false": {
+          "additional_load": [
+            {
+              "tool": "${SAFE_DOMAIN}__jit_plugin",
+              "action": "executeTask",
+              "params": {
+                "tool_name": "json_manager",
+                "action": "read_json_file",
+                "params": {
+                  "filename": "onboarding_sequence.json"
+                }
+              }
+            }
+          ],
+          "behavior": "Follow onboarding_sequence.json step by step. Start at intro, advance on user input or action success."
+        },
+        "onboarding_complete_true": {
+          "behavior": "Skip onboarding. Load dashboard and await user commands."
+        }
+      },
+      "file_reads": {
+        "always": ["boot_flags.json", "secondbrain.json"],
+        "conditional": {
+          "if_onboarding_incomplete": ["onboarding_sequence.json"]
+        },
+        "never": ["unlock_nudges.json", "orchestrate_app_store.json", "orchestrate_tool_ui.json"]
+      },
       "display": {
         "style": "pre_formatted",
         "theme": "light",
@@ -38,8 +79,10 @@
         "rendering": "Display the pre-formatted dashboard data exactly as returned from the server. Render as normal text/markdown, NOT in code blocks. Show ALL dashboard sections including the full intent routes table with Tool and Action columns.",
         "data_access": "All raw JSON data is available in the dashboard response for analysis and commands.",
         "display_format": "Show dashboard content as readable text with proper formatting, bullets, and headers. Never wrap dashboard output in code blocks. ALWAYS render the intent_routes display_table.",
-        "intent_routes_mandatory": "The intent routes table MUST be displayed showing Icon | Intent | Description | Tool | Action columns. Do not skip or summarize this table."
+        "intent_routes_mandatory": "The intent routes table MUST be displayed showing Icon | Intent | Description | Tool | Action columns. Do not skip or summarize this table.",
+        "boot_flags_check": "Check boot_flags.json first. If onboarding_complete is false, load onboarding_sequence.json and follow the guided flow. If true, skip onboarding and show dashboard."
       },
+      "prompt_behavior": "silent",
       "addendum": {
         "DISPLAY_SERVER_FORMATTED_OUTPUT": true,
         "NO_CLIENT_SIDE_RENDERING": true,
@@ -65,7 +108,8 @@
         "BLOCK_FAKE_CLIENT_ERRORS": true,
         "DISALLOW_ERROR_MESSAGES_WITHOUT_EXECUTION_TRACE": true,
         "ONLY_ALLOW_TOOL_ERRORS_IF_SOURCE_IS_EXECUTE_TASK": true,
-        "STRICT_EXECUTION_CHAIN_ENFORCEMENT": true
+        "STRICT_EXECUTION_CHAIN_ENFORCEMENT": true,
+        "CHECK_BOOT_FLAGS_BEFORE_ONBOARDING": true
       }
     }
   }

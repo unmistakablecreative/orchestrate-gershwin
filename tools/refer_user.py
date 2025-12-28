@@ -12,12 +12,29 @@ from datetime import datetime
 
 import requests
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RUNTIME_DIR = os.path.dirname(BASE_DIR)
+SECONDBRAIN_PATH = os.path.join(RUNTIME_DIR, "data", "secondbrain.json")
 STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 CREDENTIALS_PATH = os.path.join(STATE_DIR, "system_identity.json")
 JSONBIN_MASTER_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 REFERRALS_BIN = "694a185eae596e708fab9028"
 # TEST LEDGER - Switch to production (68292fcf8561e97a50162139) before release
 LEDGER_BIN = "694f0af6ae596e708fb2bd68"
+
+
+def get_referrer_name():
+    """Get referrer name from secondbrain.json user_profile"""
+    try:
+        if os.path.exists(SECONDBRAIN_PATH):
+            with open(SECONDBRAIN_PATH, 'r') as f:
+                secondbrain = json.load(f)
+                entries = secondbrain.get("entries", {})
+                user_profile = entries.get("user_profile", {})
+                return user_profile.get("full_name", "Unknown Referrer")
+        return "Unknown Referrer"
+    except Exception:
+        return "Unknown Referrer"
 
 
 def refer_user(params):
@@ -35,7 +52,8 @@ def refer_user(params):
         identity = json.load(f)
 
     referrer_id = identity.get("user_id")
-    referrer_name = identity.get("name", "Unknown Referrer")
+    # Get referrer name from secondbrain.json (set during onboarding)
+    referrer_name = get_referrer_name()
 
     if not referrer_id:
         return {"status": "error", "message": "No user_id found in system_identity.json"}

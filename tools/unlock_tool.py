@@ -17,12 +17,35 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 RUNTIME_DIR = os.path.dirname(BASE_DIR)
 APP_STORE_PATH = os.path.join(RUNTIME_DIR, "data", "orchestrate_app_store.json")
+UNLOCK_STATUS_PATH = os.path.join(RUNTIME_DIR, "data", "unlock_status.json")
 STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 REFERRAL_PATH = os.path.join(STATE_DIR, "referrals.json")
 IDENTITY_PATH = os.path.join(STATE_DIR, "system_identity.json")
 SYSTEM_REGISTRY = os.path.join(RUNTIME_DIR, "system_settings.ndjson")
 JSONBIN_ID = "694f0af6ae596e708fb2bd68"
 JSONBIN_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
+
+
+def update_unlock_status(tool_name):
+    """Update unlock_status.json with newly unlocked tool"""
+    try:
+        unlock_status = {"tools_unlocked": []}
+        if os.path.exists(UNLOCK_STATUS_PATH):
+            with open(UNLOCK_STATUS_PATH, 'r') as f:
+                unlock_status = json.load(f)
+
+        if "tools_unlocked" not in unlock_status:
+            unlock_status["tools_unlocked"] = []
+
+        if tool_name not in unlock_status["tools_unlocked"]:
+            unlock_status["tools_unlocked"].append(tool_name)
+
+            with open(UNLOCK_STATUS_PATH, 'w') as f:
+                json.dump(unlock_status, f, indent=2)
+
+        return {"status": "success"}
+    except Exception as e:
+        return {"error": f"Failed to update unlock_status.json: {e}"}
 
 
 def load_app_store():
@@ -281,6 +304,9 @@ def unlock_preinstalled_tool(tool_name, cost):
 
     save_registry(registry)
 
+    # Update unlock_status.json for dashboard rendering
+    update_unlock_status(tool_name)
+
     # Get unlock message from unlock_messages.json
     tool_message = unlock_messages.get(tool_name, {})
     if tool_message:
@@ -349,6 +375,9 @@ def unlock_marketplace_tool(tool_name, cost):
             "error": "Tool unlocked but action registration failed",
             "details": register_result["error"]
         }
+
+    # Update unlock_status.json for dashboard rendering
+    update_unlock_status(tool_name)
 
     # Handle setup script if specified
     if "setup_script" in tool_config:

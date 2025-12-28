@@ -48,7 +48,7 @@
       },
       "step_2b": {
         "title": "📋 Building Your Project Structure",
-        "narration": "Creating tasks for {{previous_input}}...",
+        "narration": "Creating Action Method workspace for {{previous_input}}...",
         "action": {
           "tool": "json_manager",
           "action": "batch_add_entries",
@@ -58,32 +58,16 @@
               "project_info": {
                 "name": "{{previous_input}}",
                 "created": "{{timestamp}}",
-                "status": "active"
+                "status": "active",
+                "framework": "action_method"
               },
-              "task_1": {
-                "title": "Define objectives",
-                "status": "pending",
-                "priority": "high"
-              },
-              "task_2": {
-                "title": "Identify stakeholders",
-                "status": "pending",
-                "priority": "medium"
-              },
-              "task_3": {
-                "title": "Set timeline and milestones",
-                "status": "pending",
-                "priority": "medium"
-              },
-              "task_4": {
-                "title": "Gather resources",
-                "status": "pending",
-                "priority": "low"
-              }
+              "action_steps": [],
+              "resources": [],
+              "backburner": []
             }
           }
         },
-        "narration_after": "✅ Created {{previous_input}} workspace with 4 starter tasks:\n\n- Define objectives (high priority)\n- Identify stakeholders\n- Set timeline and milestones\n- Gather resources\n\nYou can add, update, or remove tasks anytime.",
+        "narration_after": "✅ Created {{previous_input}} with Action Method structure:\n\n**Action Steps** - Next physical actions to move this forward\n**Resources** - Reference materials, links, docs you'll need\n**Backburner** - Ideas worth keeping but not urgent\n\nAdd your first action step: \"add action step: [what's the next thing to do?]\"",
         "next": "step_3"
       },
       "step_3": {

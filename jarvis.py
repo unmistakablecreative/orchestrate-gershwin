@@ -22,7 +22,6 @@ SYSTEM_REGISTRY = f"{BASE_DIR}/system_settings.ndjson"
 WORKING_MEMORY_PATH = f"{BASE_DIR}/data/working_memory.json"
 UNLOCK_STATUS_PATH = os.path.join(BASE_DIR, "data", "unlock_status.json")
 TOOL_UI_PATH = os.path.join(BASE_DIR, "data", "orchestrate_tool_ui.json")
-MERGED_UI_PATH = os.path.join(BASE_DIR, "data", "merged_tool_ui.json")
 NGROK_CONFIG_PATH = os.path.join(BASE_DIR, "data", "ngrok.json")
 EXEC_HUB_PATH = f"{BASE_DIR}/execution_hub.py"
 REFERRAL_PATH = os.path.join(BASE_DIR, "container_state", "referrals.json")
@@ -45,8 +44,9 @@ if os.path.exists(STATE_DIR):
 else:
     logging.warning(f"⚠️ State directory not found, skipping mount")
 
-# === Merge Logic ===
-def merge_tool_ui_with_unlocks():
+# === Merge Logic (in-memory, no file writes) ===
+def get_merged_tool_ui():
+    """Merge tool UI with unlock status in memory. No file writes."""
     try:
         with open(TOOL_UI_PATH, "r") as f:
             raw = json.load(f)
@@ -70,13 +70,11 @@ def merge_tool_ui_with_unlocks():
                 "locked": tool_name not in unlocked
             })
 
-        with open(MERGED_UI_PATH, "w") as out:
-            json.dump(merged, out, indent=2)
-
-        logging.info("✅ Merged tool UI written to merged_tool_ui.json")
+        return merged
 
     except Exception as e:
         logging.warning(f"⚠️ Failed to merge tool UI: {e}")
+        return []
 
 # === Repo Sync + Registry Merge ===
 def sync_repo_and_merge_registry():
@@ -132,7 +130,7 @@ def startup_routines():
     try:
         logging.info("🔥 FASTAPI STARTUP HOOK TRIGGERED")
         sync_repo_and_merge_registry()
-        merge_tool_ui_with_unlocks()
+        # Tool UI merge is now done in-memory on-demand via get_merged_tool_ui()
     except Exception as e:
         logging.warning(f"⚠️ Startup routines failed: {e}")
 
@@ -200,7 +198,7 @@ async def execute_task(request: Request):
 def get_supported_actions():
     try:
         sync_repo_and_merge_registry()
-        merge_tool_ui_with_unlocks()
+        # get_merged_tool_ui() returns in-memory, called on-demand where needed
 
         with open(SYSTEM_REGISTRY, "r") as f:
             entries = [json.loads(line.strip()) for line in f if line.strip()]
