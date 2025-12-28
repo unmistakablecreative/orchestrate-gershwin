@@ -21,7 +21,7 @@ STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 REFERRAL_PATH = os.path.join(STATE_DIR, "referrals.json")
 IDENTITY_PATH = os.path.join(STATE_DIR, "system_identity.json")
 SYSTEM_REGISTRY = os.path.join(RUNTIME_DIR, "system_settings.ndjson")
-JSONBIN_ID = "68292fcf8561e97a50162139"
+JSONBIN_ID = "694f0af6ae596e708fb2bd68"
 JSONBIN_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 
 
