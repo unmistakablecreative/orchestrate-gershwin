@@ -1,7 +1,7 @@
 #!/bin/bash
 export PYTHONPATH="$PYTHONPATH:/Applications/OrchestrateOS.app/Contents/Resources/orchestrate"
 USER_DIR="$HOME/Documents/Orchestrate"
-STATE_DIR="/Library/Application Support/OrchestrateOS"
+STATE_DIR="$HOME/Library/Application Support/OrchestrateOS"
 OUTPUT_DIR="/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/app"
 RUNTIME_DIR="/tmp/runtime"
 mkdir -p "$USER_DIR/dropzone"
