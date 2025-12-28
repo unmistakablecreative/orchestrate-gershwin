@@ -332,6 +332,25 @@ def format_toolkit_list(data, limit=50):
     if not tools:
         return {"display_table": "No tools available", "tools": []}
 
+    # Merge with unlock_status.json to get accurate unlock state
+    unlocked_tools = set()
+    if os.path.exists(UNLOCK_STATUS_PATH):
+        try:
+            with open(UNLOCK_STATUS_PATH, 'r') as f:
+                unlock_data = json.load(f)
+                unlocked_tools = set(unlock_data.get("tools_unlocked", []))
+        except Exception:
+            pass
+
+    # Apply unlock status from unlock_status.json
+    for tool in tools:
+        tool_name = tool.get("tool", "")
+        if tool_name in unlocked_tools:
+            tool["locked"] = False
+        # Also respect the existing locked field if already unlocked
+        elif not tool.get("locked", True):
+            pass  # Keep unlocked
+
     unlocked = sorted([t for t in tools if not t.get("locked", True)],
                      key=lambda x: x.get("tool", "").lower())
     locked = sorted([t for t in tools if t.get("locked", True)],

@@ -144,6 +144,13 @@
         "narration": "You have 3 credits. Here's why Outline Editor is worth 2 of them:\n\n**The problem:** AI writes something good. You copy. You paste. You format. You save. Every. Single. Time.\n\n**With Outline Editor:** Say 'turn this into a document' and it's done. No copying. No pasting. It just appears in your workspace, structured and saved.\n\nYou can also:\n- Create docs from scratch: 'write me an outline about X'\n- Build collections of related documents\n- Edit sections without losing structure\n\n**The cost:** $10/month subscription at https://www.getoutline.com/ unlocks the API. But think about it—how many hours do you waste copy/pasting AI output? How much is that time worth? This pays for itself the first week.\n\nSay 'unlock outline editor' to activate it (uses 2 credits), or 'skip' for now.",
         "prompt": "Unlock now or skip?",
         "requires_user_input": true,
+        "next": "step_9"
+      },
+      "step_9": {
+        "title": "🎁 Earn More Credits",
+        "narration": "Want to unlock more tools? You can earn 3 credits for each person you refer.\n\n**How it works:**\n1. Tell a friend about OrchestrateOS\n2. Say: 'refer [their name] [their email]'\n3. When they install, you both get 3 credits\n\n**The tools waiting for you:**\n- Email integration (read/send from AI)\n- Calendar sync (schedule from conversations)\n- Readwise (search your highlights)\n- GitHub, Notion, Buffer, and more\n\nEach referral = 3 credits. Most tools cost 1-2 credits.\n\nReady to start using your workspace?",
+        "prompt": "Say 'ready' to continue",
+        "requires_user_input": true,
         "next": "outro"
       }
     },
@@ -156,7 +163,8 @@
         "params": {
           "filename": "secondbrain.json"
         }
-      }
+      },
+      "sets_flag": "onboarding_complete"
     }
   }
 }

@@ -307,20 +307,29 @@ def unlock_preinstalled_tool(tool_name, cost):
     # Update unlock_status.json for dashboard rendering
     update_unlock_status(tool_name)
 
-    # Get unlock message from unlock_messages.json
+    # Get unlock message and guided_activation from unlock_messages.json
     tool_message = unlock_messages.get(tool_name, {})
     if tool_message:
         message = tool_message.get("message", f"✅ {tool_name} unlocked! {ledger['referral_credits']} credits remaining.")
     else:
         message = f"✅ {tool_name} unlocked! {ledger['referral_credits']} credits remaining."
 
-    return {
+    response = {
         "status": "success",
         "tool": tool_name,
         "type": "preinstalled",
         "credits_remaining": ledger["referral_credits"],
         "message": message
     }
+
+    # Include guided_activation if available - GPT should auto-execute this flow
+    if tool_message.get("guided_activation"):
+        response["guided_activation"] = tool_message["guided_activation"]
+        response["requires_credentials"] = tool_message.get("requires_credentials", False)
+        if tool_message.get("credential_setup_url"):
+            response["credential_setup_url"] = tool_message["credential_setup_url"]
+
+    return response
 
 
 def unlock_marketplace_tool(tool_name, cost):
@@ -394,6 +403,16 @@ def unlock_marketplace_tool(tool_name, cost):
         }
 
     # No setup required - standard unlock
+    # Load unlock_messages for guided_activation
+    unlock_messages_path = os.path.join(RUNTIME_DIR, "data", "unlock_messages.json")
+    try:
+        with open(unlock_messages_path, "r") as f:
+            unlock_messages = json.load(f)
+    except FileNotFoundError:
+        unlock_messages = {}
+
+    tool_message = unlock_messages.get(tool_name, {})
+
     response = {
         "status": "success",
         "tool": tool_name,
@@ -405,6 +424,13 @@ def unlock_marketplace_tool(tool_name, cost):
 
     if "post_unlock_nudge" in tool_config:
         response["nudge"] = tool_config["post_unlock_nudge"]
+
+    # Include guided_activation if available - GPT should auto-execute this flow
+    if tool_message.get("guided_activation"):
+        response["guided_activation"] = tool_message["guided_activation"]
+        response["requires_credentials"] = tool_message.get("requires_credentials", False)
+        if tool_message.get("credential_setup_url"):
+            response["credential_setup_url"] = tool_message["credential_setup_url"]
 
     return response
 
