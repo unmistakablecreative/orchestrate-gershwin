@@ -12,7 +12,8 @@ from datetime import datetime
 
 import requests
 
-CREDENTIALS_PATH = "/Library/Application Support/OrchestrateOS/system_identity.json"
+STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
+CREDENTIALS_PATH = os.path.join(STATE_DIR, "system_identity.json")
 JSONBIN_MASTER_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 REFERRALS_BIN = "694a185eae596e708fab9028"
 # TEST LEDGER - Switch to production (68292fcf8561e97a50162139) before release
