@@ -31,23 +31,42 @@
     },
     "guided_activation": {
       "step_1": {
-        "narration": "Let's create your first document right now. What topic do you want notes on?",
-        "prompt": "Topic (e.g., 'meeting notes', 'project ideas', 'book summary'):",
+        "narration": "Let's set up your workspace. First, we'll create a collection to organize your documents.",
+        "prompt": "Collection name (e.g., 'Personal Notes', 'Work Projects'):",
         "requires_user_input": true,
         "next": "step_2"
       },
       "step_2": {
+        "narration": "Creating your collection...",
+        "action_template": {
+          "tool": "outline_editor",
+          "action": "create_collection",
+          "params": {
+            "name": "{{user_input}}"
+          }
+        },
+        "narration_after": "Collection '{{user_input}}' created!",
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "Now let's add your first document to this collection. What topic?",
+        "prompt": "Document topic (e.g., 'meeting notes', 'project ideas'):",
+        "requires_user_input": true,
+        "next": "step_4"
+      },
+      "step_4": {
         "narration": "Creating your document...",
         "action_template": {
           "tool": "outline_editor",
           "action": "create_doc",
           "params": {
             "title": "{{user_input}}",
-            "text": "# {{user_input}}\n\n*Created with OrchestrateOS*\n\n## Notes\n\n- \n"
+            "text": "# {{user_input}}\n\n*Created with OrchestrateOS*\n\n## Notes\n\n- \n",
+            "collection_id": "{{step_2_result.id}}"
           }
         },
         "narration_after": "Done! Your document '{{user_input}}' is live in Outline.\n\nURL: {{result.url}}\n\nYou can now say things like:\n- 'Add to my {{user_input}} doc: [content]'\n- 'Create a new document about X'\n- 'List my recent documents'",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -112,7 +131,7 @@
         },
         "narration_after": "Draft saved! You can review and send it, or I can send it directly.\n\nYou can now say:\n- 'Check my inbox'\n- 'Send an email to [person] about [topic]'\n- 'Summarize my unread emails'",
         "skip_if": "{{step_2_input == 'skip'}}",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -180,7 +199,7 @@
         },
         "narration_after": "Done! '{{step_2_input}}' is on your calendar for {{user_input}}.\n\nYou can now say:\n- 'What's on my calendar today?'\n- 'Schedule a meeting with [person] about [topic]'\n- 'Block time for deep work tomorrow afternoon'",
         "skip_if": "{{step_2_input == 'skip'}}",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -237,7 +256,7 @@
         },
         "narration_after": "Found {{result.count}} highlights about '{{user_input}}':\n\n{{result.highlights_formatted}}\n\nYou can now say:\n- 'Show me highlights from [book name]'\n- 'What did I highlight about [topic]?'\n- 'Summarize my highlights from this week'",
         "skip_if": "{{user_input == 'skip'}}",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -282,7 +301,7 @@
           }
         },
         "narration_after": "Saved! Your thought is now in Mem and fully searchable.\n\nYou can now say:\n- 'Save this to Mem: [idea]'\n- 'Search my Mem for [topic]'\n- 'Create a daily journal entry'",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -339,7 +358,7 @@
         },
         "narration_after": "Open issues for {{user_input}}:\n\n{{result.issues_formatted}}\n\nYou can now say:\n- 'Show PRs for [repo]'\n- 'Create an issue in [repo] about [topic]'\n- 'What's my GitHub activity this week?'",
         "skip_if": "{{user_input == 'skip'}}",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -391,7 +410,7 @@
           }
         },
         "narration_after": "Post scheduled for {{user_input}}!\n\nPreview: '{{step_1_input}}'\n\nYou can now say:\n- 'Schedule a post about [topic]'\n- 'Show my scheduled posts'\n- 'Create a week of posts about [theme]'",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -436,7 +455,7 @@
           }
         },
         "narration_after": "Image generated!\n\n{{result.image_url}}\n\nYou can now say:\n- 'Generate an image of [description]'\n- 'Create a social media graphic about [topic]'\n- 'Make variations of this image'",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -493,7 +512,7 @@
         },
         "narration_after": "Page created!\n\nURL: {{result.url}}\n\nYou can now say:\n- 'Create a Notion page about [topic]'\n- 'Search my Notion for [query]'\n- 'Add to my [page name]: [content]'",
         "skip_if": "{{user_input == 'skip'}}",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -529,7 +548,7 @@
         },
         "narration_after": "Draft created!\n\nYou can now say:\n- 'Show my subscriber growth'\n- 'Create a broadcast about [topic]'\n- 'List my email sequences'",
         "skip_if": "{{user_input == 'skip'}}",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   },
@@ -575,7 +594,7 @@
           }
         },
         "narration_after": "Presentation created!\n\nURL: {{result.url}}\nSlides: {{result.num_cards}}\n\nYou can now say:\n- 'Create a deck about [topic]'\n- 'Make a pitch deck for [idea]'\n- 'Generate slides from my notes on [topic]'",
-        "next": "step_9"
+        "next": "return_to_onboarding_sequence_step_9"
       }
     }
   }
