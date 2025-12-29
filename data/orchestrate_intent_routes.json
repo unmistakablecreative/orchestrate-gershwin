@@ -1,100 +1,328 @@
 {
   "entries": {
-    "code_editor.create_code_blueprint": {
-      "tool": "code_editor",
-      "action": "create_code_blueprint",
-      "aliases": ["create a new tool", "start a new tool", "initialize code blueprint"],
-      "display_name": "🛠️ Create Tool Blueprint"
-    },
-    "code_editor.patch_code_function_in_file": {
-      "tool": "code_editor",
-      "action": "patch_code_function_in_file",
-      "aliases": ["update this function", "patch the logic here", "replace what this function does"],
-      "display_name": "🩹 Patch Code Function"
-    },
-    "system_settings.add_action": {
-      "tool": "system_settings",
-      "action": "add_action",
-      "aliases": ["register this action", "make it available to the system", "add tool action"],
-      "display_name": "🧩 Register Action"
-    },
-    "composer.add_composer_action": {
-      "tool": "composer",
-      "action": "add_composer_action",
-      "aliases": ["insert this into flow", "add step to workflow", "link in composer"],
-      "display_name": "🎼 Add to Composer"
-    },
-    "terminal.run_terminal_command": {
-      "tool": "terminal",
-      "action": "run_terminal_command",
-      "aliases": ["run this command", "execute in shell", "send to terminal"],
-      "display_name": "💻 Terminal Run"
-    },
     "json_manager.create_json_file": {
       "tool": "json_manager",
       "action": "create_json_file",
-      "aliases": ["create a file", "start json log", "init json doc"],
-      "display_name": "📄 Create JSON File"
+      "aliases": ["create a new file", "make a json file", "start a new list", "initialize a document"],
+      "display_name": "📄 Create JSON File",
+      "locked": false
     },
     "json_manager.add_json_entry": {
       "tool": "json_manager",
       "action": "add_json_entry",
-      "aliases": ["add note", "insert entry", "log to json"],
-      "display_name": "➕ Add JSON Entry"
+      "aliases": ["add an entry", "save this note", "log this", "add to the list", "record this"],
+      "display_name": "➕ Add Entry",
+      "locked": false
+    },
+    "json_manager.read_json_file": {
+      "tool": "json_manager",
+      "action": "read_json_file",
+      "aliases": ["show me the file", "read the list", "what's in the file", "display entries"],
+      "display_name": "📖 Read File",
+      "locked": false
+    },
+    "json_manager.read_json_entry": {
+      "tool": "json_manager",
+      "action": "read_json_entry",
+      "aliases": ["show me that entry", "get the details", "look up this item"],
+      "display_name": "🔍 Read Entry",
+      "locked": false
     },
     "json_manager.update_json_entry": {
       "tool": "json_manager",
       "action": "update_json_entry",
-      "aliases": ["update entry", "modify task", "change field"],
-      "display_name": "✏️ Update Entry"
+      "aliases": ["update this entry", "change the status", "modify this item", "edit the record"],
+      "display_name": "✏️ Update Entry",
+      "locked": false
     },
-    "json_manager.add_field_to_json_entry": {
+    "json_manager.list_json_entries": {
       "tool": "json_manager",
-      "action": "add_field_to_json_entry",
-      "aliases": ["tag it", "add metadata", "attach label"],
-      "display_name": "🏷️ Add Field"
+      "action": "list_json_entries",
+      "aliases": ["list all entries", "show me everything", "what entries exist"],
+      "display_name": "📋 List Entries",
+      "locked": false
     },
-    "json_manager.search_json_entries": {
+    "json_manager.batch_add_json_entries": {
       "tool": "json_manager",
-      "action": "search_json_entries",
-      "aliases": ["search notes", "find entries", "filter by keyword"],
-      "display_name": "🔍 Search Entries"
+      "action": "batch_add_json_entries",
+      "aliases": ["add multiple entries", "bulk import", "add several items at once"],
+      "display_name": "📥 Batch Add",
+      "locked": false
     },
-    "file_finder.search_files": {
-      "tool": "file_finder",
-      "action": "search_files",
-      "aliases": ["find file", "lookup filename", "search file system"],
-      "display_name": "🗂️ File Finder"
+    "system_settings.list_tools": {
+      "tool": "system_settings",
+      "action": "list_tools",
+      "aliases": ["what tools do I have", "show my tools", "list available tools", "what can you do"],
+      "display_name": "🔧 List Tools",
+      "locked": false
     },
-    "read_file.read_file": {
-      "tool": "read_file",
+    "system_settings.set_credential": {
+      "tool": "system_settings",
+      "action": "set_credential",
+      "aliases": ["set my api key", "add credentials", "configure api access", "save my token"],
+      "display_name": "🔑 Set Credential",
+      "locked": false
+    },
+    "system_settings.add_memory_file": {
+      "tool": "system_settings",
+      "action": "add_memory_file",
+      "aliases": ["remember this file", "add to context", "include this in memory"],
+      "display_name": "🧠 Add Memory File",
+      "locked": false
+    },
+    "system_settings.list_memory_files": {
+      "tool": "system_settings",
+      "action": "list_memory_files",
+      "aliases": ["what files are in memory", "show context files", "list memory"],
+      "display_name": "📚 List Memory Files",
+      "locked": false
+    },
+    "unlock_tool.unlock_tool": {
+      "tool": "unlock_tool",
+      "action": "unlock_tool",
+      "aliases": ["unlock this tool", "enable this feature", "activate tool"],
+      "display_name": "🔓 Unlock Tool",
+      "locked": false
+    },
+    "unlock_tool.list_marketplace_tools": {
+      "tool": "unlock_tool",
+      "action": "list_marketplace_tools",
+      "aliases": ["what tools can I unlock", "show marketplace", "available tools to unlock"],
+      "display_name": "🛒 Marketplace",
+      "locked": false
+    },
+    "unlock_tool.get_credits_balance": {
+      "tool": "unlock_tool",
+      "action": "get_credits_balance",
+      "aliases": ["how many credits do I have", "check my balance", "show credits"],
+      "display_name": "💰 Check Credits",
+      "locked": false
+    },
+    "check_credits.check_credits": {
+      "tool": "check_credits",
+      "action": "check_credits",
+      "aliases": ["check credits", "my credit balance", "how many unlocks left"],
+      "display_name": "💳 Credits Balance",
+      "locked": false
+    },
+    "refer_user.refer_user": {
+      "tool": "refer_user",
+      "action": "refer_user",
+      "aliases": ["refer a friend", "invite someone", "share referral", "get referral link"],
+      "display_name": "👥 Refer User",
+      "locked": false
+    },
+    "file_ops_tool.read_file": {
+      "tool": "file_ops_tool",
       "action": "read_file",
-      "aliases": ["open file", "read doc", "show contents"],
-      "display_name": "📖 Read File"
+      "aliases": ["read this file", "open the document", "show file contents"],
+      "display_name": "📖 Read File",
+      "locked": false
     },
-    "outline_editor.append_section": {
+    "file_ops_tool.find_file": {
+      "tool": "file_ops_tool",
+      "action": "find_file",
+      "aliases": ["find a file", "search for file", "locate document"],
+      "display_name": "🔎 Find File",
+      "locked": false
+    },
+    "file_ops_tool.extract_pdf": {
+      "tool": "file_ops_tool",
+      "action": "extract_pdf",
+      "aliases": ["read this pdf", "extract pdf text", "parse pdf"],
+      "display_name": "📑 Extract PDF",
+      "locked": false
+    },
+    "file_ops_tool.extract_csv": {
+      "tool": "file_ops_tool",
+      "action": "extract_csv",
+      "aliases": ["read this csv", "parse spreadsheet", "extract csv data"],
+      "display_name": "📊 Extract CSV",
+      "locked": false
+    },
+    "outline_editor.create_doc": {
       "tool": "outline_editor",
-      "action": "append_section",
-      "aliases": ["add section", "append to doc", "continue writing"],
-      "display_name": "🧱 Append Section"
+      "action": "create_doc",
+      "aliases": ["create a document", "start a new doc", "write a document"],
+      "display_name": "📝 Create Document",
+      "locked": true,
+      "unlock_cost": 3
+    },
+    "outline_editor.get_doc": {
+      "tool": "outline_editor",
+      "action": "get_doc",
+      "aliases": ["get the document", "show me the doc", "read document"],
+      "display_name": "📄 Get Document",
+      "locked": true,
+      "unlock_cost": 3
+    },
+    "outline_editor.update_doc": {
+      "tool": "outline_editor",
+      "action": "update_doc",
+      "aliases": ["update the document", "edit the doc", "modify document"],
+      "display_name": "✏️ Update Document",
+      "locked": true,
+      "unlock_cost": 3
+    },
+    "outline_editor.search_docs": {
+      "tool": "outline_editor",
+      "action": "search_docs",
+      "aliases": ["search my documents", "find in docs", "look up document"],
+      "display_name": "🔍 Search Documents",
+      "locked": true,
+      "unlock_cost": 3
+    },
+    "outline_editor.list_docs": {
+      "tool": "outline_editor",
+      "action": "list_docs",
+      "aliases": ["list my documents", "show all docs", "what documents do I have"],
+      "display_name": "📚 List Documents",
+      "locked": true,
+      "unlock_cost": 3
+    },
+    "mem_tool.create_note": {
+      "tool": "mem_tool",
+      "action": "create_note",
+      "aliases": ["save this to mem", "create a note", "remember this insight"],
+      "display_name": "🧠 Create Note",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "mem_tool.mem_it": {
+      "tool": "mem_tool",
+      "action": "mem_it",
+      "aliases": ["mem this", "process and save", "capture this thought"],
+      "display_name": "💭 Mem It",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "readwise_tool.fetch_books": {
+      "tool": "readwise_tool",
+      "action": "fetch_books",
+      "aliases": ["show my books", "list readwise books", "what have I read"],
+      "display_name": "📚 Fetch Books",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "readwise_tool.fetch_highlights": {
+      "tool": "readwise_tool",
+      "action": "fetch_highlights",
+      "aliases": ["show highlights", "get book highlights", "my reading notes"],
+      "display_name": "✨ Fetch Highlights",
+      "locked": true,
+      "unlock_cost": 5
     },
     "buffer_engine.post_to_platform": {
       "tool": "buffer_engine",
       "action": "post_to_platform",
-      "aliases": ["share online", "publish post", "send to socials"],
-      "display_name": "📤 Post to Platform"
+      "aliases": ["post to social media", "share this online", "publish to twitter"],
+      "display_name": "📤 Post to Social",
+      "locked": true,
+      "unlock_cost": 7
     },
-    "mem_tool.create_mem": {
-      "tool": "mem_tool",
-      "action": "create_mem",
-      "aliases": ["remember this", "save to memory", "log insight"],
-      "display_name": "🧠 Save Memory"
+    "buffer_engine.buffer_loop": {
+      "tool": "buffer_engine",
+      "action": "buffer_loop",
+      "aliases": ["run social scheduler", "process post queue", "publish scheduled posts"],
+      "display_name": "🔄 Buffer Loop",
+      "locked": true,
+      "unlock_cost": 7
     },
-    "universal_integrator.main": {
-      "tool": "universal_integrator",
-      "action": "main",
-      "aliases": ["call api", "send webhook", "connect external"],
-      "display_name": "🔌 API Call"
+    "ideogram_tool.generate_image": {
+      "tool": "ideogram_tool",
+      "action": "generate_image",
+      "aliases": ["generate an image", "create art", "make a picture", "design graphics"],
+      "display_name": "🎨 Generate Image",
+      "locked": true,
+      "unlock_cost": 7
+    },
+    "github_tool_universal.status": {
+      "tool": "github_tool_universal",
+      "action": "status",
+      "aliases": ["check git status", "repo status", "what changed in repo"],
+      "display_name": "📊 Git Status",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.commit_repo": {
+      "tool": "github_tool_universal",
+      "action": "commit_repo",
+      "aliases": ["commit changes", "save to git", "commit my code"],
+      "display_name": "💾 Git Commit",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.push_repo": {
+      "tool": "github_tool_universal",
+      "action": "push_repo",
+      "aliases": ["push to github", "upload changes", "sync to remote"],
+      "display_name": "⬆️ Git Push",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.pull_repo": {
+      "tool": "github_tool_universal",
+      "action": "pull_repo",
+      "aliases": ["pull from github", "get latest changes", "sync from remote"],
+      "display_name": "⬇️ Git Pull",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.list_repos": {
+      "tool": "github_tool_universal",
+      "action": "list_repos",
+      "aliases": ["list my repos", "show github repos", "what repos do I have"],
+      "display_name": "📁 List Repos",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "automation_engine.list_rules": {
+      "tool": "automation_engine",
+      "action": "list_rules",
+      "aliases": ["show my automations", "list automation rules", "what automations exist"],
+      "display_name": "📋 List Automations",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "automation_engine.add_rule": {
+      "tool": "automation_engine",
+      "action": "add_rule",
+      "aliases": ["create an automation", "add automation rule", "set up workflow"],
+      "display_name": "⚙️ Add Automation",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "automation_engine.run_engine": {
+      "tool": "automation_engine",
+      "action": "run_engine",
+      "aliases": ["start automations", "run automation engine", "process automations"],
+      "display_name": "▶️ Run Engine",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "terminal.run_terminal_command": {
+      "tool": "terminal",
+      "action": "run_terminal_command",
+      "aliases": ["run command", "execute in terminal", "run shell command"],
+      "display_name": "💻 Run Command",
+      "locked": true,
+      "unlock_cost": 10
+    },
+    "terminal.ls": {
+      "tool": "terminal",
+      "action": "ls",
+      "aliases": ["list directory", "show folder contents", "what files are here"],
+      "display_name": "📂 List Directory",
+      "locked": true,
+      "unlock_cost": 10
+    },
+    "terminal.tail": {
+      "tool": "terminal",
+      "action": "tail",
+      "aliases": ["show recent logs", "tail the file", "last lines of file"],
+      "display_name": "📜 Tail Log",
+      "locked": true,
+      "unlock_cost": 10
     }
   }
 }
