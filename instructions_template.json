@@ -1,14 +1,6 @@
 {
   "commands": {
     "Load OrchestrateOS": {
-      "display": {
-        "style": "pre_formatted",
-        "render_mode": "server_side",
-        "flags": {
-          "DISPLAY_SERVER_FORMATTED_OUTPUT": true,
-          "SHOW_PREFORMATTED_TABLES": true
-        }
-      },
       "run": [
         {
           "tool": "${SAFE_DOMAIN}__jit_plugin",
@@ -16,9 +8,7 @@
           "params": {
             "tool_name": "json_manager",
             "action": "read_json_file",
-            "params": {
-              "filename": "boot_flags.json"
-            }
+            "params": {"filename": "boot_flags.json"}
           }
         },
         {
@@ -27,9 +17,7 @@
           "params": {
             "tool_name": "json_manager",
             "action": "read_json_file",
-            "params": {
-              "filename": "secondbrain.json"
-            }
+            "params": {"filename": "secondbrain.json"}
           }
         },
         {
@@ -38,9 +26,7 @@
           "params": {
             "tool_name": "json_manager",
             "action": "read_json_file",
-            "params": {
-              "filename": "orchestrate_intent_routes.json"
-            }
+            "params": {"filename": "orchestrate_intent_routes.json"}
           }
         },
         {
@@ -49,9 +35,7 @@
           "params": {
             "tool_name": "json_manager",
             "action": "read_json_file",
-            "params": {
-              "filename": "unlock_messages.json"
-            }
+            "params": {"filename": "unlock_messages.json"}
           }
         },
         {
@@ -77,12 +61,16 @@
         {
           "tool": "${SAFE_DOMAIN}__jit_plugin",
           "action": "getDashboardFile",
-          "params": {
-            "file_key": "full_dashboard"
-          }
+          "params": {"file_key": "full_dashboard"}
         }
       ],
       "post_process": "render_dashboard_from_server",
+      "display": {
+        "style": "pre_formatted",
+        "theme": "dark",
+        "layout": "dashboard",
+        "render_mode": "server_side"
+      },
       "boot_flags_logic": {
         "onboarding_complete_false": {
           "additional_load": [
@@ -92,60 +80,31 @@
               "params": {
                 "tool_name": "json_manager",
                 "action": "read_json_file",
-                "params": {
-                  "filename": "onboarding_sequence.json"
-                }
+                "params": {"filename": "onboarding_sequence.json"}
               }
             }
           ],
           "behavior": "ALWAYS render dashboard first showing toolkit table. Then below dashboard, follow onboarding_sequence.json step by step starting at intro."
         },
         "onboarding_complete_true": {
-          "behavior": "Skip onboarding. Load dashboard and await user commands."
+          "behavior": "Render dashboard and await user commands."
         }
       },
-      "file_reads": {
-        "always": [
-          "boot_flags.json",
-          "secondbrain.json",
-          "orchestrate_intent_routes.json",
-          "unlock_messages.json",
-          "system_docs/orchestrate_os_protocol.md"
-        ],
-        "conditional": {
-          "if_onboarding_incomplete": ["onboarding_sequence.json"]
-        },
-        "never": [
-          "unlock_nudges.json",
-          "orchestrate_app_store.json",
-          "orchestrate_tool_ui.json"
-        ]
-      },
       "instructions": {
-        "rendering": "Display the pre-formatted dashboard data exactly as returned from the server. Render as normal text/markdown, NOT in code blocks.",
+        "rendering": "Display the pre-formatted dashboard data exactly as returned from the server. Render as normal text/markdown, NOT in code blocks. Show ALL dashboard sections including toolkit table.",
         "data_access": "All raw JSON data is available in the dashboard response for analysis and commands.",
-        "boot_flags_check": "Check boot_flags.json first. If onboarding_complete is false, load onboarding_sequence.json and follow the guided flow. If true, skip onboarding and show dashboard.",
+        "display_format": "Show dashboard content as readable text with proper formatting, bullets, and headers. Never wrap dashboard output in code blocks.",
+        "boot_flags_check": "Check boot_flags.json first. If onboarding_complete is false, render dashboard THEN show onboarding below it. If true, just render dashboard.",
         "context_files": "orchestrate_os_protocol.md provides system behavior rules. orchestrate_intent_routes.json provides command routing. unlock_messages.json provides guided_activation flows."
       },
       "prompt_behavior": "silent",
       "addendum": {
+        "DISPLAY_SERVER_FORMATTED_OUTPUT": true,
+        "NO_CLIENT_SIDE_RENDERING": true,
+        "NO_JSON_TO_MARKDOWN_CONVERSION": true,
+        "SHOW_PREFORMATTED_TABLES": true,
+        "RAW_DATA_AVAILABLE_FOR_COMMANDS": true,
         "ALL_TOOL_REQUESTS_MUST_USE_EXECUTE_TASK": true,
-        "NO_IMPLIED_CAUSALITY_WITHOUT_SCHEMATIC_REFERENCE": true,
-        "FAILURES_MUST_REFERENCE_SCHEMA_DIRECTLY": true,
-        "DISABLE_SPECULATIVE_DIAGNOSTICS": true,
-        "SUPPRESS_GPT_INFERRED_REASONING": true,
-        "ENFORCE_SCHEMATIC_AUDIT_LOG": true,
-        "INCLUDE_EXECUTION_TRACE": true,
-        "BLOCK_PATTERN_MATCHING_IN_COMMAND_EXECUTION": true,
-        "DISALLOW_PARAM_INFERENCE_FROM_HISTORY": true,
-        "REQUIRE_SCHEMA_CONFIRMATION_BEFORE_TOOL_DISPATCH": true,
-        "ONLY_ALLOW_PARAMS_DECLARED_IN_SCHEMA": true,
-        "REQUIRE_EXECUTETASK_CALL_BEFORE_ERROR_REPORTING": true,
-        "BLOCK_FAKE_ENVIRONMENT_ERRORS": true,
-        "BLOCK_FAKE_CLIENT_ERRORS": true,
-        "DISALLOW_ERROR_MESSAGES_WITHOUT_EXECUTION_TRACE": true,
-        "ONLY_ALLOW_TOOL_ERRORS_IF_SOURCE_IS_EXECUTE_TASK": true,
-        "STRICT_EXECUTION_CHAIN_ENFORCEMENT": true,
         "CHECK_BOOT_FLAGS_BEFORE_ONBOARDING": true,
         "ALWAYS_RENDER_DASHBOARD_FIRST": true
       }
