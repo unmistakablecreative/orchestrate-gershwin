@@ -322,12 +322,19 @@ def unlock_preinstalled_tool(tool_name, cost):
         "message": message
     }
 
-    # Include guided_activation if available - GPT should auto-execute this flow
-    if tool_message.get("guided_activation"):
-        response["guided_activation"] = tool_message["guided_activation"]
-        response["requires_credentials"] = tool_message.get("requires_credentials", False)
+    # Include credential_setup if requires_credentials - GPT must execute this FIRST
+    if tool_message.get("requires_credentials"):
+        response["requires_credentials"] = True
+        if tool_message.get("credential_setup"):
+            response["credential_setup"] = tool_message["credential_setup"]
         if tool_message.get("credential_setup_url"):
             response["credential_setup_url"] = tool_message["credential_setup_url"]
+        if tool_message.get("credential_key"):
+            response["credential_key"] = tool_message["credential_key"]
+
+    # Include guided_activation if available - GPT should auto-execute this AFTER credential_setup
+    if tool_message.get("guided_activation"):
+        response["guided_activation"] = tool_message["guided_activation"]
 
     return response
 
@@ -425,12 +432,19 @@ def unlock_marketplace_tool(tool_name, cost):
     if "post_unlock_nudge" in tool_config:
         response["nudge"] = tool_config["post_unlock_nudge"]
 
-    # Include guided_activation if available - GPT should auto-execute this flow
-    if tool_message.get("guided_activation"):
-        response["guided_activation"] = tool_message["guided_activation"]
-        response["requires_credentials"] = tool_message.get("requires_credentials", False)
+    # Include credential_setup if requires_credentials - GPT must execute this FIRST
+    if tool_message.get("requires_credentials"):
+        response["requires_credentials"] = True
+        if tool_message.get("credential_setup"):
+            response["credential_setup"] = tool_message["credential_setup"]
         if tool_message.get("credential_setup_url"):
             response["credential_setup_url"] = tool_message["credential_setup_url"]
+        if tool_message.get("credential_key"):
+            response["credential_key"] = tool_message["credential_key"]
+
+    # Include guided_activation if available - GPT should auto-execute this AFTER credential_setup
+    if tool_message.get("guided_activation"):
+        response["guided_activation"] = tool_message["guided_activation"]
 
     return response
 

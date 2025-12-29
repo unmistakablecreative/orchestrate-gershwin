@@ -3,7 +3,7 @@
     "render": "guided",
     "flow_control": true,
     "advance_on": ["user_input", "action_success"],
-    "note": "Each unlock triggers mini-onboarding. User immediately does something with the tool."
+    "note": "Each unlock triggers mini-onboarding. For tools requiring credentials, credential_setup runs BEFORE guided_activation."
   },
 
   "outline_editor": {
@@ -11,6 +11,24 @@
     "requires_credentials": true,
     "credential_key": "outline_api_key",
     "credential_setup_url": "https://app.getoutline.com/settings/tokens",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Outline account.",
+        "instruction": "1. Go to https://app.getoutline.com/settings/tokens\n2. Click 'Create a token'\n3. Give it a name (e.g., 'OrchestrateOS')\n4. Copy the token",
+        "prompt": "Paste your Outline API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "outline_editor",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Outline!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's create your first document right now. What topic do you want notes on?",
@@ -39,6 +57,24 @@
     "requires_credentials": true,
     "credential_key": "nylas_grant_id",
     "credential_setup_url": "Connect via OAuth during setup",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your email account.",
+        "instruction": "1. Email integration uses OAuth (secure login through your provider)\n2. You'll be redirected to sign in with Google/Microsoft\n3. Grant OrchestrateOS permission to read and send emails",
+        "prompt": "Paste your Nylas Grant ID (provided after OAuth):",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "nylasinbox",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to your email!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's see what's in your inbox. Checking your latest emails...",
@@ -86,6 +122,24 @@
     "requires_credentials": true,
     "credential_key": "nylas_grant_id",
     "credential_setup_url": "Connect via OAuth during setup",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your calendar.",
+        "instruction": "1. Calendar integration uses OAuth (secure login through your provider)\n2. You'll be redirected to sign in with Google/Microsoft\n3. Grant OrchestrateOS permission to read and create events",
+        "prompt": "Paste your Nylas Grant ID (provided after OAuth):",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "nylas_calendar",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to your calendar!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's see your schedule. What day do you want to check?",
@@ -136,6 +190,24 @@
     "requires_credentials": true,
     "credential_key": "readwise_api_key",
     "credential_setup_url": "https://readwise.io/access_token",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Readwise account.",
+        "instruction": "1. Go to https://readwise.io/access_token\n2. Copy your access token\n3. This gives OrchestrateOS read-only access to your highlights",
+        "prompt": "Paste your Readwise API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "readwise_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Readwise!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's pull up your reading highlights. Fetching your latest...",
@@ -175,6 +247,24 @@
     "requires_credentials": true,
     "credential_key": "mem_api_key",
     "credential_setup_url": "https://mem.ai/settings/api",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Mem account.",
+        "instruction": "1. Go to https://mem.ai/settings/api\n2. Click 'Create API Key'\n3. Copy the key",
+        "prompt": "Paste your Mem API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "mem_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Mem!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's save your first idea to Mem. What's on your mind?",
@@ -202,6 +292,24 @@
     "requires_credentials": true,
     "credential_key": "github_token",
     "credential_setup_url": "https://github.com/settings/tokens",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your GitHub account.",
+        "instruction": "1. Go to https://github.com/settings/tokens\n2. Click 'Generate new token (classic)'\n3. Select scopes: repo, read:user\n4. Copy the token",
+        "prompt": "Paste your GitHub personal access token:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "github_tool_universal",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to GitHub!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's see your repos. Fetching your GitHub activity...",
@@ -241,6 +349,24 @@
     "requires_credentials": true,
     "credential_key": "buffer_access_token",
     "credential_setup_url": "https://publish.buffer.com/profile/apps",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Buffer account.",
+        "instruction": "1. Go to https://publish.buffer.com/profile/apps\n2. Create a new app or use an existing one\n3. Copy your access token",
+        "prompt": "Paste your Buffer access token:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "buffer_engine",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Buffer!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's schedule your first post. What do you want to share?",
@@ -275,6 +401,24 @@
     "requires_credentials": true,
     "credential_key": "ideogram_api_key",
     "credential_setup_url": "https://ideogram.ai/manage-api",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Ideogram account.",
+        "instruction": "1. Go to https://ideogram.ai/manage-api\n2. Create an API key\n3. Copy the key",
+        "prompt": "Paste your Ideogram API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "ideogram_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Ideogram!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's generate your first image. What do you want to see?",
@@ -302,6 +446,24 @@
     "requires_credentials": true,
     "credential_key": "notion_api_key",
     "credential_setup_url": "https://www.notion.so/my-integrations",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Notion account.",
+        "instruction": "1. Go to https://www.notion.so/my-integrations\n2. Click 'New integration'\n3. Give it a name and select your workspace\n4. Copy the 'Internal Integration Token'",
+        "prompt": "Paste your Notion API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "notion_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Notion!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's see your Notion workspace. Fetching your pages...",
@@ -377,6 +539,24 @@
     "requires_credentials": true,
     "credential_key": "gamma_api_key",
     "credential_setup_url": "https://gamma.app/settings/developer",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Gamma account.",
+        "instruction": "1. Go to https://gamma.app/settings/developer\n2. Generate an API key\n3. Copy the key",
+        "prompt": "Paste your Gamma API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "gamma_engine",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "✅ Connected to Gamma!",
+        "next": "guided_activation"
+      }
+    },
     "guided_activation": {
       "step_1": {
         "narration": "Let's create your first presentation. What's it about?",

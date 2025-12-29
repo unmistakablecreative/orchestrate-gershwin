@@ -1,6 +1,14 @@
 {
   "commands": {
     "Load OrchestrateOS": {
+      "display": {
+        "style": "pre_formatted",
+        "render_mode": "server_side",
+        "flags": {
+          "DISPLAY_SERVER_FORMATTED_OUTPUT": true,
+          "SHOW_PREFORMATTED_TABLES": true
+        }
+      },
       "run": [
         {
           "tool": "${SAFE_DOMAIN}__jit_plugin",
@@ -90,7 +98,7 @@
               }
             }
           ],
-          "behavior": "Follow onboarding_sequence.json step by step. Start at intro, advance on user input or action success."
+          "behavior": "ALWAYS render dashboard first showing toolkit table. Then below dashboard, follow onboarding_sequence.json step by step starting at intro."
         },
         "onboarding_complete_true": {
           "behavior": "Skip onboarding. Load dashboard and await user commands."
@@ -138,7 +146,8 @@
         "DISALLOW_ERROR_MESSAGES_WITHOUT_EXECUTION_TRACE": true,
         "ONLY_ALLOW_TOOL_ERRORS_IF_SOURCE_IS_EXECUTE_TASK": true,
         "STRICT_EXECUTION_CHAIN_ENFORCEMENT": true,
-        "CHECK_BOOT_FLAGS_BEFORE_ONBOARDING": true
+        "CHECK_BOOT_FLAGS_BEFORE_ONBOARDING": true,
+        "ALWAYS_RENDER_DASHBOARD_FIRST": true
       }
     }
   }
