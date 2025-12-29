@@ -84,18 +84,20 @@
               }
             }
           ],
-          "behavior": "ALWAYS render dashboard first showing toolkit table. Then below dashboard, follow onboarding_sequence.json step by step starting at intro."
+          "behavior": "ALWAYS render dashboard first showing toolkit table AND app store table. Then below dashboard, render ONLY the current step from onboarding_sequence.json (starting at 'intro'). Wait for user input before advancing to next step. NEVER render multiple steps simultaneously."
         },
         "onboarding_complete_true": {
-          "behavior": "Render dashboard and await user commands."
+          "behavior": "Render dashboard showing toolkit table AND app store table, then await user commands."
         }
       },
       "instructions": {
-        "rendering": "Display the pre-formatted dashboard data exactly as returned from the server. Render as normal text/markdown, NOT in code blocks. Show ALL dashboard sections including toolkit table.",
+        "rendering": "Display the pre-formatted dashboard data exactly as returned from the server. Render as normal text/markdown, NOT in code blocks. Show ALL dashboard sections including toolkit table AND app store table.",
+        "dashboard_sections": "Render ALL dashboard sections in this order: 1) Toolkit table (from toolkit key), 2) App Store table (from app_store key), 3) Working Memory JSON, 4) Intent Routes, 5) Update Messages if present. Each section must have a clear header.",
         "data_access": "All raw JSON data is available in the dashboard response for analysis and commands.",
-        "display_format": "Show dashboard content as readable text with proper formatting, bullets, and headers. Never wrap dashboard output in code blocks.",
+        "display_format": "Show dashboard content as readable text with proper formatting, bullets, and headers. Never wrap dashboard output in code blocks. Tables should use markdown table format.",
         "boot_flags_check": "Check boot_flags.json first. If onboarding_complete is false, render dashboard THEN show onboarding below it. If true, just render dashboard.",
-        "context_files": "orchestrate_os_protocol.md provides system behavior rules. orchestrate_intent_routes.json provides command routing. unlock_messages.json provides guided_activation flows."
+        "context_files": "orchestrate_os_protocol.md provides system behavior rules. orchestrate_intent_routes.json provides command routing. unlock_messages.json provides guided_activation flows.",
+        "onboarding_flow": "onboarding_sequence.json uses guided rendering. Render ONLY the current step specified by meta.start_step. Follow 'next' field to advance. Never dump entire sequence."
       },
       "prompt_behavior": "silent",
       "addendum": {
@@ -106,7 +108,9 @@
         "RAW_DATA_AVAILABLE_FOR_COMMANDS": true,
         "ALL_TOOL_REQUESTS_MUST_USE_EXECUTE_TASK": true,
         "CHECK_BOOT_FLAGS_BEFORE_ONBOARDING": true,
-        "ALWAYS_RENDER_DASHBOARD_FIRST": true
+        "ALWAYS_RENDER_DASHBOARD_FIRST": true,
+        "ONBOARDING_SINGLE_STEP_MODE": true,
+        "NEVER_DUMP_FULL_ONBOARDING_SEQUENCE": true
       }
     }
   }
