@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import subprocess
+import webbrowser
 
 import requests
 from datetime import datetime
@@ -19,10 +20,10 @@ RUNTIME_DIR = os.path.dirname(BASE_DIR)
 APP_STORE_PATH = os.path.join(RUNTIME_DIR, "data", "orchestrate_app_store.json")
 UNLOCK_STATUS_PATH = os.path.join(RUNTIME_DIR, "data", "unlock_status.json")
 STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
-REFERRAL_PATH = os.path.join(STATE_DIR, "referrals.json")
+REFERRAL_PATH = os.path.join(STATE_DIR, "system_identity.json")
 IDENTITY_PATH = os.path.join(STATE_DIR, "system_identity.json")
 SYSTEM_REGISTRY = os.path.join(RUNTIME_DIR, "system_settings.ndjson")
-JSONBIN_ID = "694f0af6ae596e708fb2bd68"
+JSONBIN_ID = "6955618fd0ea881f404c2cdd"
 JSONBIN_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 
 
@@ -79,20 +80,40 @@ def save_registry(entries):
 
 
 def load_local_ledger():
-    """Load user's local referral ledger"""
+    """Load user's local referral ledger from JSONBin"""
     try:
-        with open(REFERRAL_PATH, 'r') as f:
-            return json.load(f)
+        user_id = get_user_id()
+        if not user_id:
+            return {"error": "No user ID found"}
+
+        response = requests.get(
+            f"https://api.jsonbin.io/v3/b/{JSONBIN_ID}/latest",
+            headers={"X-Master-Key": JSONBIN_KEY}
+        )
+
+        if response.status_code != 200:
+            return {"error": "Failed to fetch JSONBin ledger"}
+
+        full_ledger = response.json().get("record", {})
+        installs = full_ledger.get("installs", {})
+
+        if user_id in installs:
+            return installs[user_id]
+        else:
+            return {"error": f"User {user_id} not found in JSONBin"}
+
     except Exception as e:
         return {"error": f"Failed to load local ledger: {e}"}
 
 
 def save_local_ledger(ledger):
-    """Save updated local ledger"""
+    """Save updated local ledger to JSONBin"""
     try:
-        with open(REFERRAL_PATH, 'w') as f:
-            json.dump(ledger, f, indent=2)
-        return {"status": "success"}
+        user_id = get_user_id()
+        if not user_id:
+            return {"error": "No user ID found"}
+
+        return sync_to_jsonbin(user_id, ledger)
     except Exception as e:
         return {"error": f"Failed to save local ledger: {e}"}
 
@@ -126,9 +147,7 @@ def sync_from_jsonbin():
         installs = full_ledger.get("installs", {})
 
         if user_id in installs:
-            # Update local ledger with JSONBin data
-            save_local_ledger(installs[user_id])
-            return {"status": "success"}
+            return {"status": "success", "ledger": installs[user_id]}
         else:
             return {"error": f"User {user_id} not found in JSONBin"}
 
@@ -153,7 +172,7 @@ def sync_to_jsonbin(user_id, ledger):
         installs[user_id] = ledger
 
         updated = {
-            "filename": "install_ledger.json",
+            "filename": "gerwin_install_ledger.json",
             "installs": installs
         }
 
@@ -186,12 +205,11 @@ def register_tool_actions(tool_name):
         sys.path.insert(0, BASE_DIR)
         from system_settings import add_tool
 
-        # Tool is being unlocked, so register as unlocked with no cost
         result = add_tool({
             "tool_name": tool_name, 
             "script_path": tool_script,
-            "locked": False,  # Just unlocked
-            "referral_unlock_cost": 0  # Already paid
+            "locked": False,
+            "referral_unlock_cost": 0
         })
         return result
 
@@ -218,13 +236,11 @@ def find_tool_location(tool_name):
     - 'marketplace': exists in orchestrate_app_store.json
     - 'not_found': doesn't exist anywhere
     """
-    # Check registry for pre-installed tool
     registry = load_registry()
     for entry in registry:
         if entry.get("tool") == tool_name and entry.get("action") == "__tool__":
             return "preinstalled", entry.get("referral_unlock_cost", 0)
 
-    # Check app store for marketplace tool
     app_store = load_app_store()
     if tool_name in app_store:
         return "marketplace", app_store[tool_name].get("referral_unlock_cost", 0)
@@ -234,7 +250,6 @@ def find_tool_location(tool_name):
 
 def unlock_preinstalled_tool(tool_name, cost):
     """Unlock a pre-installed tool (mark as unlocked in registry)"""
-    # Load unlock messages
     unlock_messages_path = os.path.join(RUNTIME_DIR, "data", "unlock_messages.json")
     try:
         with open(unlock_messages_path, "r") as f:
@@ -242,27 +257,37 @@ def unlock_preinstalled_tool(tool_name, cost):
     except FileNotFoundError:
         unlock_messages = {}
 
-    # Sync from JSONBin first
     sync_from_jsonbin()
 
-    # Load ledger
     ledger = load_local_ledger()
     if "error" in ledger:
         return ledger
 
-    # Check if already unlocked
     unlocked_tools = ledger.get("tools_unlocked", [])
     if tool_name in unlocked_tools:
-        # Special handling for claude_assistant - return auth instructions
         if tool_name == "claude_assistant":
-            return {
-                "status": "already_unlocked",
-                "message": "✅ claude_assistant is already unlocked",
-                "auth_required": True,
-                "auth_instructions": "🔐 AUTHENTICATION REQUIRED:\n\nRun this command in the container to authenticate:\n\n/home/orchestrate/.local/bin/claude auth login\n\nThis will provide a URL to complete OAuth authentication.\nAfter authentication, Claude Code can execute autonomous tasks."
-            }
+            tool_message = unlock_messages.get(tool_name, {})
+            if tool_message.get("auto_browser_auth"):
+                auth_url = tool_message.get("auth_url", "https://claude.ai/oauth/authorize")
+                try:
+                    webbrowser.open(auth_url)
+                    browser_opened = True
+                except Exception:
+                    browser_opened = False
 
-        # Return message from unlock_messages.json if available
+                response = {
+                    "status": "already_unlocked",
+                    "message": "✅ claude_assistant is already unlocked",
+                    "auth_required": True,
+                    "browser_opened": browser_opened,
+                    "auth_url": auth_url
+                }
+                if tool_message.get("credential_setup"):
+                    response["credential_setup"] = tool_message["credential_setup"]
+                if tool_message.get("guided_activation"):
+                    response["guided_activation"] = tool_message["guided_activation"]
+                return response
+
         tool_message = unlock_messages.get(tool_name, {})
         message = tool_message.get("message", f"✅ {tool_name} is already unlocked")
         return {
@@ -270,7 +295,6 @@ def unlock_preinstalled_tool(tool_name, cost):
             "message": message
         }
 
-    # Check credits
     current_credits = ledger.get("referral_credits", 0)
     if current_credits < cost:
         return {
@@ -278,23 +302,19 @@ def unlock_preinstalled_tool(tool_name, cost):
             "credits_needed": cost - current_credits
         }
 
-    # Deduct credits
     ledger["referral_credits"] -= cost
     ledger["tools_unlocked"].append(tool_name)
 
-    # Save local ledger
     save_result = save_local_ledger(ledger)
     if "error" in save_result:
         return save_result
 
-    # Sync to JSONBin
     user_id = get_user_id()
     if user_id:
         sync_result = sync_to_jsonbin(user_id, ledger)
         if "error" in sync_result:
             print(f"⚠️  Warning: JSONBin sync failed: {sync_result['error']}", file=sys.stderr)
 
-    # Mark as unlocked in registry
     registry = load_registry()
     for entry in registry:
         if entry.get("tool") == tool_name and entry.get("action") == "__tool__":
@@ -304,10 +324,8 @@ def unlock_preinstalled_tool(tool_name, cost):
 
     save_registry(registry)
 
-    # Update unlock_status.json for dashboard rendering
     update_unlock_status(tool_name)
 
-    # Get unlock message and guided_activation from unlock_messages.json
     tool_message = unlock_messages.get(tool_name, {})
     if tool_message:
         message = tool_message.get("message", f"✅ {tool_name} unlocked! {ledger['referral_credits']} credits remaining.")
@@ -322,7 +340,6 @@ def unlock_preinstalled_tool(tool_name, cost):
         "message": message
     }
 
-    # Include credential_setup if requires_credentials - GPT must execute this FIRST
     if tool_message.get("requires_credentials"):
         response["requires_credentials"] = True
         if tool_message.get("credential_setup"):
@@ -332,7 +349,17 @@ def unlock_preinstalled_tool(tool_name, cost):
         if tool_message.get("credential_key"):
             response["credential_key"] = tool_message["credential_key"]
 
-    # Include guided_activation if available - GPT should auto-execute this AFTER credential_setup
+    if tool_message.get("auto_browser_auth"):
+        auth_url = tool_message.get("auth_url", "https://claude.ai/oauth/authorize")
+        try:
+            webbrowser.open(auth_url)
+            response["browser_opened"] = True
+        except Exception:
+            response["browser_opened"] = False
+        response["auth_url"] = auth_url
+        if tool_message.get("credential_setup"):
+            response["credential_setup"] = tool_message["credential_setup"]
+
     if tool_message.get("guided_activation"):
         response["guided_activation"] = tool_message["guided_activation"]
 
@@ -341,18 +368,15 @@ def unlock_preinstalled_tool(tool_name, cost):
 
 def unlock_marketplace_tool(tool_name, cost):
     """Unlock a marketplace tool (register + add to registry)"""
-    # Sync from JSONBin first
     sync_from_jsonbin()
 
     app_store = load_app_store()
     tool_config = app_store.get(tool_name, {})
 
-    # Load ledger
     ledger = load_local_ledger()
     if "error" in ledger:
         return ledger
 
-    # Check if already unlocked
     unlocked_tools = ledger.get("tools_unlocked", [])
     if tool_name in unlocked_tools:
         return {
@@ -360,7 +384,6 @@ def unlock_marketplace_tool(tool_name, cost):
             "message": f"✅ {tool_config.get('label', tool_name)} is already unlocked"
         }
 
-    # Check credits
     current_credits = ledger.get("referral_credits", 0)
     if current_credits < cost:
         return {
@@ -368,23 +391,19 @@ def unlock_marketplace_tool(tool_name, cost):
             "credits_needed": cost - current_credits
         }
 
-    # Deduct credits
     ledger["referral_credits"] -= cost
     ledger["tools_unlocked"].append(tool_name)
 
-    # Save local ledger
     save_result = save_local_ledger(ledger)
     if "error" in save_result:
         return save_result
 
-    # Sync to JSONBin
     user_id = get_user_id()
     if user_id:
         sync_result = sync_to_jsonbin(user_id, ledger)
         if "error" in sync_result:
             print(f"⚠️  Warning: JSONBin sync failed: {sync_result['error']}", file=sys.stderr)
 
-    # Register tool actions
     register_result = register_tool_actions(tool_name)
     if "error" in register_result:
         return {
@@ -392,11 +411,44 @@ def unlock_marketplace_tool(tool_name, cost):
             "details": register_result["error"]
         }
 
-    # Update unlock_status.json for dashboard rendering
     update_unlock_status(tool_name)
 
-    # Handle setup script if specified
-    if "setup_script" in tool_config:
+    unlock_messages_path = os.path.join(RUNTIME_DIR, "data", "unlock_messages.json")
+    try:
+        with open(unlock_messages_path, "r") as f:
+            unlock_messages = json.load(f)
+    except FileNotFoundError:
+        unlock_messages = {}
+
+    tool_message = unlock_messages.get(tool_name, {})
+
+    if tool_message.get("auto_browser_auth"):
+        auth_url = tool_message.get("auth_url", "https://claude.ai/oauth/authorize")
+        try:
+            webbrowser.open(auth_url)
+            browser_opened = True
+        except Exception:
+            browser_opened = False
+
+        response = {
+            "status": "success",
+            "tool": tool_name,
+            "type": "marketplace",
+            "label": tool_config.get("label", tool_name),
+            "credits_remaining": ledger["referral_credits"],
+            "message": tool_message.get("message", f"✅ {tool_config.get('label', tool_name)} unlocked!"),
+            "browser_opened": browser_opened,
+            "auth_url": auth_url
+        }
+        if tool_message.get("credential_setup"):
+            response["credential_setup"] = tool_message["credential_setup"]
+        if tool_message.get("guided_activation"):
+            response["guided_activation"] = tool_message["guided_activation"]
+        if "post_unlock_nudge" in tool_config:
+            response["nudge"] = tool_config["post_unlock_nudge"]
+        return response
+
+    if "setup_script" in tool_config and not tool_message.get("auto_browser_auth"):
         setup_script = tool_config["setup_script"]
 
         return {
@@ -408,17 +460,6 @@ def unlock_marketplace_tool(tool_name, cost):
             "unlock_message": f"✅ {tool_config.get('label', tool_name)} unlocked! ({ledger['referral_credits']} credits remaining)\n\n🔧 Authentication Required - Copy/paste this into Terminal:\n\nbash ~/Documents/Orchestrate/{setup_script}\n\nThis opens your browser for Claude Code OAuth (takes 30 seconds).",
             "post_unlock_nudge": tool_config.get("post_unlock_nudge", "")
         }
-
-    # No setup required - standard unlock
-    # Load unlock_messages for guided_activation
-    unlock_messages_path = os.path.join(RUNTIME_DIR, "data", "unlock_messages.json")
-    try:
-        with open(unlock_messages_path, "r") as f:
-            unlock_messages = json.load(f)
-    except FileNotFoundError:
-        unlock_messages = {}
-
-    tool_message = unlock_messages.get(tool_name, {})
 
     response = {
         "status": "success",
@@ -432,7 +473,6 @@ def unlock_marketplace_tool(tool_name, cost):
     if "post_unlock_nudge" in tool_config:
         response["nudge"] = tool_config["post_unlock_nudge"]
 
-    # Include credential_setup if requires_credentials - GPT must execute this FIRST
     if tool_message.get("requires_credentials"):
         response["requires_credentials"] = True
         if tool_message.get("credential_setup"):
@@ -442,7 +482,6 @@ def unlock_marketplace_tool(tool_name, cost):
         if tool_message.get("credential_key"):
             response["credential_key"] = tool_message["credential_key"]
 
-    # Include guided_activation if available - GPT should auto-execute this AFTER credential_setup
     if tool_message.get("guided_activation"):
         response["guided_activation"] = tool_message["guided_activation"]
 
@@ -461,7 +500,6 @@ def unlock_tool(tool_name):
     3. If neither: return error
     """
 
-    # Find where tool exists
     location, cost = find_tool_location(tool_name)
 
     if location == "not_found":
@@ -469,10 +507,9 @@ def unlock_tool(tool_name):
             "error": f"Tool '{tool_name}' not found in pre-installed tools or marketplace"
         }
 
-    # Route to appropriate unlock function
     if location == "preinstalled":
         return unlock_preinstalled_tool(tool_name, cost)
-    else:  # marketplace
+    else:
         return unlock_marketplace_tool(tool_name, cost)
 
 
