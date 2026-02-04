@@ -14,7 +14,7 @@ import requests
 
 STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 IDENTITY_PATH = os.path.join(STATE_DIR, "system_identity.json")
-BIN_ID = "694f0af6ae596e708fb2bd68"
+BIN_ID = "6955618fd0ea881f404c2cdd"
 API_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 HEADERS = {"X-Master-Key": API_KEY, "Content-Type": "application/json"}
 
