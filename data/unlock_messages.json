@@ -591,16 +591,14 @@
     }
   },
   "claude_assistant": {
-    "message": "Claude Assistant unlocked! Autonomous task execution is now available.",
-    "auto_browser_auth": true,
-    "auth_url": "https://claude.ai/login",
+    "message": "Claude Assistant unlocked! Run the setup script to authenticate with your Claude subscription.",
     "requires_credentials": false,
     "credential_setup": {
       "step_1": {
-        "narration": "Claude Assistant requires an active Claude Pro or Team subscription.",
-        "instruction": "1. Sign in at https://claude.ai/login\n2. Verify your Claude Pro or Team subscription is active\n3. Return here - OrchestrateOS will handle the rest",
+        "narration": "Claude Assistant requires Claude Code CLI and an active Claude Pro or Team subscription.",
+        "instruction": "Run this in Terminal to authenticate:\n\nbash /Applications/OrchestrateOS.app/Contents/Resources/orchestrate/auth/setup_claude_auth.sh\n\nThis will:\n1. Install Claude Code CLI if needed\n2. Open your browser for Claude OAuth sign-in\n3. Connect your subscription to OrchestrateOS",
         "requires_user_input": false,
-        "narration_after": "Browser opened for Claude authentication.",
+        "narration_after": "Once authenticated, Claude can execute tasks autonomously.",
         "next": "guided_activation"
       }
     },

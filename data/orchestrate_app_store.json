@@ -58,8 +58,9 @@
       "requires_credentials": false,
       "requires_subscription": true,
       "subscription_type": "Claude Pro or Team",
-      "unlock_message": "Claude Assistant unlocked! Your browser will open for Claude authentication. Sign in with your Claude Pro or Team subscription to enable autonomous task execution.",
-      "post_unlock_nudge": "\ud83d\udca1 Power user tip: Claude Assistant works great with outline_editor for autonomous documentation workflows"
+      "unlock_message": "Claude Assistant unlocked! Run the authentication script to connect your Claude Pro/Team subscription:\n\nbash /Applications/OrchestrateOS.app/Contents/Resources/orchestrate/auth/setup_claude_auth.sh\n\nThis opens your browser for Claude Code OAuth (installs CLI if needed).",
+      "post_unlock_nudge": "\ud83d\udca1 Power user tip: Claude Assistant works great with outline_editor for autonomous documentation workflows",
+      "setup_script": "auth/setup_claude_auth.sh"
     }
   },
   "display_mode": "table",
