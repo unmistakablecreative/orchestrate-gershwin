@@ -2,10 +2,12 @@
   "meta": {
     "render": "guided",
     "flow_control": true,
-    "advance_on": ["user_input", "action_success"],
+    "advance_on": [
+      "user_input",
+      "action_success"
+    ],
     "note": "Each unlock triggers mini-onboarding. For tools requiring credentials, credential_setup runs BEFORE guided_activation."
   },
-
   "outline_editor": {
     "message": "Outline Editor unlocked!",
     "requires_credentials": true,
@@ -25,7 +27,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Outline!",
+        "narration_after": "\u2705 Connected to Outline!",
         "next": "guided_activation"
       }
     },
@@ -70,7 +72,6 @@
       }
     }
   },
-
   "nylasinbox": {
     "message": "Email Tool unlocked!",
     "requires_credentials": true,
@@ -90,7 +91,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to your email!",
+        "narration_after": "\u2705 Connected to your email!",
         "next": "guided_activation"
       }
     },
@@ -135,7 +136,6 @@
       }
     }
   },
-
   "nylas_calendar": {
     "message": "Calendar unlocked!",
     "requires_credentials": true,
@@ -155,7 +155,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to your calendar!",
+        "narration_after": "\u2705 Connected to your calendar!",
         "next": "guided_activation"
       }
     },
@@ -203,7 +203,6 @@
       }
     }
   },
-
   "readwise_tool": {
     "message": "Readwise unlocked!",
     "requires_credentials": true,
@@ -223,7 +222,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Readwise!",
+        "narration_after": "\u2705 Connected to Readwise!",
         "next": "guided_activation"
       }
     },
@@ -260,7 +259,6 @@
       }
     }
   },
-
   "mem_tool": {
     "message": "Mem unlocked!",
     "requires_credentials": true,
@@ -280,7 +278,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Mem!",
+        "narration_after": "\u2705 Connected to Mem!",
         "next": "guided_activation"
       }
     },
@@ -305,7 +303,6 @@
       }
     }
   },
-
   "github_tool_universal": {
     "message": "GitHub unlocked!",
     "requires_credentials": true,
@@ -325,7 +322,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to GitHub!",
+        "narration_after": "\u2705 Connected to GitHub!",
         "next": "guided_activation"
       }
     },
@@ -362,7 +359,6 @@
       }
     }
   },
-
   "buffer_engine": {
     "message": "Buffer unlocked!",
     "requires_credentials": true,
@@ -382,7 +378,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Buffer!",
+        "narration_after": "\u2705 Connected to Buffer!",
         "next": "guided_activation"
       }
     },
@@ -414,7 +410,6 @@
       }
     }
   },
-
   "ideogram_tool": {
     "message": "Ideogram unlocked!",
     "requires_credentials": true,
@@ -434,7 +429,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Ideogram!",
+        "narration_after": "\u2705 Connected to Ideogram!",
         "next": "guided_activation"
       }
     },
@@ -459,7 +454,6 @@
       }
     }
   },
-
   "notion_tool": {
     "message": "Notion unlocked!",
     "requires_credentials": true,
@@ -479,7 +473,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Notion!",
+        "narration_after": "\u2705 Connected to Notion!",
         "next": "guided_activation"
       }
     },
@@ -516,7 +510,6 @@
       }
     }
   },
-
   "convertkit_tool": {
     "message": "ConvertKit unlocked!",
     "requires_credentials": false,
@@ -552,7 +545,6 @@
       }
     }
   },
-
   "gamma_engine": {
     "message": "Gamma unlocked!",
     "requires_credentials": true,
@@ -572,7 +564,7 @@
             "value": "{{user_input}}"
           }
         },
-        "narration_after": "✅ Connected to Gamma!",
+        "narration_after": "\u2705 Connected to Gamma!",
         "next": "guided_activation"
       }
     },
@@ -594,6 +586,41 @@
           }
         },
         "narration_after": "Presentation created!\n\nURL: {{result.url}}\nSlides: {{result.num_cards}}\n\nYou can now say:\n- 'Create a deck about [topic]'\n- 'Make a pitch deck for [idea]'\n- 'Generate slides from my notes on [topic]'",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "claude_assistant": {
+    "message": "Claude Assistant unlocked! Autonomous task execution is now available.",
+    "auto_browser_auth": true,
+    "auth_url": "https://claude.ai/login",
+    "requires_credentials": false,
+    "credential_setup": {
+      "step_1": {
+        "narration": "Claude Assistant requires an active Claude Pro or Team subscription.",
+        "instruction": "1. Sign in at https://claude.ai/login\n2. Verify your Claude Pro or Team subscription is active\n3. Return here - OrchestrateOS will handle the rest",
+        "requires_user_input": false,
+        "narration_after": "Browser opened for Claude authentication.",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's test Claude Assistant with a simple task.",
+        "prompt": "Describe a task for Claude to execute (e.g., 'Write a summary of my recent notes'):",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Assigning task to Claude Assistant...",
+        "action_template": {
+          "tool": "claude_assistant",
+          "action": "assign_task",
+          "params": {
+            "description": "{{user_input}}"
+          }
+        },
+        "narration_after": "Task assigned! Claude will execute it autonomously in the background.\n\nYou can now say:\n- 'Assign Claude: [complex task description]'\n- 'Check Claude task status'\n- 'Show completed Claude tasks'",
         "next": "return_to_onboarding_sequence_step_9"
       }
     }
