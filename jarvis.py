@@ -44,6 +44,15 @@ if os.path.exists(STATE_DIR):
 else:
     logging.warning(f"⚠️ State directory not found, skipping mount")
 
+# === Semantic Memory Mount ===
+SEMANTIC_MEMORY_DIR = os.path.join(BASE_DIR, "semantic_memory")
+if os.path.exists(SEMANTIC_MEMORY_DIR):
+    app.mount("/semantic_memory", StaticFiles(directory=SEMANTIC_MEMORY_DIR, html=True), name="semantic_memory")
+else:
+    os.makedirs(SEMANTIC_MEMORY_DIR, exist_ok=True)
+    app.mount("/semantic_memory", StaticFiles(directory=SEMANTIC_MEMORY_DIR, html=True), name="semantic_memory")
+    logging.info(f"📁 Created semantic_memory directory: {SEMANTIC_MEMORY_DIR}")
+
 # === Merge Logic (in-memory, no file writes) ===
 def get_merged_tool_ui():
     """Merge tool UI with unlock status in memory. No file writes."""
