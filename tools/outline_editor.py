@@ -170,45 +170,41 @@ def delete_doc(doc_id):
     return res.json()
 
 
-def list_docs(limit, offset, sort, direction, collectionId):
+def list_docs(limit=25, offset=0, sort='updatedAt', direction='DESC', collectionId=None):
+    """List documents with optional filtering."""
     from system_settings import load_credential
     api_base = 'https://app.getoutline.com/api'
     token = load_credential('outline_api_key')
     if not token:
-        return {'status': 'error', 'message':
-            '❌ Missing Outline API token in credentials.json'}
-    headers = {'Authorization': f'Bearer {token}', 'Content-Type':
-        'application/json'}
-    payload = {'limit': limit, 'offset': offset, 'sort': sort, 'direction':
-        direction}
+        return {'status': 'error', 'message': 'Missing Outline API token'}
+    headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+    payload = {'limit': limit, 'offset': offset, 'sort': sort, 'direction': direction}
     if collectionId:
-        payload['collectionId'] = collectionId
-    res = requests.post(f'{api_base}/documents.list', headers=headers, json
-        =payload, verify=False)
+        # Resolve collection alias to UUID
+        payload['collectionId'] = resolve_collection_alias(collectionId)
+    res = requests.post(f'{api_base}/documents.list', headers=headers, json=payload, verify=False)
     res.raise_for_status()
     return res.json()
 
 
-def search_docs(query, limit, offset):
+def search_docs(query, limit=25, offset=0):
+    """Search documents. Returns only doc ID and title."""
     from system_settings import load_credential
     api_base = 'https://app.getoutline.com/api'
     token = load_credential('outline_api_key')
     if not token:
-        return {'status': 'error', 'message':
-            '❌ Missing Outline API token in credentials.json'}
-    headers = {'Authorization': f'Bearer {token}', 'Content-Type':
-        'application/json'}
+        return {'status': 'error', 'message': 'Missing Outline API token'}
+    headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
     payload = {'query': query, 'limit': limit, 'offset': offset}
-    res = requests.post(f'{api_base}/documents.search', json=payload,
-        headers=headers, verify=False)
+    res = requests.post(f'{api_base}/documents.search', json=payload, headers=headers, verify=False)
     res.raise_for_status()
 
-    # Simplify return to only include doc ID and title
+    # Outline search returns {data: [{document: {id, title, ...}, context: "..."}]}
     full_response = res.json()
     if 'data' in full_response:
         simplified_results = [
-            {'id': doc.get('id'), 'title': doc.get('title')}
-            for doc in full_response.get('data', [])
+            {'id': item.get('document', {}).get('id'), 'title': item.get('document', {}).get('title')}
+            for item in full_response.get('data', [])
         ]
         return {'status': 'success', 'data': simplified_results}
 
@@ -335,8 +331,11 @@ def _register_collection_alias(name, collection_id):
 
         with open(aliases_path, 'w') as f:
             json.dump(aliases, f, indent=2)
-    except Exception:
-        pass  # Silent fail - alias registration is convenience, not critical
+    except Exception as e:
+        # Log error for debugging
+        debug_path = os.path.join(BASE_DIR, 'data', 'alias_debug.log')
+        with open(debug_path, 'a') as f:
+            f.write(f"Error registering alias {name}: {e}\n")
 
 
 def get_collection(collection_id):
