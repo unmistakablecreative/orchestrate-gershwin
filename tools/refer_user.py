@@ -19,8 +19,8 @@ STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 CREDENTIALS_PATH = os.path.join(STATE_DIR, "system_identity.json")
 JSONBIN_MASTER_KEY = "$2a$10$MoavwaWsCucy2FkU/5ycV.lBTPWoUq4uKHhCi9Y47DOHWyHFL3o2C"
 REFERRALS_BIN = "694a185eae596e708fab9028"
-# TEST LEDGER - Switch to production (68292fcf8561e97a50162139) before release
-LEDGER_BIN = "694f0af6ae596e708fb2bd68"
+# Gershwin install ledger
+LEDGER_BIN = "6955618fd0ea881f404c2cdd"
 
 
 def get_referrer_name():
