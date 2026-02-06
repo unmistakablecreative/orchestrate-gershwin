@@ -101,14 +101,20 @@ def update_doc(params):
             '❌ Missing Outline API token in credentials.json'}
     headers = {'Authorization': f'Bearer {token}', 'Content-Type':
         'application/json'}
-    if append:
-        payload_append = True
-        text = '\n\n' + text.strip()
-    else:
-        payload_append = False
-    payload = {'id': doc_id, 'title': title, 'text': text, 'publish': publish}
-    if payload_append:
-        payload['append'] = True
+
+    # Build payload with only non-None values
+    payload = {'id': doc_id}
+    if title is not None:
+        payload['title'] = title
+    if text is not None:
+        if append:
+            payload['text'] = '\n\n' + text.strip()
+            payload['append'] = True
+        else:
+            payload['text'] = text
+    if publish is not None:
+        payload['publish'] = publish
+
     res = requests.post(f'{api_base}/documents.update', json=payload,
         headers=headers, verify=False)
     res.raise_for_status()
@@ -285,50 +291,23 @@ def move_doc(doc_id, collectionId, parentDocumentId):
     return res.json()
 
 
-def create_collection(name, description, permission, icon, color, sharing):
+def create_collection(params):
+    name = params.get('name')
+    description = params.get('description', '')
+    permission = params.get('permission', 'read_write')
+    icon = params.get('icon', 'collection')
+    color = params.get('color', '#4E5C6E')
+    sharing = params.get('sharing', False)
     from system_settings import load_credential
     api_base = 'https://app.getoutline.com/api'
     token = load_credential('outline_api_key')
     if not token:
-        return {'status': 'error', 'message':
-            '❌ Missing Outline API token in credentials.json'}
-    headers = {'Authorization': f'Bearer {token}', 'Content-Type':
-        'application/json'}
-    payload = {'name': name, 'description': description, 'permission':
-        permission, 'icon': icon, 'color': color, 'sharing': sharing}
-    res = requests.post(f'{api_base}/collections.create', json=payload,
-        headers=headers, verify=False)
+        return {'status': 'error', 'message': 'Missing Outline API token'}
+    headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+    payload = {'name': name, 'description': description, 'permission': permission, 'icon': icon, 'color': color, 'sharing': sharing}
+    res = requests.post(f'{api_base}/collections.create', json=payload, headers=headers, verify=False)
     res.raise_for_status()
-
-    # After successful API call, save alias mapping
-    response_data = res.json()
-    collection_id = response_data.get('data', {}).get('id')
-
-    if collection_id:
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        aliases_path = os.path.join(BASE_DIR, 'data', 'collection_aliases.json')
-
-        # Read existing aliases (or create empty dict if not exists)
-        try:
-            if os.path.exists(aliases_path):
-                with open(aliases_path, 'r') as f:
-                    aliases = json.load(f)
-            else:
-                aliases = {}
-        except (json.JSONDecodeError, IOError):
-            aliases = {}
-
-        # Add mapping: collection_aliases[name] = collection_id
-        aliases[name] = collection_id
-
-        # Write back to file
-        try:
-            with open(aliases_path, 'w') as f:
-                json.dump(aliases, f, indent=2)
-        except IOError:
-            pass  # Silent fail on write error, still return successful API response
-
-    return response_data
+    return res.json()
 
 
 def get_collection(collection_id):
@@ -419,7 +398,7 @@ def main():
     elif args.action == 'ask_outline_ai':
         result = ask_outline_ai(**params)
     elif args.action == 'create_collection':
-        result = create_collection(**params)
+        result = create_collection(params)
     elif args.action == 'create_doc':
         result = create_doc(params)
     elif args.action == 'delete_collection':
