@@ -307,7 +307,36 @@ def create_collection(params):
     payload = {'name': name, 'description': description, 'permission': permission, 'icon': icon, 'color': color, 'sharing': sharing}
     res = requests.post(f'{api_base}/collections.create', json=payload, headers=headers, verify=False)
     res.raise_for_status()
-    return res.json()
+    result = res.json()
+
+    # Auto-register collection alias
+    collection_id = result.get('data', {}).get('id')
+    if collection_id and name:
+        _register_collection_alias(name, collection_id)
+
+    return result
+
+
+def _register_collection_alias(name, collection_id):
+    """Add collection name as alias in collection_aliases.json"""
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    aliases_path = os.path.join(BASE_DIR, 'data', 'collection_aliases.json')
+
+    try:
+        if os.path.exists(aliases_path):
+            with open(aliases_path, 'r') as f:
+                aliases = json.load(f)
+        else:
+            aliases = {}
+
+        # Add both original name and lowercase version
+        aliases[name] = collection_id
+        aliases[name.lower()] = collection_id
+
+        with open(aliases_path, 'w') as f:
+            json.dump(aliases, f, indent=2)
+    except Exception:
+        pass  # Silent fail - alias registration is convenience, not critical
 
 
 def get_collection(collection_id):
