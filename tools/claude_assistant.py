@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Claude Assistant - Fixed Version with Parallel Execution
-Based on minimal core version with proper agent filtering and prison guard limits
+Claude Assistant - Fixed Version with Proper Agent Assignment and File Locking
 """
 
 import sys
@@ -13,47 +12,50 @@ import requests
 import stat
 import re
 import uuid
+import fcntl
 from datetime import datetime, timedelta
 
 
-# =============================================================================
-# PRISON GUARD: Hard limits on parallel agents
-# =============================================================================
-MAX_PARALLEL_AGENTS = 3  # NEVER allow more than this
+# === 3-QUEUE PARALLEL EXECUTION SYSTEM ===
+NUM_QUEUES = 3
 
-def count_running_agents():
-    """Count currently running Claude Code agent processes."""
-    lockfile = os.path.join(os.getcwd(), "data/execute_queue.lock")
-    
-    if not os.path.exists(lockfile):
-        return 0
-    
-    try:
-        with open(lockfile, 'r') as f:
-            lock_data = json.load(f)
-        
-        pids = lock_data.get("pids", [])
-        if not pids and lock_data.get("pid"):
-            pids = [lock_data["pid"]]
-        
-        running = 0
-        for pid in pids:
-            try:
-                os.kill(pid, 0)
-                running += 1
-            except OSError:
-                pass
-        
-        return running
-    except:
-        return 0
+def get_queue_file_for_task(task_id):
+    """Hash task_id to determine which queue file to use (1, 2, or 3)"""
+    queue_num = (hash(task_id) % NUM_QUEUES) + 1
+    return os.path.join(os.getcwd(), f"data/claude_task_q{queue_num}.json")
 
-def enforce_agent_limit():
-    """Returns False if we're at max agents, True if we can spawn more."""
-    running = count_running_agents()
-    if running >= MAX_PARALLEL_AGENTS:
-        return False
-    return True
+def get_all_queue_files():
+    """Return list of all queue file paths"""
+    return [os.path.join(os.getcwd(), f"data/claude_task_q{i}.json") for i in range(1, NUM_QUEUES + 1)]
+
+
+def safe_read_queue_with_lock(queue_file):
+    """Read queue file with exclusive lock to prevent race conditions"""
+    if not os.path.exists(queue_file):
+        return {"tasks": {}}
+    
+    with open(queue_file, 'r+', encoding='utf-8') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            queue = json.load(f)
+        except:
+            queue = {"tasks": {}}
+        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+    
+    return queue
+
+
+def safe_write_queue_with_lock(queue_file, queue_data):
+    """Write queue file with exclusive lock"""
+    os.makedirs(os.path.dirname(queue_file), exist_ok=True)
+    
+    mode = 'r+' if os.path.exists(queue_file) else 'w+'
+    with open(queue_file, mode, encoding='utf-8') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        f.seek(0)
+        f.truncate()
+        json.dump(queue_data, f, indent=2)
+        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
 
 def safe_write_queue(queue_file, queue_data):
@@ -70,6 +72,30 @@ def safe_write_queue(queue_file, queue_data):
 
     if was_readonly:
         os.chmod(queue_file, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+
+
+def validate_task_format(description):
+    """
+    Validate task description follows OrchestrateOS format.
+    Returns (is_valid, warnings) tuple.
+    Warnings are informational, not blocking.
+    """
+    warnings = []
+
+    if "@" in description and "`@" not in description:
+        warnings.append("Trigger found but not wrapped in backticks - consider `@trigger` format")
+
+    if "Expected output:" not in description and "expected output:" not in description:
+        if len(description) > 100:
+            warnings.append("Consider adding 'Expected output:' line for clarity")
+
+    fluff_patterns = ["please ", "could you ", "would you ", "if you could"]
+    for pattern in fluff_patterns:
+        if pattern in description.lower():
+            warnings.append(f"Contains '{pattern}' - tasks should be direct commands")
+            break
+
+    return True, warnings
 
 
 def assign_task(params):
@@ -94,18 +120,17 @@ def assign_task(params):
     batch_id = params.get("batch_id")
     agent_id = params.get("agent_id")
 
-    # Auto-generate task_id if not provided
     if not task_id:
         task_id = f"task_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
 
     if not description:
         return {"status": "error", "message": "❌ Missing required field: description"}
 
-    # Generate batch_id if not provided
+    _, format_warnings = validate_task_format(description)
+
     if not batch_id:
         batch_id = f"batch_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{task_id[:8]}"
 
-    # Reset thread score to 100 at start of each task
     try:
         subprocess.run(
             ["python3", "execution_hub.py", "load_orchestrate_os"],
@@ -125,7 +150,6 @@ def assign_task(params):
     if create_output_doc:
         context["hint"] = "Create an outline document for this task using execution_hub.py with outline_editor.create_doc"
 
-    # AUTO-INJECT TOOL BUILD PROTOCOL if task involves building a tool
     tool_build_keywords = ["build tool", "create tool", "new tool", "implement tool", "write tool", "build.*tool"]
     description_lower = description.lower()
 
@@ -143,7 +167,6 @@ def assign_task(params):
             except Exception as e:
                 print(f"Warning: Could not load tool_build_protocol.md: {e}", file=sys.stderr)
 
-    # AUTO-INJECT TRIGGER STEPS if task contains @trigger pattern
     trigger_match = re.search(r'@([\w_-]+)', description)
     if trigger_match:
         trigger_name = f"@{trigger_match.group(1)}"
@@ -163,7 +186,6 @@ def assign_task(params):
 
                     inject_steps = trigger_config.get("inject_steps", "")
                     if inject_steps:
-                        # Handle both string (new format) and array (legacy)
                         steps_text = inject_steps if isinstance(inject_steps, str) else "\n".join(inject_steps)
                         description = f"{description}\n\n--- INJECTED STEPS FROM {trigger_name} ---\n{steps_text}"
 
@@ -178,15 +200,12 @@ def assign_task(params):
             except Exception as e:
                 print(f"Warning: Could not load triggers: {e}", file=sys.stderr)
 
-    # AUTO-INJECT SKILL CONTENT if task matches skill triggers
     skills_dir = os.path.expanduser("~/.claude/skills")
     if os.path.exists(skills_dir):
         try:
             skill_names = os.listdir(skills_dir)
             matched_skill = None
 
-            # PRIORITY 1: Check if skill folder name is literally in description
-            # This prevents alphabetical trigger matching from picking wrong skill
             for skill_name in skill_names:
                 if skill_name.lower() in description_lower:
                     skill_md = os.path.join(skills_dir, skill_name, "SKILL.md")
@@ -194,7 +213,6 @@ def assign_task(params):
                         matched_skill = skill_name
                         break
 
-            # PRIORITY 2: Fall back to trigger matching if no explicit match
             if not matched_skill:
                 for skill_name in skill_names:
                     skill_md = os.path.join(skills_dir, skill_name, "SKILL.md")
@@ -210,7 +228,6 @@ def assign_task(params):
                                 matched_skill = skill_name
                                 break
 
-            # Inject the matched skill
             if matched_skill:
                 skill_md = os.path.join(skills_dir, matched_skill, "SKILL.md")
                 with open(skill_md, 'r', encoding='utf-8') as f:
@@ -219,14 +236,11 @@ def assign_task(params):
         except Exception as e:
             print(f"Warning: Could not load skills: {e}", file=sys.stderr)
 
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
+    # Use hash-based queue selection for parallel execution
+    queue_file = get_queue_file_for_task(task_id)
     os.makedirs(os.path.dirname(queue_file), exist_ok=True)
 
-    if os.path.exists(queue_file):
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
-    else:
-        queue = {"tasks": {}}
+    queue = safe_read_queue_with_lock(queue_file)
 
     now = datetime.now().isoformat()
     task_entry = {
@@ -243,7 +257,7 @@ def assign_task(params):
         task_entry["agent_id"] = agent_id
     queue["tasks"][task_id] = task_entry
 
-    safe_write_queue(queue_file, queue)
+    safe_write_queue_with_lock(queue_file, queue)
 
     auto_execute = params.get("auto_execute", True)
 
@@ -258,7 +272,7 @@ def assign_task(params):
             "execution": execute_result
         }
 
-    return {
+    result = {
         "status": "success",
         "message": f"✅ Task '{task_id}' assigned to Claude Code queue",
         "task_id": task_id,
@@ -266,6 +280,11 @@ def assign_task(params):
         "agent_id": agent_id,
         "next_step": "Call execute_queue to trigger processing" if not auto_execute else "Task will be processed in current session"
     }
+
+    if format_warnings:
+        result["format_warnings"] = format_warnings
+
+    return result
 
 
 def assign_demo_task(params):
@@ -296,10 +315,10 @@ def check_task_status(params):
     if not task_id:
         return {"status": "error", "message": "❌ Missing required field: task_id"}
 
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
-    if os.path.exists(queue_file):
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
+    # Search all queue files
+    for queue_file in get_all_queue_files():
+        if os.path.exists(queue_file):
+            queue = safe_read_queue_with_lock(queue_file)
             if task_id in queue.get("tasks", {}):
                 task_data = queue["tasks"][task_id]
                 return {
@@ -398,61 +417,140 @@ def get_all_results(params):
 
 
 def ask_claude(params):
-    """Quick Q&A - GPT asks Claude a simple question, Claude answers."""
+    """Quick Q&A - Spawn Claude session to answer a question."""
     question = params.get("question")
+    wait = params.get("wait", True)  # Wait for response by default
 
     if not question:
         return {"status": "error", "message": "❌ Missing required field: question"}
 
-    return {
-        "status": "ready",
-        "message": "📝 Question received - Claude will respond in current session",
-        "question": question,
-        "note": "Claude sees this and will answer directly without task queue"
-    }
+    # Same env setup as execute_queue - remove ALL Claude detection vars
+    base_env = os.environ.copy()
+    base_env.pop('ANTHROPIC_API_KEY', None)
+    base_env.pop('CLAUDECODE', None)
+    base_env.pop('CLAUDE_CODE_ENTRYPOINT', None)
+    base_env.pop('CLAUDE_CODE_SSE_PORT', None)
+    base_env.pop('CLAUDE_CODE_SUBAGENT_MODEL', None)
+    base_env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:' + base_env.get('PATH', '')
+
+    try:
+        import shlex
+        # Use zsh login shell to get the claude alias with CLAUDE.md system prompts
+        claude_cmd = f"claude -p {shlex.quote(question)} --allowedTools 'Bash,Read,Write,Edit'"
+
+        if wait:
+            # Synchronous - wait for response
+            full_cmd = ["/bin/zsh", "-l", "-c", claude_cmd]
+            result = subprocess.run(
+                full_cmd,
+                env=base_env, cwd=os.getcwd(), capture_output=True, text=True, timeout=120
+            )
+            return {
+                "status": "success" if result.returncode == 0 else "error",
+                "response": result.stdout.strip(),
+                "stderr": result.stderr.strip() if result.stderr else None,
+                "returncode": result.returncode,
+                "command": claude_cmd,
+                "full_command": full_cmd
+            }
+        else:
+            # Async - fire and forget
+            log_file = open(os.path.join(os.getcwd(), "data/claude_ask.log"), "w")
+            process = subprocess.Popen(
+                ["/bin/zsh", "-l", "-c", claude_cmd],
+                env=base_env, cwd=os.getcwd(), stdout=log_file, stderr=subprocess.STDOUT, start_new_session=True
+            )
+            return {
+                "status": "success",
+                "message": f"🚀 Claude spawned with PID {process.pid}",
+                "pid": process.pid,
+                "log": "data/claude_ask.log"
+            }
+    except subprocess.TimeoutExpired:
+        return {"status": "error", "message": "⏱️ Claude timed out after 120s"}
+    except Exception as e:
+        return {"status": "error", "message": f"❌ Failed to spawn Claude: {str(e)}"}
 
 
 def cancel_task(params):
-    """Cancel a queued or in_progress task."""
+    """Cancel a queued or in_progress task. Use remove=true to delete entirely."""
     task_id = params.get("task_id")
+    remove = params.get("remove", False)
 
     if not task_id:
         return {"status": "error", "message": "❌ Missing required field: task_id"}
 
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
+    # Search all queue files for the task
+    queue_file = None
+    queue = None
+    for qf in get_all_queue_files():
+        if os.path.exists(qf):
+            try:
+                q = safe_read_queue_with_lock(qf)
+                if task_id in q.get("tasks", {}):
+                    queue_file = qf
+                    queue = q
+                    break
+            except:
+                continue
 
-    if not os.path.exists(queue_file):
-        return {"status": "error", "message": "❌ No task queue found"}
-
-    try:
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
-    except Exception as e:
-        return {"status": "error", "message": f"❌ Error reading queue: {str(e)}"}
-
-    if task_id not in queue.get("tasks", {}):
-        return {"status": "error", "message": f"❌ Task '{task_id}' not found in queue"}
+    if not queue_file or not queue:
+        return {"status": "error", "message": f"❌ Task '{task_id}' not found in any queue"}
 
     task = queue["tasks"][task_id]
     current_status = task.get("status")
 
-    if current_status in ["done", "error"]:
-        return {"status": "error", "message": f"❌ Cannot cancel task that is already {current_status}"}
-
-    queue["tasks"][task_id]["status"] = "cancelled"
-    queue["tasks"][task_id]["cancelled_at"] = datetime.now().isoformat()
+    if remove:
+        # Completely remove the task from queue
+        del queue["tasks"][task_id]
+        action = "removed"
+    else:
+        if current_status in ["done", "error"]:
+            return {"status": "error", "message": f"❌ Cannot cancel task that is already {current_status}"}
+        queue["tasks"][task_id]["status"] = "cancelled"
+        queue["tasks"][task_id]["cancelled_at"] = datetime.now().isoformat()
+        action = "cancelled"
 
     try:
-        with open(queue_file, 'w', encoding='utf-8') as f:
-            json.dump(queue, f, indent=2)
+        safe_write_queue_with_lock(queue_file, queue)
     except Exception as e:
         return {"status": "error", "message": f"❌ Error writing queue: {str(e)}"}
 
     return {
         "status": "success",
-        "message": f"✅ Task '{task_id}' cancelled",
+        "message": f"✅ Task '{task_id}' {action}",
         "task_id": task_id,
         "previous_status": current_status
+    }
+
+
+def clear_queue(params):
+    """Remove all tasks from all queues."""
+    total_count = 0
+    all_task_ids = []
+
+    for queue_file in get_all_queue_files():
+        if not os.path.exists(queue_file):
+            continue
+
+        try:
+            queue = safe_read_queue_with_lock(queue_file)
+            task_count = len(queue.get("tasks", {}))
+            task_ids = list(queue.get("tasks", {}).keys())
+            
+            total_count += task_count
+            all_task_ids.extend(task_ids)
+            
+            queue["tasks"] = {}
+            safe_write_queue_with_lock(queue_file, queue)
+        except Exception as e:
+            print(f"Warning: Could not clear {queue_file}: {e}", file=sys.stderr)
+
+    return {
+        "status": "success",
+        "message": f"✅ Cleared {total_count} tasks from all queues",
+        "removed_count": total_count,
+        "removed_tasks": all_task_ids
     }
 
 
@@ -471,19 +569,22 @@ def update_task(params):
     if not any([new_description, new_priority, new_context, new_agent_id]):
         return {"status": "error", "message": "❌ Must provide at least one field to update"}
 
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
+    # Search all queue files for the task
+    queue_file = None
+    queue = None
+    for qf in get_all_queue_files():
+        if os.path.exists(qf):
+            try:
+                q = safe_read_queue_with_lock(qf)
+                if task_id in q.get("tasks", {}):
+                    queue_file = qf
+                    queue = q
+                    break
+            except:
+                continue
 
-    if not os.path.exists(queue_file):
-        return {"status": "error", "message": "❌ No task queue found"}
-
-    try:
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
-    except Exception as e:
-        return {"status": "error", "message": f"❌ Error reading queue: {str(e)}"}
-
-    if task_id not in queue.get("tasks", {}):
-        return {"status": "error", "message": f"❌ Task '{task_id}' not found in queue"}
+    if not queue_file or not queue:
+        return {"status": "error", "message": f"❌ Task '{task_id}' not found in any queue"}
 
     task = queue["tasks"][task_id]
 
@@ -513,8 +614,7 @@ def update_task(params):
     queue["tasks"][task_id]["updated_at"] = datetime.now().isoformat()
 
     try:
-        with open(queue_file, 'w', encoding='utf-8') as f:
-            json.dump(queue, f, indent=2)
+        safe_write_queue_with_lock(queue_file, queue)
     except Exception as e:
         return {"status": "error", "message": f"❌ Error writing queue: {str(e)}"}
 
@@ -528,89 +628,108 @@ def update_task(params):
 
 def process_queue(params):
     """
-    Claude calls this to get all queued tasks.
-    
+    Claude calls this to get all queued tasks from all queue files.
+
     NOW WITH AGENT FILTERING - if agent_id provided, only returns tasks for that agent.
-    
+
     Parameters:
     - agent_id: If provided, ONLY return tasks assigned to this agent
+    - peek: If True, return ALL tasks (queued + in_progress) WITHOUT marking them.
+            Used by dashboard for polling without side effects.
     """
-    agent_id = params.get("agent_id")  # KEY: Agent filter
-    
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
-
-    if not os.path.exists(queue_file):
-        return {
-            "status": "success",
-            "message": "✅ No tasks in queue",
-            "pending_tasks": [],
-            "task_count": 0,
-            "agent_id": agent_id
-        }
-
-    try:
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
-    except Exception as e:
-        return {"status": "error", "message": f"❌ Error reading queue: {str(e)}"}
+    agent_id = params.get("agent_id")
+    peek = params.get("peek", False)
 
     pending = []
     now = datetime.now().isoformat()
     tasks_marked = []
+    queues_updated = []  # Track which queues need to be written back
 
-    for task_id, task_data in queue.get("tasks", {}).items():
-        if task_data.get("status") != "queued":
+    # Read from all queue files
+    for queue_file in get_all_queue_files():
+        if not os.path.exists(queue_file):
             continue
-        
-        # === AGENT FILTERING ===
-        # If agent_id specified, ONLY get tasks for this agent
-        if agent_id:
-            task_agent = task_data.get("agent_id")
-            if task_agent != agent_id:
-                continue  # Skip - not assigned to this agent
 
-        # Mark as in_progress
-        queue["tasks"][task_id]["status"] = "in_progress"
-        queue["tasks"][task_id]["started_at"] = now
-        tasks_marked.append(task_id)
+        try:
+            queue = safe_read_queue_with_lock(queue_file)
+        except Exception as e:
+            print(f"Warning: Could not read {queue_file}: {e}", file=sys.stderr)
+            continue
 
-        pending.append({
-            "task_id": task_id,
-            "description": task_data["description"],
-            "context": task_data.get("context", {}),
-            "priority": task_data.get("priority", "medium"),
-            "created_at": task_data.get("created_at"),
-            "agent_id": task_data.get("agent_id"),
-            "AFTER_COMPLETION_YOU_MUST": f"Call log_task_completion for task_id '{task_id}'"
-        })
+        queue_modified = False
+        for task_id, task_data in queue.get("tasks", {}).items():
+            task_status = task_data.get("status", "queued")
+
+            # In peek mode, return queued AND in_progress tasks
+            if peek:
+                if task_status not in ["queued", "in_progress"]:
+                    continue
+            else:
+                if task_status != "queued":
+                    continue
+
+            if agent_id:
+                task_agent = task_data.get("agent_id")
+                if task_agent != agent_id:
+                    continue
+
+            # Only modify queue if NOT in peek mode
+            if not peek:
+                queue["tasks"][task_id]["status"] = "in_progress"
+                queue["tasks"][task_id]["started_at"] = now
+                tasks_marked.append(task_id)
+                queue_modified = True
+
+            task_entry = {
+                "task_id": task_id,
+                "description": task_data["description"],
+                "status": task_status if peek else "in_progress",
+                "context": task_data.get("context", {}),
+                "priority": task_data.get("priority", "medium"),
+                "created_at": task_data.get("created_at"),
+                "agent_id": task_data.get("agent_id"),
+                "card_title": task_data.get("card_title"),
+                "processing_started_at": task_data.get("processing_started_at")
+            }
+            if not peek:
+                task_entry["AFTER_COMPLETION_YOU_MUST"] = f"Call log_task_completion for task_id '{task_id}'"
+            pending.append(task_entry)
+
+        # Write back if modified
+        if queue_modified:
+            try:
+                safe_write_queue_with_lock(queue_file, queue)
+                queues_updated.append(queue_file)
+            except Exception as e:
+                print(f"Warning: Could not update {queue_file}: {e}", file=sys.stderr)
 
     if not pending:
-        msg = "✅ No pending tasks"
+        msg = "✅ No active tasks" if peek else "✅ No pending tasks"
         if agent_id:
-            msg = f"✅ No pending tasks for {agent_id}"
+            msg = f"✅ No {'active' if peek else 'pending'} tasks for {agent_id}"
         return {
             "status": "success",
             "message": msg,
             "pending_tasks": [],
             "task_count": 0,
-            "agent_id": agent_id
+            "agent_id": agent_id,
+            "peek": peek
         }
 
-    # Save updated queue
-    try:
-        safe_write_queue(queue_file, queue)
-        print(f"⏱️ Auto-marked {len(tasks_marked)} task(s) as in_progress", file=sys.stderr)
-    except Exception as e:
-        print(f"Warning: Could not update task status: {e}", file=sys.stderr)
+    if not peek:
+        print(f"⏱️ Auto-marked {len(tasks_marked)} task(s) as in_progress across {len(queues_updated)} queue(s)", file=sys.stderr)
 
-    return {
+    result = {
         "status": "success",
-        "message": f"Found {len(pending)} pending task(s)" + (f" for {agent_id}" if agent_id else ""),
+        "message": f"Found {len(pending)} {'active' if peek else 'pending'} task(s)" + (f" for {agent_id}" if agent_id else ""),
         "pending_tasks": pending,
         "task_count": len(pending),
         "agent_id": agent_id,
-        "CRITICAL_REMINDER": "🚨 YOU MUST CALL log_task_completion FOR EACH TASK 🚨"
+        "peek": peek
     }
+    if not peek:
+        result["CRITICAL_REMINDER"] = "🚨 YOU MUST CALL log_task_completion FOR EACH TASK 🚨"
+    return result
 
 
 def mark_task_in_progress(params):
@@ -620,25 +739,32 @@ def mark_task_in_progress(params):
     IMPORTANT: This sets 'processing_started_at' which is used for ACTUAL execution time calculation.
     In parallel execution, 'started_at' gets set when all tasks are pulled from queue simultaneously,
     but 'processing_started_at' records when Claude ACTUALLY starts working on this specific task.
+
+    Optional:
+    - card_title: Short distinctive name for the task (max 40 chars) for dashboard display
     """
     task_id = params.get("task_id")
+    card_title = params.get("card_title")  # Optional: agent-generated short title for dashboard
 
     if not task_id:
         return {"status": "error", "message": "❌ Missing required field: task_id"}
 
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
+    # Search all queue files for the task
+    queue_file = None
+    queue = None
+    for qf in get_all_queue_files():
+        if os.path.exists(qf):
+            try:
+                q = safe_read_queue_with_lock(qf)
+                if task_id in q.get("tasks", {}):
+                    queue_file = qf
+                    queue = q
+                    break
+            except:
+                continue
 
-    if not os.path.exists(queue_file):
-        return {"status": "error", "message": "❌ No task queue found"}
-
-    try:
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
-    except Exception as e:
-        return {"status": "error", "message": f"❌ Error reading queue: {str(e)}"}
-
-    if task_id not in queue.get("tasks", {}):
-        return {"status": "error", "message": f"❌ Task '{task_id}' not found in queue"}
+    if not queue_file or not queue:
+        return {"status": "error", "message": f"❌ Task '{task_id}' not found in any queue"}
 
     task = queue["tasks"][task_id]
     current_status = task.get("status")
@@ -652,22 +778,19 @@ def mark_task_in_progress(params):
     now = datetime.now().isoformat()
     queue["tasks"][task_id]["status"] = "in_progress"
 
-    # started_at = when task entered queue processing
     if "started_at" not in queue["tasks"][task_id]:
         queue["tasks"][task_id]["started_at"] = now
 
-    # processing_started_at = when Claude ACTUALLY starts working on this task
-    # This is the key timestamp for accurate execution time in parallel runs
     queue["tasks"][task_id]["processing_started_at"] = now
+    if card_title:
+        queue["tasks"][task_id]["card_title"] = card_title[:40]  # Cap at 40 chars
     started_at = queue["tasks"][task_id]["started_at"]
 
     try:
-        with open(queue_file, 'w', encoding='utf-8') as f:
-            json.dump(queue, f, indent=2)
+        safe_write_queue_with_lock(queue_file, queue)
     except Exception as e:
         return {"status": "error", "message": f"❌ Error writing queue: {str(e)}"}
 
-    # Write stub to results file
     results_file = os.path.join(os.getcwd(), "data/claude_task_results.json")
     try:
         if os.path.exists(results_file):
@@ -677,37 +800,37 @@ def mark_task_in_progress(params):
             results = {"results": {}}
 
         if task_id not in results.get("results", {}):
-            results["results"][task_id] = {
+            stub = {
                 "status": "in_progress",
                 "started_at": started_at,
                 "processing_started_at": now,
                 "description": queue["tasks"][task_id].get("description", ""),
                 "batch_id": queue["tasks"][task_id].get("batch_id")
             }
+            if card_title:
+                stub["card_title"] = card_title[:40]
+            results["results"][task_id] = stub
             with open(results_file, 'w', encoding='utf-8') as f:
                 json.dump(results, f, indent=2)
     except Exception as e:
         print(f"Warning: Could not write started_at stub: {e}", file=sys.stderr)
 
-    return {
+    result = {
         "status": "success",
         "message": f"✅ Task '{task_id}' marked as in_progress",
         "processing_started_at": now
     }
+    if card_title:
+        result["card_title"] = card_title[:40]
+    return result
 
 
 def execute_queue(params):
     """
     Spawns Claude Code session(s) to process queued tasks.
     
-    MODES:
-    1. Sequential (default): One agent processes all tasks
-    2. Single agent: agent_id param filters to specific agent's tasks
-    3. Parallel: parallel param spawns multiple agents
-    
-    PRISON GUARD: Hard limit of 3 agents max, enforced here.
+    No hard limits on parallel agents - task count drives spawning.
     """
-    # CRITICAL: Check if already inside Claude Code
     if os.environ.get("CLAUDECODE"):
         return {
             "status": "error",
@@ -716,21 +839,8 @@ def execute_queue(params):
         }
 
     agent_id = params.get("agent_id")
-    parallel = params.get("parallel", 1)
+    parallel = params.get("parallel", 3)
     
-    # PRISON GUARD: Enforce max agents
-    parallel = min(max(parallel, 1), MAX_PARALLEL_AGENTS)
-    
-    # Check current running agents
-    if not enforce_agent_limit():
-        running = count_running_agents()
-        return {
-            "status": "blocked",
-            "message": f"❌ Prison guard: {running} agents already running (max {MAX_PARALLEL_AGENTS})",
-            "hint": "Wait for current agents to complete or kill them with kill_agents()"
-        }
-
-    # LOCKFILE CHECK
     lockfile = os.path.join(os.getcwd(), "data/execute_queue.lock")
 
     if os.path.exists(lockfile):
@@ -742,7 +852,6 @@ def execute_queue(params):
                 pids = lock_data.get("pids", [])
                 created_at = lock_data.get("created_at")
 
-            # Check timestamp - auto-remove locks older than 30 minutes
             if created_at:
                 try:
                     lock_time = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
@@ -753,7 +862,6 @@ def execute_queue(params):
                 except:
                     pass
 
-            # Check if any PIDs still alive
             if not should_remove:
                 all_pids = pids if pids else ([pid] if pid else [])
                 any_alive = False
@@ -784,24 +892,20 @@ def execute_queue(params):
             except:
                 pass
 
-    # CHECK for queued tasks
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
-    if not os.path.exists(queue_file):
-        return {
-            "status": "success",
-            "message": "✅ No tasks in queue",
-            "task_count": 0
-        }
-
-    try:
-        with open(queue_file, 'r', encoding='utf-8') as f:
-            queue = json.load(f)
-    except Exception as e:
-        return {"status": "error", "message": f"❌ Error reading queue: {str(e)}"}
-
-    # Count queued tasks
-    task_count = sum(1 for task_data in queue.get("tasks", {}).values()
-                     if task_data.get("status") == "queued")
+    # Count tasks across all queue files
+    task_count = 0
+    all_queued_tasks = {}  # task_id -> task_data
+    for queue_file in get_all_queue_files():
+        if not os.path.exists(queue_file):
+            continue
+        try:
+            queue = safe_read_queue_with_lock(queue_file)
+            for task_id, task_data in queue.get("tasks", {}).items():
+                if task_data.get("status") == "queued":
+                    task_count += 1
+                    all_queued_tasks[task_id] = task_data
+        except Exception as e:
+            print(f"Warning: Could not read {queue_file}: {e}", file=sys.stderr)
 
     if task_count == 0:
         return {
@@ -810,51 +914,57 @@ def execute_queue(params):
             "task_count": 0
         }
 
-    # Setup environment
     base_env = os.environ.copy()
     base_env.pop('ANTHROPIC_API_KEY', None)
-    base_env.pop('CLAUDECODE', None)  # CRITICAL: Remove so spawned process doesn't think it's nested
+    base_env.pop('CLAUDECODE', None)
+    base_env.pop('CLAUDE_CODE_ENTRYPOINT', None)
+    base_env.pop('CLAUDE_CODE_SSE_PORT', None)
+    base_env.pop('CLAUDE_CODE_SUBAGENT_MODEL', None)
+    base_env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:' + base_env.get('PATH', '')
 
     spawned = []
     pids = []
 
-    # PARALLEL MODE
     if parallel > 1:
-        # Group tasks by agent_id to count per agent
         agent_tasks = {}
-        for task_id, task_data in queue.get("tasks", {}).items():
-            if task_data.get("status") == "queued":
-                aid = task_data.get("agent_id", "agent_1")
-                if aid not in agent_tasks:
-                    agent_tasks[aid] = []
-                agent_tasks[aid].append(task_id)
+        for task_id, task_data in all_queued_tasks.items():
+            aid = task_data.get("agent_id", "agent_1")
+            if aid not in agent_tasks:
+                agent_tasks[aid] = []
+            agent_tasks[aid].append(task_id)
 
-        # Limit to max agents
-        agent_ids = sorted(agent_tasks.keys())[:MAX_PARALLEL_AGENTS]
+        agent_ids = sorted(agent_tasks.keys())[:parallel]
 
         for aid in agent_ids:
             task_list = agent_tasks.get(aid, [])
             if not task_list:
                 continue
 
-            # Each agent uses MAIN queue file but filters by agent_id
             prompt = f"""You are {aid}. Process ONLY your assigned tasks.
 
 ⚠️ CRITICAL: You are {aid}. Only process tasks assigned to you.
 
-1. Get YOUR tasks only:
+1. Get YOUR tasks:
    python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant", "action": "process_queue", "params": {{"agent_id": "{aid}"}}}}'
 
-2. For each task returned, execute it
-3. Log completion for each task via execution_hub.py
-4. Exit when done
+2. For EACH task:
+   a. Generate a card_title (max 40 chars) - a short distinctive name like "SaaSpocalypse journalist blast" or "Post-scarcity execution blog". NO generic prefixes like "Build" or "Create".
+   b. Call mark_task_in_progress with task_id AND card_title:
+      python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant", "action": "mark_task_in_progress", "params": {{"task_id": "...", "card_title": "..."}}}}'
+   c. Execute the task
+   d. Generate a card_stat (max 15 chars) - the key outcome like "24 sent", "6 sections", "deployed"
+   e. Call log_task_completion with task_id, status, actions_taken, card_title, AND card_stat
+
+3. Exit when done
 
 Project context in .claude/CLAUDE.md"""
 
             try:
+                import shlex
+                claude_cmd = f"claude -p {shlex.quote(prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
                 log_file = open(os.path.join(os.getcwd(), f"data/claude_execution_{aid}.log"), "w")
                 process = subprocess.Popen(
-                    ["claude", "-p", prompt, "--permission-mode", "acceptEdits", "--allowedTools", "Bash,Read,Write,Edit"],
+                    ["/bin/zsh", "-l", "-c", claude_cmd],
                     env=base_env, cwd=os.getcwd(), stdout=log_file, stderr=subprocess.STDOUT, start_new_session=True
                 )
                 spawned.append({"agent_id": aid, "pid": process.pid, "tasks": len(task_list)})
@@ -863,36 +973,48 @@ Project context in .claude/CLAUDE.md"""
             except Exception as e:
                 print(f"❌ Failed to spawn {aid}: {e}", file=sys.stderr)
 
-    # SINGLE AGENT MODE (with optional agent_id filter)
     else:
         if agent_id:
             prompt = f"""You are {agent_id}. Process ONLY tasks assigned to {agent_id}.
 
-Call process_queue with agent_id="{agent_id}" to get YOUR tasks:
-python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant", "action": "process_queue", "params": {{"agent_id": "{agent_id}"}}}}'
+1. Get YOUR tasks:
+   python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant", "action": "process_queue", "params": {{"agent_id": "{agent_id}"}}}}'
 
-1. Get YOUR tasks only
-2. Execute each task
-3. Log completion for each
-4. rm data/execute_queue.lock when done
+2. For EACH task:
+   a. Generate a card_title (max 40 chars) - short distinctive name like "SaaSpocalypse journalist blast". NO generic prefixes.
+   b. Call mark_task_in_progress with task_id AND card_title
+   c. Execute the task
+   d. Generate a card_stat (max 15 chars) - key outcome like "24 sent", "6 sections", "deployed"
+   e. Call log_task_completion with task_id, status, actions_taken, card_title, AND card_stat
+
+3. rm data/execute_queue.lock when done
 
 Project context in .claude/CLAUDE.md"""
         else:
-            prompt = """Process all tasks in data/claude_task_queue.json.
+            prompt = """Process all tasks in the queue.
 
 🚨 LOGGING IS MANDATORY - call log_task_completion for EVERY task 🚨
 
-1. python3 execution_hub.py execute_task --params '{"tool_name": "claude_assistant", "action": "process_queue", "params": {}}'
-2. For each task, execute it
-3. Log completion for each task
-4. rm data/execute_queue.lock when done
+1. Get tasks:
+   python3 execution_hub.py execute_task --params '{"tool_name": "claude_assistant", "action": "process_queue", "params": {}}'
+
+2. For EACH task:
+   a. Generate a card_title (max 40 chars) - short distinctive name like "SaaSpocalypse journalist blast". NO generic prefixes.
+   b. Call mark_task_in_progress with task_id AND card_title
+   c. Execute the task
+   d. Generate a card_stat (max 15 chars) - key outcome like "24 sent", "6 sections", "deployed"
+   e. Call log_task_completion with task_id, status, actions_taken, card_title, AND card_stat
+
+3. rm data/execute_queue.lock when done
 
 Project context in .claude/CLAUDE.md"""
 
         try:
+            import shlex
+            claude_cmd = f"claude -p {shlex.quote(prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
             log_file = open(os.path.join(os.getcwd(), "data/claude_execution.log"), "w")
             process = subprocess.Popen(
-                ["claude", "-p", prompt, "--permission-mode", "acceptEdits", "--allowedTools", "Bash,Read,Write,Edit"],
+                ["/bin/zsh", "-l", "-c", claude_cmd],
                 env=base_env, cwd=os.getcwd(), stdout=log_file, stderr=subprocess.STDOUT, start_new_session=True
             )
             spawned.append({"pid": process.pid, "tasks": task_count, "agent_id": agent_id})
@@ -900,7 +1022,6 @@ Project context in .claude/CLAUDE.md"""
         except Exception as e:
             return {"status": "error", "message": f"❌ Failed to spawn Claude Code: {str(e)}"}
 
-    # CREATE LOCKFILE
     try:
         with open(lockfile, 'w') as f:
             json.dump({
@@ -942,7 +1063,7 @@ def kill_agents(params):
             
             for pid in pids:
                 try:
-                    os.kill(pid, 9)  # SIGKILL
+                    os.kill(pid, 9)
                     killed.append(pid)
                 except OSError:
                     failed.append(pid)
@@ -952,7 +1073,6 @@ def kill_agents(params):
         except Exception as e:
             return {"status": "error", "message": f"❌ Error: {e}"}
     
-    # Also try to kill any claude processes
     try:
         subprocess.run(["pkill", "-f", "claude.*-p"], capture_output=True, timeout=5)
     except:
@@ -980,6 +1100,8 @@ def log_task_completion(params):
     - output_summary: human-readable summary
     - errors: if status is "error", what went wrong
     - execution_time_seconds: how long it took
+    - card_title: Short distinctive name (max 40 chars) for dashboard display
+    - card_stat: Key outcome metric (max 15 chars) like "24 sent", "6 sections", "deployed"
     """
     task_id = params.get("task_id")
     status = params.get("status")
@@ -988,32 +1110,32 @@ def log_task_completion(params):
     output_summary = params.get("output_summary")
     errors = params.get("errors")
     execution_time = params.get("execution_time_seconds", 0)
+    card_title = params.get("card_title")  # Optional: agent-generated short title
+    card_stat = params.get("card_stat")    # Optional: agent-generated outcome metric
 
     if not task_id:
         return {"status": "error", "message": "❌ Missing required field: task_id"}
     if not status:
         return {"status": "error", "message": "❌ Missing required field: status"}
 
-    # Normalize status: accept "completed", "complete", "done" as success
     status_lower = status.lower().strip()
     if status_lower in ["completed", "complete", "done"]:
         status = "done"
     else:
-        # Anything else is treated as an error
         status = "error"
 
-    # REMOVE completed task from queue
     task_description = None
     task_batch_id = None
     task_started_at = None
     task_created_at = None
-    task_processing_started_at = None  # Actual work start time (key for parallel execution)
-    queue_file = os.path.join(os.getcwd(), "data/claude_task_queue.json")
+    task_processing_started_at = None
 
-    if os.path.exists(queue_file):
+    # Search all queue files for the task
+    for queue_file in get_all_queue_files():
+        if not os.path.exists(queue_file):
+            continue
         try:
-            with open(queue_file, 'r', encoding='utf-8') as f:
-                queue = json.load(f)
+            queue = safe_read_queue_with_lock(queue_file)
 
             if task_id in queue.get("tasks", {}):
                 task_description = queue["tasks"][task_id].get("description", "")
@@ -1023,12 +1145,12 @@ def log_task_completion(params):
                 task_processing_started_at = queue["tasks"][task_id].get("processing_started_at")
 
                 del queue["tasks"][task_id]
-                safe_write_queue(queue_file, queue)
+                safe_write_queue_with_lock(queue_file, queue)
                 print(f"✅ Removed '{task_id}' from queue (completed)", file=sys.stderr)
+                break  # Found and removed, no need to check other queues
         except Exception as e:
-            print(f"Warning: Could not update queue: {e}", file=sys.stderr)
+            print(f"Warning: Could not update {queue_file}: {e}", file=sys.stderr)
 
-    # Try to get timestamps from results stub if not in queue
     if execution_time == 0 and not task_processing_started_at:
         results_file = os.path.join(os.getcwd(), "data/claude_task_results.json")
         if os.path.exists(results_file):
@@ -1037,7 +1159,6 @@ def log_task_completion(params):
                     existing_results = json.load(f)
                 if task_id in existing_results.get("results", {}):
                     stub = existing_results["results"][task_id]
-                    # Prefer processing_started_at (actual work time) over started_at (queue time)
                     task_processing_started_at = stub.get("processing_started_at")
                     if not task_started_at:
                         task_started_at = stub.get("started_at")
@@ -1045,12 +1166,12 @@ def log_task_completion(params):
                         task_description = stub.get("description")
                     if not task_batch_id:
                         task_batch_id = stub.get("batch_id")
+                    # Preserve card_title from stub if agent didn't provide one
+                    if not card_title and stub.get("card_title"):
+                        card_title = stub.get("card_title")
             except:
                 pass
 
-    # Calculate execution_time if not provided
-    # PRIORITY: processing_started_at > started_at > created_at
-    # This ensures parallel tasks report ACTUAL work time, not queue wait time
     if execution_time == 0:
         timestamp = task_processing_started_at or task_started_at or task_created_at
         if timestamp:
@@ -1064,7 +1185,6 @@ def log_task_completion(params):
             except Exception as e:
                 print(f"Warning: Could not calculate execution time: {e}", file=sys.stderr)
 
-    # Write result
     results_file = os.path.join(os.getcwd(), "data/claude_task_results.json")
     archive_dir = os.path.join(os.getcwd(), "data/task_archive")
 
@@ -1077,7 +1197,6 @@ def log_task_completion(params):
     else:
         results = {"results": {}}
 
-    # Archive old results if count > 10
     if len(results.get("results", {})) > 10:
         try:
             os.makedirs(archive_dir, exist_ok=True)
@@ -1093,20 +1212,55 @@ def log_task_completion(params):
 
             if to_archive:
                 archive_file = os.path.join(archive_dir, "tasks.jsonl")
+
+                # Load existing task_ids to prevent duplicates
+                existing_task_ids = set()
+                if os.path.exists(archive_file):
+                    try:
+                        with open(archive_file, 'r', encoding='utf-8') as f:
+                            for line in f:
+                                try:
+                                    entry = json.loads(line.strip())
+                                    existing_task_ids.add(entry.get('task_id'))
+                                except:
+                                    pass
+                    except:
+                        pass
+
                 with open(archive_file, 'a', encoding='utf-8') as f:
                     for archived_task_id, result_data in to_archive.items():
-                        # Convert to simplified tagged format
+                        # Skip if already archived
+                        if archived_task_id in existing_task_ids:
+                            continue
+
                         desc = result_data.get('description', '')
-                        summary = desc.replace('\n', ' ')[:100].strip()
-                        if len(desc) > 100:
+                        summary = desc.replace('\n', ' ')[:200].strip()
+                        if len(desc) > 200:
                             summary += '...'
 
-                        # Extract and map tags
+                        # Extract doc references: [Name](/doc/UUID)
+                        doc_refs = re.findall(r'\[([^\]]+)\]\(/doc/([a-f0-9-]+)\)', desc)
+                        doc_refs_dict = {name: doc_id for name, doc_id in doc_refs}
+
+                        # Load project tags mapping and add linked docs
+                        project_tags_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'project_tags.json')
+                        if os.path.exists(project_tags_file):
+                            try:
+                                with open(project_tags_file, 'r') as ptf:
+                                    project_tags_map = json.load(ptf)
+                                for tag in result_data.get('project_tags', []):
+                                    if tag in project_tags_map:
+                                        for doc_key, doc_id in project_tags_map[tag].items():
+                                            doc_refs_dict[f"[project:{doc_key}]"] = doc_id
+                            except:
+                                pass
+
                         tags = result_data.get('project_tags', [])
                         tag_map = {'war-plan': 'orchestrate-blitzkrieg', 'blog': 'blogs'}
                         mapped_tags = [f'#{tag_map.get(t, t)}' for t in tags]
+                        # Dedupe tags
+                        mapped_tags = list(dict.fromkeys(mapped_tags))
 
-                        # Infer category
                         desc_lower = desc.lower()
                         if 'blog' in desc_lower or 'chronicle' in desc_lower:
                             category = 'content'
@@ -1121,12 +1275,18 @@ def log_task_completion(params):
                         else:
                             category = 'general'
 
+                        completed_at = result_data.get('completed_at')
+                        if not completed_at or completed_at == 'unknown':
+                            completed_at = datetime.now().isoformat()
+
                         archived_entry = {
                             'task_id': archived_task_id,
                             'summary': summary,
-                            'completed': result_data.get('completed_at', 'unknown'),
+                            'completed': completed_at,
                             'tag': ' '.join(mapped_tags),
-                            'category': category
+                            'category': category,
+                            'doc_refs': doc_refs_dict,
+                            'actions_taken': result_data.get('actions_taken', [])
                         }
                         f.write(json.dumps(archived_entry) + '\n')
 
@@ -1138,7 +1298,6 @@ def log_task_completion(params):
     if not output_summary:
         output_summary = "Task completed" if status == "done" else "Task failed"
 
-    # Calculate batch position
     is_first_task_in_batch = False
     batch_position = 0
 
@@ -1151,12 +1310,10 @@ def log_task_completion(params):
         is_first_task_in_batch = (completed_in_batch == 0)
         batch_position = completed_in_batch + 1
 
-    # Extract project tags from task description using regex
     project_tags = []
     if task_description:
         project_tags = re.findall(r'#([\w-]+)', task_description)
 
-    # Add result
     results["results"][task_id] = {
         "status": status,
         "description": task_description if task_description else output_summary,
@@ -1169,7 +1326,12 @@ def log_task_completion(params):
         "project_tags": project_tags
     }
 
-    # Include processing_started_at for transparency on parallel execution timing
+    # Add card_title and card_stat for dashboard display
+    if card_title:
+        results["results"][task_id]["card_title"] = card_title[:40]
+    if card_stat:
+        results["results"][task_id]["card_stat"] = card_stat[:15]
+
     if task_processing_started_at:
         results["results"][task_id]["processing_started_at"] = task_processing_started_at
     if task_started_at:
@@ -1187,11 +1349,8 @@ def log_task_completion(params):
     except Exception as e:
         return {"status": "error", "message": f"❌ Error writing results: {str(e)}"}
 
-    # FORM-TO-OUTPUT PATTERN: Write output to semantic_memory/results/{request_id}.json
-    # This enables HTML forms to poll for results directly
     if task_description and "REQUEST_ID:" in task_description:
         try:
-            # Extract request_id from task description
             request_id_match = re.search(r'REQUEST_ID:\s*(\S+)', task_description)
             if request_id_match:
                 request_id = request_id_match.group(1).strip()
@@ -1199,7 +1358,6 @@ def log_task_completion(params):
                 os.makedirs(results_dir, exist_ok=True)
                 result_file_path = os.path.join(results_dir, f"{request_id}.json")
 
-                # Write the output in format HTML expects
                 result_data = {
                     "status": "complete",
                     "type": task_id,
@@ -1213,7 +1371,6 @@ def log_task_completion(params):
         except Exception as e:
             print(f"Warning: Could not write form-to-output result: {e}", file=sys.stderr)
 
-    # Merge token telemetry if available
     telemetry_file = os.path.join(os.getcwd(), "data", "last_execution_telemetry.json")
 
     if os.path.exists(telemetry_file):
@@ -1263,10 +1420,10 @@ def batch_assign_tasks(params):
     - tasks: list of task dicts
 
     Optional:
-    - parallel: number of agents (1-3, default 1)
+    - parallel: number of agents (default 3)
     """
     tasks = params.get("tasks")
-    parallel = min(max(params.get("parallel", 1), 1), MAX_PARALLEL_AGENTS)
+    parallel = params.get("parallel", 3)
 
     if not tasks:
         return {"status": "error", "message": "❌ Missing required field: tasks"}
@@ -1289,35 +1446,33 @@ def batch_assign_tasks(params):
             failed_count += 1
             continue
 
-        if not task_id:
-            results.append({"index": i, "task_id": None, "status": "error", "message": "❌ Missing task_id"})
-            failed_count += 1
-            continue
+        # task_id is optional - assign_task will auto-generate if not provided
 
         task_params = task.copy()
         task_params["auto_execute"] = False
 
-        # Assign agent_id for parallel execution
-        if parallel > 1:
+        if parallel > 1 and not task_params.get("agent_id"):
             agent_num = (i % parallel) + 1
             task_params["agent_id"] = f"agent_{agent_num}"
 
         try:
             result = assign_task(task_params)
+            # Get task_id from result (assign_task auto-generates if not provided)
+            actual_task_id = result.get("task_id") or task_id
             if result.get("status") == "success":
                 success_count += 1
                 agent_label = f" ({task_params.get('agent_id')})" if parallel > 1 else ""
                 results.append({
                     "index": i,
-                    "task_id": task_id,
+                    "task_id": actual_task_id,
                     "status": "success",
-                    "message": f"✅ Task {task_id} queued{agent_label}"
+                    "message": f"✅ Task {actual_task_id} queued{agent_label}"
                 })
             else:
                 failed_count += 1
                 results.append({
                     "index": i,
-                    "task_id": task_id,
+                    "task_id": actual_task_id,
                     "status": "error",
                     "message": result.get("message", "Unknown error")
                 })
@@ -1334,7 +1489,6 @@ def batch_assign_tasks(params):
     if failed_count > 0:
         summary += f" ({failed_count} failed)"
 
-    # Auto-execute after batch assignment
     execution = None
     if success_count > 0 and not os.environ.get("CLAUDECODE"):
         execution = execute_queue({"parallel": parallel})
@@ -1413,7 +1567,7 @@ def get_recent_tasks(params):
 
 
 def parse_tasks_from_doc(params):
-    """Parse tasks from markdown document text."""
+    """Parse tasks from markdown document text. Only # headers start new tasks."""
     doc_text = params.get("doc_text", "")
 
     if not doc_text:
@@ -1425,17 +1579,17 @@ def parse_tasks_from_doc(params):
     current_lines = []
 
     for line in lines:
+        # Only headers start new tasks, bullets are part of task description
         is_header = line.startswith('#')
-        is_bullet = line.startswith('- ') and not line.startswith('  ')
 
-        if is_header or is_bullet:
+        if is_header:
             if current_task:
                 tasks.append({
                     "description": '\n'.join(current_lines).strip(),
                     "raw_header": current_task
                 })
 
-            current_task = line.lstrip('#- ').strip()
+            current_task = line.lstrip('# ').strip()
             current_lines = [current_task]
         elif current_task and line.strip():
             current_lines.append(line)
@@ -1457,27 +1611,35 @@ def parse_tasks_from_doc(params):
 def self_assign_from_doc(params):
     """
     One-command task import from Outline doc.
+    
+    FIXED: Now assigns agent_ids BEFORE spawning to prevent race conditions.
 
     Required:
     - doc_id: Outline document ID to fetch tasks from
 
     Optional:
     - test_mode: if true, writes to claude_test_task_queue.json (default: false)
-    - parallel: number of agents for parallel execution (1-3, default: 3)
+    - parallel: number of agents for parallel execution (default: 3)
     """
-    doc_id = params.get("doc_id", "8398b552-a586-4c11-9821-cc85844e9156")
+    doc_id = params.get("doc_id", "51b72c69-0e28-4d20-bfbc-6b0854ec2f25")  # Claude Tasks in outline_editor
     test_mode = params.get("test_mode", False)
-    parallel = min(max(params.get("parallel", 3), 1), MAX_PARALLEL_AGENTS)
+    parallel = params.get("parallel", 3)
 
-    # Fetch document from Outline
     try:
+        # Set up environment for psycopg2 to find libpq
+        env = os.environ.copy()
+        env.pop('PYTHONPATH', None)
+        env['PATH'] = '/Users/srinivas/venv/bin:/opt/homebrew/bin:' + env.get('PATH', '')
+        env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib:' + env.get('DYLD_LIBRARY_PATH', '')
+
         result = subprocess.run(
-            ["python3", "execution_hub.py", "execute_task", "--params",
+            ["/Users/srinivas/venv/bin/python3", "execution_hub.py", "execute_task", "--params",
              json.dumps({"tool_name": "outline_editor", "action": "get_doc", "params": {"doc_id": doc_id}})],
             capture_output=True,
             text=True,
             timeout=30,
-            cwd=os.getcwd()
+            cwd=os.getcwd(),
+            env=env
         )
 
         if result.returncode != 0:
@@ -1489,12 +1651,11 @@ def self_assign_from_doc(params):
 
         doc_text = doc_response.get("data", {}).get("text", "")
         if not doc_text:
-            return {"status": "error", "message": "❌ Document has no text content"}
+            return {"status": "error", "message": f"❌ Document has no text content. stdout: {result.stdout[:300]} stderr: {result.stderr[:300]}"}
 
     except Exception as e:
         return {"status": "error", "message": f"❌ Error fetching document: {str(e)}"}
 
-    # Parse tasks from document
     parse_result = parse_tasks_from_doc({"doc_text": doc_text})
     if parse_result.get("status") == "error":
         return parse_result
@@ -1503,11 +1664,10 @@ def self_assign_from_doc(params):
     if not parsed_tasks:
         return {"status": "success", "message": "✅ No tasks found in document", "tasks_added": 0}
 
-    # Generate task list
     tasks_to_assign = []
     task_ids = []
 
-    for task in parsed_tasks:
+    for i, task in enumerate(parsed_tasks):
         description = task.get("description", "")
         raw_header = task.get("raw_header", "")
 
@@ -1515,14 +1675,17 @@ def self_assign_from_doc(params):
         task_id = re.sub(r'[^a-z0-9]+', '_', clean_header.lower()).strip('_')
         task_id = task_id[:50]
 
+        agent_num = (i % parallel) + 1
+        agent_id = f"agent_{agent_num}"
+
         tasks_to_assign.append({
             "task_id": task_id,
             "description": description,
-            "context": {"source_doc": doc_id}
+            "context": {"source_doc": doc_id},
+            "agent_id": agent_id
         })
         task_ids.append(task_id)
 
-    # Use batch_assign_tasks
     batch_result = batch_assign_tasks({"tasks": tasks_to_assign, "parallel": parallel})
 
     return {
@@ -1560,7 +1723,6 @@ def get_task_results(params):
     if output_format == "json":
         return {"status": "success", "results": all_results, "task_count": len(all_results)}
 
-    # Format as markdown table
     if not all_results:
         return {"status": "success", "formatted_output": "## Recent Execution Data\n\nNo completed tasks found."}
 
@@ -1866,6 +2028,100 @@ def archive_thread_logs(params):
         return {"status": "error", "message": f"❌ Failed to archive: {str(e)}"}
 
 
+# === STAGING FUNCTIONS FOR DASHBOARD ===
+
+STAGED_TASKS_FILE = os.path.join(os.getcwd(), "data/staged_tasks.json")
+
+
+def stage_task(params):
+    """
+    Stage a task for later execution. Used by Claude in conversation to queue tasks
+    that appear in the dashboard staging stack without triggering execution.
+
+    Required:
+    - description: The task description
+
+    Optional:
+    - preset: Task preset type (custom, email, website, report, tool, blog)
+    """
+    description = params.get("description")
+    preset = params.get("preset", "custom")
+
+    if not description:
+        return {"status": "error", "message": "❌ Missing required field: description"}
+
+    # Read existing staged tasks
+    staged = []
+    if os.path.exists(STAGED_TASKS_FILE):
+        try:
+            with open(STAGED_TASKS_FILE, 'r', encoding='utf-8') as f:
+                staged = json.load(f)
+        except:
+            staged = []
+
+    # Add new task
+    staged.append({
+        "description": description,
+        "preset": preset,
+        "staged_at": datetime.now().isoformat()
+    })
+
+    # Write back
+    try:
+        with open(STAGED_TASKS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(staged, f, indent=2)
+    except Exception as e:
+        return {"status": "error", "message": f"❌ Failed to stage task: {str(e)}"}
+
+    return {
+        "status": "success",
+        "message": f"✅ Task staged ({len(staged)} total)",
+        "staged_count": len(staged)
+    }
+
+
+def get_staged_tasks(params):
+    """
+    Get all staged tasks from the staging file.
+    Used by dashboard to display the staging stack.
+    """
+    if not os.path.exists(STAGED_TASKS_FILE):
+        return {
+            "status": "success",
+            "staged_tasks": [],
+            "count": 0
+        }
+
+    try:
+        with open(STAGED_TASKS_FILE, 'r', encoding='utf-8') as f:
+            staged = json.load(f)
+    except:
+        staged = []
+
+    return {
+        "status": "success",
+        "staged_tasks": staged,
+        "count": len(staged)
+    }
+
+
+def clear_staged_tasks(params):
+    """
+    Clear all staged tasks. Called by dashboard after Execute All
+    moves staged tasks to the queue.
+    """
+    try:
+        with open(STAGED_TASKS_FILE, 'w', encoding='utf-8') as f:
+            json.dump([], f)
+    except Exception as e:
+        return {"status": "error", "message": f"❌ Failed to clear staged tasks: {str(e)}"}
+
+    return {
+        "status": "success",
+        "message": "✅ Staged tasks cleared"
+    }
+
+
 def main():
     """Main entry point"""
     import argparse
@@ -1888,6 +2144,7 @@ def main():
         'get_all_results': get_all_results,
         'ask_claude': ask_claude,
         'cancel_task': cancel_task,
+        'clear_queue': clear_queue,
         'update_task': update_task,
         'process_queue': process_queue,
         'execute_queue': execute_queue,
@@ -1902,7 +2159,10 @@ def main():
         'infer_task_type': infer_task_type,
         'get_task_context': get_task_context,
         'parse_tasks_from_doc': parse_tasks_from_doc,
-        'self_assign_from_doc': self_assign_from_doc
+        'self_assign_from_doc': self_assign_from_doc,
+        'stage_task': stage_task,
+        'get_staged_tasks': get_staged_tasks,
+        'clear_staged_tasks': clear_staged_tasks
     }
 
     if args.action in actions:

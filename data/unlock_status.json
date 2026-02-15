@@ -1,4 +1,12 @@
 {
-  "tools_unlocked": [],
-  "unlock_credits": 0
+  "tools_unlocked": [
+    "json_manager",
+    "terminal_tool",
+    "system_settings",
+    "unlock_tool",
+    "check_credits",
+    "system_control",
+    "refer_user"
+  ],
+  "unlock_credits": 3
 }

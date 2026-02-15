@@ -519,3 +519,106 @@ def get_dashboard_file(file_key: str):
 @app.get("/")
 def root():
     return {"status": "Jarvis core is online."}
+
+@app.get("/data-nocache/{filename:path}")
+async def get_data_nocache(filename: str):
+    """Serve data files with no-cache headers for real-time polling"""
+    from fastapi.responses import FileResponse
+    filepath = os.path.join(BASE_DIR, "data", filename)
+    if not os.path.exists(filepath):
+        return {"error": "File not found"}
+    return FileResponse(
+        filepath,
+        headers={
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
+    )
+
+# === Tool Catalog Endpoint ===
+@app.get("/get_tool_catalog")
+def get_tool_catalog():
+    """
+    Unified tool catalog merging system_settings.ndjson + orchestrate_app_store.json.
+    Returns single list with unlock status, metadata, and costs.
+    """
+    try:
+        # Load system_settings.ndjson (user's installed tools)
+        installed_tools = {}
+        if os.path.exists(SYSTEM_REGISTRY):
+            with open(SYSTEM_REGISTRY, "r") as f:
+                for line in f:
+                    if line.strip():
+                        entry = json.loads(line.strip())
+                        if entry.get("action") == "__tool__":
+                            installed_tools[entry.get("tool")] = entry
+
+        # Load orchestrate_app_store.json (marketplace)
+        app_store_path = os.path.join(BASE_DIR, "data", "orchestrate_app_store.json")
+        app_store = {}
+        if os.path.exists(app_store_path):
+            with open(app_store_path, "r") as f:
+                data = json.load(f)
+                app_store = data.get("entries", {})
+
+        # Load unlock_status.json
+        unlocked_tools = set()
+        if os.path.exists(UNLOCK_STATUS_PATH):
+            with open(UNLOCK_STATUS_PATH, "r") as f:
+                unlock_data = json.load(f)
+                unlocked_tools = set(unlock_data.get("tools_unlocked", []))
+
+        # Merge: app_store has metadata, system_settings has install status
+        catalog = []
+        
+        # All tools from app_store (marketplace view)
+        for tool_name, meta in app_store.items():
+            is_installed = tool_name in installed_tools
+            is_unlocked = tool_name in unlocked_tools or (is_installed and not installed_tools.get(tool_name, {}).get("locked", True))
+            
+            catalog.append({
+                "name": tool_name,
+                "label": meta.get("label", tool_name),
+                "description": meta.get("description", ""),
+                "priority": meta.get("priority", 99),
+                "cost": meta.get("referral_unlock_cost", 0),
+                "unlocked": is_unlocked,
+                "installed": is_installed,
+                "requires_credentials": meta.get("requires_credentials", False),
+                "credential_fields": meta.get("credential_fields", []),
+                "unlock_message": meta.get("unlock_message", ""),
+                "post_unlock_nudge": meta.get("post_unlock_nudge", "")
+            })
+
+        # Add any installed tools not in app_store (core tools)
+        for tool_name, entry in installed_tools.items():
+            if tool_name not in app_store:
+                is_unlocked = tool_name in unlocked_tools or not entry.get("locked", True)
+                catalog.append({
+                    "name": tool_name,
+                    "label": tool_name.replace("_", " ").title(),
+                    "description": entry.get("description", ""),
+                    "priority": 999,
+                    "cost": entry.get("referral_unlock_cost", 0),
+                    "unlocked": is_unlocked,
+                    "installed": True,
+                    "requires_credentials": False,
+                    "credential_fields": [],
+                    "unlock_message": "",
+                    "post_unlock_nudge": ""
+                })
+
+        # Sort by priority, then unlocked first
+        catalog.sort(key=lambda x: (not x["unlocked"], x["priority"], x["name"]))
+
+        return {
+            "status": "success",
+            "tools": catalog,
+            "total": len(catalog),
+            "unlocked_count": sum(1 for t in catalog if t["unlocked"])
+        }
+
+    except Exception as e:
+        logging.error(f"Failed to build tool catalog: {e}")
+        return {"status": "error", "message": str(e)}

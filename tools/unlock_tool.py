@@ -473,7 +473,7 @@ def unlock_marketplace_tool(tool_name, cost):
             "label": tool_config.get("label", tool_name),
             "credits_remaining": ledger["referral_credits"],
             "script_launched": script_launched,
-            "unlock_message": f"✅ {tool_config.get('label', tool_name)} unlocked! ({ledger['referral_credits']} credits remaining)\n\n{'🌐 Authentication launched — check your browser to sign in with your Claude Pro/Team account.' if script_launched else '🔧 Authentication Required — run this in Terminal:\\n\\nbash ' + script_path + '\\n\\nThis opens your browser for Claude Code OAuth.'}",
+            "unlock_message": f"✅ {tool_config.get('label', tool_name)} unlocked! ({ledger['referral_credits']} credits remaining)\n\n" + ('🌐 Authentication launched — check your browser to sign in with your Claude Pro/Team account.' if script_launched else f'🔧 Authentication Required — run this in Terminal:\n\nbash {script_path}\n\nThis opens your browser for Claude Code OAuth.'),
             "post_unlock_nudge": tool_config.get("post_unlock_nudge", "")
         }
 
