@@ -554,10 +554,23 @@ def get_tool_catalog():
                         if entry.get("action") == "__tool__":
                             installed_tools[entry.get("tool")] = entry
 
-        # Load orchestrate_app_store.json (marketplace)
+        # Load orchestrate_app_store.json (marketplace) - try GitHub first for latest tools
+        GITHUB_APP_STORE_URL = "https://raw.githubusercontent.com/unmistakablecreative/orchestrate-gershwin/main/data/orchestrate_app_store.json"
         app_store_path = os.path.join(BASE_DIR, "data", "orchestrate_app_store.json")
         app_store = {}
-        if os.path.exists(app_store_path):
+
+        # Try GitHub first (gets latest marketplace tools)
+        try:
+            import requests
+            resp = requests.get(GITHUB_APP_STORE_URL, timeout=3)
+            if resp.status_code == 200:
+                data = resp.json()
+                app_store = data.get("entries", {})
+        except:
+            pass  # Fall through to local file
+
+        # Fallback to local file if GitHub failed
+        if not app_store and os.path.exists(app_store_path):
             with open(app_store_path, "r") as f:
                 data = json.load(f)
                 app_store = data.get("entries", {})
