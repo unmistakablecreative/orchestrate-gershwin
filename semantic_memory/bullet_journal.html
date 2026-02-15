@@ -140,7 +140,7 @@
 
         async function loadData() {
             try {
-                const response = await fetch('/data/bullet_journal.json');
+                const response = await fetch('/data-nocache/bullet_journal.json');
                 const data = await response.json();
 
                 allEntries = Object.entries(data.entries || {}).map(([id, entry]) => ({
