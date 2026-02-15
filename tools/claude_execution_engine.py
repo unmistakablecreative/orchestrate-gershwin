@@ -159,7 +159,7 @@ def trigger_execute_queue(parallel=3):
 
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         cmd = [
-            '/Users/srinivas/venv/bin/python3',
+            sys.executable,
             os.path.join(repo_root, 'execution_hub.py'),
             'execute_task',
             '--params',
