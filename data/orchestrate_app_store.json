@@ -1,70 +1,129 @@
 {
   "entries": {
-    "nylasinbox": {
-      "label": "Nylas Inbox",
-      "description": "Read, send, and manage emails directly inside your system using structured API control.",
-      "priority": 1,
-      "referral_unlock_cost": 10,
-      "requires_credentials": true,
-      "credential_fields": [
-        "api_key",
-        "grant_id"
-      ],
-      "unlock_message": "\u2705 Nylas Inbox unlocked! Set your credentials with: set_credentials nylasinbox",
-      "post_unlock_nudge": "\ud83d\udca1 Tip: Unlock convertkit_tool next to automate your email marketing workflows"
-    },
     "notion_tool": {
       "label": "Notion",
       "description": "Create pages, update tasks, or search workspace content using Orchestrate-powered flows.",
+      "priority": 1,
+      "referral_unlock_cost": 3,
+      "requires_credentials": true,
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Notion unlocked! Set your API key with: set_credentials notion_tool",
+      "post_unlock_nudge": "💡 Tip: Combine Notion with outline_editor for powerful documentation workflows"
+    },
+    "outline_editor": {
+      "label": "Outline Editor",
+      "description": "Create and manage structured documents in Outline. Perfect for wikis, docs, and knowledge bases.",
       "priority": 2,
       "referral_unlock_cost": 3,
       "requires_credentials": true,
-      "credential_fields": [
-        "api_key"
-      ],
-      "unlock_message": "\u2705 Notion unlocked! Set your API key with: set_credentials notion_tool",
-      "post_unlock_nudge": "\ud83d\udca1 Tip: Combine Notion with outline_editor for powerful documentation workflows"
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Outline Editor unlocked! Set your API key with: set_credentials outline_editor",
+      "post_unlock_nudge": "💡 Tip: Use outline_editor with claude_assistant for autonomous documentation"
+    },
+    "mem_tool": {
+      "label": "Mem",
+      "description": "Capture personal insights and notes, syncing them into your Mem workspace automatically.",
+      "priority": 3,
+      "referral_unlock_cost": 3,
+      "requires_credentials": true,
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Mem unlocked! Set your API key with: set_credentials mem_tool",
+      "post_unlock_nudge": "💡 Tip: Use mem_tool for quick capture, then review in your Mem workspace"
+    },
+    "readwise_tool": {
+      "label": "Readwise",
+      "description": "Import and explore highlights from your synced Readwise library. Search across all your book notes.",
+      "priority": 4,
+      "referral_unlock_cost": 6,
+      "requires_credentials": true,
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Readwise unlocked! Set your API key with: set_credentials readwise_tool",
+      "post_unlock_nudge": "💡 Tip: Search your highlights with semantic queries for instant recall"
+    },
+    "buffer_engine": {
+      "label": "Buffer Engine",
+      "description": "Schedule and auto-publish content to social media. Queue posts, manage campaigns, track engagement.",
+      "priority": 5,
+      "referral_unlock_cost": 6,
+      "requires_credentials": true,
+      "credential_fields": ["twitter_api_key", "twitter_api_secret", "twitter_access_token", "twitter_access_secret"],
+      "unlock_message": "✅ Buffer Engine unlocked! Set your Twitter credentials with: set_credentials buffer_engine",
+      "post_unlock_nudge": "💡 Tip: Combine with ideogram_tool for automated visual content"
+    },
+    "ideogram_tool": {
+      "label": "Ideogram",
+      "description": "Generate beautiful AI-driven images for documents, social posts, or presentations.",
+      "priority": 6,
+      "referral_unlock_cost": 6,
+      "requires_credentials": true,
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Ideogram unlocked! Set your API key with: set_credentials ideogram_tool",
+      "post_unlock_nudge": "💡 Tip: Use with buffer_engine to create and schedule visual content"
+    },
+    "automation_engine": {
+      "label": "Automation Engine",
+      "description": "Event-driven automation for triggering workflows based on file changes, schedules, and custom events.",
+      "priority": 7,
+      "referral_unlock_cost": 9,
+      "requires_credentials": false,
+      "unlock_message": "✅ Automation Engine unlocked! Create rules with: add_rule",
+      "post_unlock_nudge": "💡 Tip: Set up automations to run tasks while you sleep"
+    },
+    "github_tool_universal": {
+      "label": "GitHub",
+      "description": "Manage repos, commits, and pushes to GitHub directly from OrchestrateOS.",
+      "priority": 8,
+      "referral_unlock_cost": 9,
+      "requires_credentials": true,
+      "credential_fields": ["access_token"],
+      "unlock_message": "✅ GitHub unlocked! Set your access token with: set_credentials github_tool_universal",
+      "post_unlock_nudge": "💡 Tip: Combine with claude_assistant for autonomous code commits"
+    },
+    "nylasinbox": {
+      "label": "Nylas Inbox",
+      "description": "Read, send, and manage emails directly inside your system using structured API control.",
+      "priority": 9,
+      "referral_unlock_cost": 9,
+      "requires_credentials": true,
+      "credential_fields": ["api_key", "grant_id"],
+      "unlock_message": "✅ Nylas Inbox unlocked! Set your credentials with: set_credentials nylasinbox",
+      "post_unlock_nudge": "💡 Tip: Unlock convertkit_tool next to automate your email marketing workflows"
     },
     "convertkit_tool": {
       "label": "ConvertKit",
       "description": "Create, update, and analyze email broadcasts and subscriber activity inside OrchestrateOS.",
-      "priority": 3,
-      "referral_unlock_cost": 10,
+      "priority": 10,
+      "referral_unlock_cost": 9,
       "requires_credentials": true,
-      "credential_fields": [
-        "api_key",
-        "api_secret"
-      ],
-      "unlock_message": "\u2705 ConvertKit unlocked! Set your credentials with: set_credentials convertkit_tool",
-      "post_unlock_nudge": "\ud83d\udca1 Tip: Use with nylasinbox for complete email workflow automation"
+      "credential_fields": ["api_key", "api_secret"],
+      "unlock_message": "✅ ConvertKit unlocked! Set your credentials with: set_credentials convertkit_tool",
+      "post_unlock_nudge": "💡 Tip: Use with nylasinbox for complete email workflow automation"
     },
     "gamma_tool": {
       "label": "Gamma",
-      "description": "Generate slide decks automatically from structured text using the Gamma API \u2013 no design skills needed.",
-      "priority": 4,
-      "referral_unlock_cost": 25,
+      "description": "Generate slide decks automatically from structured text using the Gamma API – no design skills needed.",
+      "priority": 11,
+      "referral_unlock_cost": 9,
       "requires_credentials": true,
-      "credential_fields": [
-        "api_key"
-      ],
-      "unlock_message": "\u2705 Gamma unlocked! Set your API key with: set_credentials gamma_tool",
-      "post_unlock_nudge": "\ud83d\udca1 Tip: Combine with outline_editor to turn documents into presentations automatically"
+      "credential_fields": ["api_key"],
+      "unlock_message": "✅ Gamma unlocked! Set your API key with: set_credentials gamma_tool",
+      "post_unlock_nudge": "💡 Tip: Combine with outline_editor to turn documents into presentations"
     },
     "claude_assistant": {
       "label": "Claude Assistant",
-      "description": "AUTONOMOUS TASK EXECUTION - Assign complex tasks (code rewrites, refactoring, doc generation) and Claude executes them while you sleep. Requires: Claude Pro/Team subscription (uses your existing plan, no API costs). One-time auth setup. Wake up to completed work. \ud83e\udd2f",
-      "priority": 5,
-      "referral_unlock_cost": 3,
+      "description": "AUTONOMOUS TASK EXECUTION - Assign complex tasks and Claude executes them while you sleep. Requires Claude Pro/Team subscription.",
+      "priority": 12,
+      "referral_unlock_cost": 12,
       "requires_credentials": false,
       "requires_subscription": true,
       "subscription_type": "Claude Pro or Team",
-      "unlock_message": "Claude Assistant unlocked! Run the authentication script to connect your Claude Pro/Team subscription:\n\nbash /Applications/OrchestrateOS.app/Contents/Resources/orchestrate/auth/setup_claude_auth.sh\n\nThis opens your browser for Claude Code OAuth (installs CLI if needed).",
-      "post_unlock_nudge": "\ud83d\udca1 Power user tip: Claude Assistant works great with outline_editor for autonomous documentation workflows",
+      "unlock_message": "🎉 Claude Assistant unlocked! Run the auth script to connect your Claude subscription:\n\nbash /Applications/OrchestrateOS.app/Contents/Resources/orchestrate/auth/setup_claude_auth.sh",
+      "post_unlock_nudge": "💡 Power user tip: Claude Assistant + outline_editor = autonomous documentation workflows",
       "setup_script": "auth/setup_claude_auth.sh"
     }
   },
   "display_mode": "table",
   "theme": "dark",
   "legend": true,
-  "sort_by": "custom"
+  "sort_by": "priority"
 }
