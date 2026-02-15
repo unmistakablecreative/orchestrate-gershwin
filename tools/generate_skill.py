@@ -18,7 +18,7 @@ SYSTEM_REGISTRY = os.path.join(RUNTIME_DIR, "system_settings.ndjson")
 APP_STORE_PATH = os.path.join(RUNTIME_DIR, "data", "orchestrate_app_store.json")
 STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 NGROK_CONFIG_PATH = os.path.join(RUNTIME_DIR, "data", "ngrok.json")
-OUTPUT_DIR = STATE_DIR
+OUTPUT_DIR = os.path.expanduser("~/Downloads")
 
 
 def load_ngrok_domain():

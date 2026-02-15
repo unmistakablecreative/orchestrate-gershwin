@@ -1,3 +1,5 @@
+import fcntl
+import stat
 #!/usr/bin/env python3
 """
 Json Manager
@@ -336,6 +338,22 @@ def main():
 
     print(json.dumps(result, indent=2))
 
+
+
+def safe_write_json(filepath, data):
+    """Safely write to JSON files with file locking."""
+    lock_path = filepath + '.lock'
+    try:
+        lock_file = open(lock_path, 'w')
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4)
+        finally:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            lock_file.close()
+    except Exception as e:
+        raise RuntimeError(f'Failed to write {filepath}: {e}')
 
 if __name__ == '__main__':
     main()
