@@ -61,6 +61,15 @@
       "unlock_message": "Claude Assistant unlocked! Run the authentication script to connect your Claude Pro/Team subscription:\n\nbash /Applications/OrchestrateOS.app/Contents/Resources/orchestrate/auth/setup_claude_auth.sh\n\nThis opens your browser for Claude Code OAuth (installs CLI if needed).",
       "post_unlock_nudge": "\ud83d\udca1 Power user tip: Claude Assistant works great with outline_editor for autonomous documentation workflows",
       "setup_script": "auth/setup_claude_auth.sh"
+    },
+    "bullet_journal": {
+      "label": "Bullet Journal",
+      "description": "Rapid logging system for notes, tasks, and events. Capture thoughts with minimal friction, then organize and review later.",
+      "priority": 6,
+      "referral_unlock_cost": 2,
+      "requires_credentials": false,
+      "unlock_message": "\u2705 Bullet Journal unlocked! Start capturing with: add_entry",
+      "post_unlock_nudge": "\ud83d\udca1 Tip: Use bullet_journal for daily capture, then migrate important items to Notion or Outline"
     }
   },
   "display_mode": "table",
