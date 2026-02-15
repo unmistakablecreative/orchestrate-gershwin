@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bullet Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background: #0C0C0F; color: #E8E8EC; min-height: 100vh; padding: 32px; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        h1 { font-size: 28px; font-weight: 600; }
+        .stats { display: flex; gap: 24px; }
+        .stat { text-align: center; }
+        .stat-num { font-size: 32px; font-weight: 700; line-height: 1; }
+        .stat-num.green { color: #22c55e; }
+        .stat-num.blue { color: #3b82f6; }
+        .stat-num.yellow { color: #f59e0b; }
+        .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filter { padding: 10px 20px; border-radius: 24px; background: #16161A; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: 500; border: 1px solid transparent; transition: all 0.15s; }
+        .filter:hover { border-color: rgba(255,255,255,0.1); }
+        .filter.active { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #000; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+
+        .card { background: linear-gradient(135deg, #1a1a1f 0%, #16161A 100%); border-radius: 14px; padding: 20px; border: 1px solid rgba(255,255,255,0.04); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+        .card.task::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .card.event::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .card.note::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+        .card-type { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 10px; }
+        .card.task .card-type { color: #22c55e; }
+        .card.event .card-type { color: #3b82f6; }
+        .card.note .card-type { color: #f59e0b; }
+
+        .card-content { font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+        .card-content.truncated { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-content.expanded { display: block; }
+
+        .show-more { color: #64748b; font-size: 12px; cursor: pointer; margin-bottom: 12px; }
+        .show-more:hover { color: #94a3b8; }
+
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .card-date { font-size: 12px; color: #475569; }
+        .card-collection { font-size: 10px; padding: 4px 10px; background: rgba(255,255,255,0.05); border-radius: 12px; color: #64748b; }
+        .card-status { font-size: 10px; padding: 4px 10px; background: rgba(255,255,255,0.05); border-radius: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; }
+        .card-status.done { background: rgba(34,197,94,0.15); color: #22c55e; }
+
+        .add-btn { position: fixed; bottom: 32px; right: 32px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border: none; cursor: pointer; font-size: 28px; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(34,197,94,0.3); }
+        .add-btn:hover { transform: scale(1.05); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: #16161A; border-radius: 16px; padding: 32px; width: 90%; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal h2 { margin-bottom: 24px; font-size: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .form-group select, .form-group input, .form-group textarea { width: 100%; padding: 12px 16px; background: #0C0C0F; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #E8E8EC; font-family: inherit; font-size: 14px; }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #22c55e; }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 14px; border: none; }
+        .btn-cancel { background: rgba(255,255,255,0.05); color: #94a3b8; }
+        .btn-cancel:hover { background: rgba(255,255,255,0.1); }
+        .btn-save { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #000; }
+        .btn-save:hover { opacity: 0.9; }
+
+        .sync-btn { padding: 10px 20px; border-radius: 24px; background: #16161A; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,0.1); margin-left: auto; }
+        .sync-btn:hover { border-color: #22c55e; color: #22c55e; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: #475569; }
+        .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Bullet Journal</h1>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num green" id="taskCount">0</div>
+                <div class="stat-label">Tasks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num blue" id="eventCount">0</div>
+                <div class="stat-label">Events</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num yellow" id="noteCount">0</div>
+                <div class="stat-label">Notes</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters">
+        <div class="filter active" data-filter="all">All</div>
+        <div class="filter" data-filter="task">Tasks</div>
+        <div class="filter" data-filter="event">Events</div>
+        <div class="filter" data-filter="note">Notes</div>
+        <div class="filter" data-filter="done">Done</div>
+        <button class="sync-btn" onclick="loadData()">Refresh</button>
+    </div>
+
+    <div class="grid" id="entriesGrid"></div>
+
+    <button class="add-btn" onclick="openModal()">+</button>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <h2>New Entry</h2>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="entryType">
+                    <option value="task">Task</option>
+                    <option value="event">Event</option>
+                    <option value="note">Note</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="entryContent" placeholder="What's on your mind?"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Collection</label>
+                <input type="text" id="entryCollection" placeholder="e.g. work, personal, ideas">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-save" onclick="saveEntry()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TRUNCATE_THRESHOLD = 120;
+        let allEntries = [];
+        let currentFilter = 'all';
+
+        async function loadData() {
+            try {
+                const response = await fetch('/data/bullet_journal.json');
+                const data = await response.json();
+
+                allEntries = Object.entries(data.entries || {}).map(([id, entry]) => ({
+                    id,
+                    ...entry
+                })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                updateStats();
+                renderEntries();
+            } catch (err) {
+                console.error('Failed to load data:', err);
+                document.getElementById('entriesGrid').innerHTML = '<div class="empty-state"><h3>Could not load entries</h3><p>Check that bullet_journal.json exists</p></div>';
+            }
+        }
+
+        function updateStats() {
+            const tasks = allEntries.filter(e => e.type === 'task');
+            const events = allEntries.filter(e => e.type === 'event');
+            const notes = allEntries.filter(e => e.type === 'note');
+
+            document.getElementById('taskCount').textContent = tasks.length;
+            document.getElementById('eventCount').textContent = events.length;
+            document.getElementById('noteCount').textContent = notes.length;
+        }
+
+        function renderEntries() {
+            const grid = document.getElementById('entriesGrid');
+
+            let filtered = allEntries;
+            if (currentFilter === 'done') {
+                // Show only done items
+                filtered = allEntries.filter(e => e.status === 'done');
+            } else if (currentFilter === 'task' || currentFilter === 'event' || currentFilter === 'note') {
+                // Show type but exclude done
+                filtered = allEntries.filter(e => e.type === currentFilter && e.status !== 'done');
+            } else {
+                // 'all' - exclude done items by default
+                filtered = allEntries.filter(e => e.status !== 'done');
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><h3>No entries found</h3><p>Click + to add your first entry</p></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(entry => {
+                const content = entry.content || '';
+                const needsTruncate = content.length > TRUNCATE_THRESHOLD;
+                const date = formatDate(entry.timestamp);
+                const statusClass = entry.status === 'done' ? 'done' : '';
+
+                return '<div class="card ' + entry.type + '">' +
+                    '<div class="card-type">' + entry.type + '</div>' +
+                    '<div class="card-content' + (needsTruncate ? ' truncated' : '') + '">' + escapeHtml(content) + '</div>' +
+                    (needsTruncate ? '<div class="show-more" onclick="toggleExpand(this)">Show more</div>' : '') +
+                    '<div class="card-footer">' +
+                        '<span class="card-date">' + date + '</span>' +
+                        '<div>' +
+                            '<span class="card-collection">' + (entry.collection || 'uncategorized') + '</span>' +
+                            '<span class="card-status ' + statusClass + '">' + (entry.status || 'raw') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function toggleExpand(btn) {
+            const content = btn.previousElementSibling;
+            if (content.classList.contains('truncated')) {
+                content.classList.remove('truncated');
+                content.classList.add('expanded');
+                btn.textContent = 'Show less';
+            } else {
+                content.classList.remove('expanded');
+                content.classList.add('truncated');
+                btn.textContent = 'Show more';
+            }
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const d = new Date(timestamp);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.querySelectorAll('.filter').forEach(filter => {
+            filter.addEventListener('click', () => {
+                document.querySelectorAll('.filter').forEach(f => f.classList.remove('active'));
+                filter.classList.add('active');
+                currentFilter = filter.dataset.filter;
+                renderEntries();
+            });
+        });
+
+        function openModal() {
+            document.getElementById('addModal').classList.add('active');
+            document.getElementById('entryContent').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('entryType').value = 'task';
+            document.getElementById('entryContent').value = '';
+            document.getElementById('entryCollection').value = '';
+        }
+
+        async function saveEntry() {
+            const type = document.getElementById('entryType').value;
+            const content = document.getElementById('entryContent').value.trim();
+            const collection = document.getElementById('entryCollection').value.trim() || 'uncategorized';
+
+            if (!content) {
+                alert('Please enter some content');
+                return;
+            }
+
+            try {
+                const response = await fetch('/execute_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tool_name: 'bullet_journal',
+                        action: 'add_entry',
+                        params: { type, content, collection }
+                    })
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    closeModal();
+                    loadData();
+                } else {
+                    alert('Failed to save: ' + (result.error || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Failed to save entry: ' + err.message);
+            }
+        }
+
+        document.getElementById('addModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addModal') closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'n' && !document.querySelector('.modal.active') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                openModal();
+            }
+        });
+
+        loadData();
+    </script>
+</body>
+</html>

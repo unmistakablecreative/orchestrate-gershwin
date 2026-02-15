@@ -6,7 +6,8 @@
     "unlock_tool",
     "check_credits",
     "system_control",
-    "refer_user"
+    "refer_user",
+    "bullet_journal"
   ],
   "unlock_credits": 3
 }
