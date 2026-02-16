@@ -278,8 +278,10 @@
                 if (result.status === 'success') {
                     closeModal();
                     loadData();
+                } else if (result.status === 'locked') {
+                    alert('Tool Locked\n\n' + result.message);
                 } else {
-                    alert('Failed to save: ' + (result.error || 'Unknown error'));
+                    alert('Failed to save: ' + (result.message || result.error || 'Unknown error'));
                 }
             } catch (err) {
                 alert('Failed to save entry: ' + err.message);
