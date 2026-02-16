@@ -110,7 +110,7 @@
 {"tool": "notion_tool", "action": "get_headers", "script_path": "tools/notion_tool.py", "description": "Execute get_headers"}
 {"tool": "notion_tool", "action": "search", "script_path": "tools/notion_tool.py", "description": "Execute search", "parameters": [{"name": "params", "required": true}]}
 {"tool": "notion_tool", "action": "update_page", "script_path": "tools/notion_tool.py", "description": "Execute update_page", "parameters": [{"name": "params", "required": true}]}
-{"tool": "bullet_journal", "action": "__tool__", "script_path": "tools/bullet_journal.py", "description": "Rapid logging for notes, tasks, and events", "locked": true, "unlocked": true, "referral_unlock_cost": 0}
+{"tool": "bullet_journal", "action": "__tool__", "script_path": "tools/bullet_journal.py", "description": "Rapid logging for notes, tasks, and events", "locked": false, "referral_unlock_cost": 0}
 {"tool": "bullet_journal", "action": "add_entry", "script_path": "tools/bullet_journal.py", "description": "Add a bullet journal entry. type: note|task|event, content: entry text, collection: category (default: general).", "parameters": [{"name": "type", "required": true}, {"name": "content", "required": true}]}
 {"tool": "bullet_journal", "action": "list_entries", "script_path": "tools/bullet_journal.py", "description": "List journal entries with optional filters"}
 {"tool": "bullet_journal", "action": "update_status", "script_path": "tools/bullet_journal.py", "description": "Update entry status (done, migrated, scheduled, cancelled, irrelevant)", "parameters": [{"name": "entry_key", "required": true}, {"name": "status", "required": true}]}
