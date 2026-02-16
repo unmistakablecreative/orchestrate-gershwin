@@ -1,0 +1,245 @@
+{
+  "title": "OrchestrateOS Gershwin GPS - Beta Sandbox Architecture",
+  "version": "1.0",
+  "generated_at": "2026-02-15T19:15:00Z",
+  "purpose": "Load this FIRST before any Gershwin work. This is the BETA containerized version with referral-based tool unlocking and terminal wizard integration.",
+
+  "golden_rules": {
+    "1_execution": "ALL tool calls go through ngrok API: POST /execute_task with tool_name, action, params",
+    "2_cli_pattern": "python3 execution_hub.py execute_task --params '{\"tool_name\": \"X\", \"action\": \"Y\", \"params\": {...}}'",
+    "3_protected": "Never directly edit: system_settings.ndjson, unlock_status.json, credentials.json",
+    "4_queue_files": "Tasks go to claude_task_q1.json, q2.json, q3.json (NOT claude_task_queue.json - legacy)",
+    "5_unlock_required": "Premium tools require unlock via referral credits before use"
+  },
+
+  "repository_context": {
+    "name": "orchestrate-gershwin",
+    "purpose": "OrchestrateOS Beta Sandbox - Testing environment for new features with containerized execution",
+    "deployment": "Docker container (orchestrate_instance) with ngrok tunnel",
+    "vs_jarvis": "This is the BETA containerized version. orchestrate-jarvis is Srini's personal local repo"
+  },
+
+  "tool_locking_architecture": {
+    "overview": "Three-tier lock/unlock system with cloud sync via JSONBin",
+
+    "tier_1_registry": {
+      "file": "system_settings.ndjson",
+      "format": "NDJSON (newline-delimited JSON)",
+      "purpose": "Central tool and action registry - the RUNTIME source of truth",
+      "key_fields": ["tool", "action", "script_path", "locked", "unlocked", "referral_unlock_cost"],
+      "mutations": "unlock_preinstalled_tool() flips locked=false, unlocked=true"
+    },
+
+    "tier_2_marketplace": {
+      "file": "data/orchestrate_app_store.json",
+      "purpose": "Marketplace catalog - defines available tools, costs, and setup flows",
+      "read_only": true,
+      "key_fields": ["label", "description", "priority", "referral_unlock_cost", "requires_credentials", "credential_fields", "setup_script"]
+    },
+
+    "tier_3_cloud_sync": {
+      "provider": "JSONBin",
+      "bin_id": "6955618fd0ea881f404c2cdd",
+      "purpose": "Cloud source of truth for referral credits and unlocks across devices",
+      "sync_on": ["unlock_tool", "refer_user", "app_start"]
+    },
+
+    "local_cache": {
+      "file": "data/unlock_status.json",
+      "purpose": "Fast local lookup of unlocked tools (no network)",
+      "structure": {"tools_unlocked": ["array"], "unlock_credits": "integer"}
+    }
+  },
+
+  "free_tools": [
+    {"name": "json_manager", "description": "Save and manage tasks, notes, ideas"},
+    {"name": "system_settings", "description": "Manage core config - tools, memory files, routing"},
+    {"name": "unlock_tool", "description": "Unlock tools using referral credits"},
+    {"name": "terminal", "description": "Run shell commands, read/write files"},
+    {"name": "check_credits", "description": "View remaining unlock credits"},
+    {"name": "refer_user", "description": "Generate referral package (earns 3 credits)"},
+    {"name": "bullet_journal", "description": "Rapid capture for notes, tasks, events"},
+    {"name": "generate_skill", "description": "Create .skill zip for Claude Code"},
+    {"name": "system_control", "description": "Core system control for loading runtime"},
+    {"name": "claude_execution_engine", "description": "Background daemon for task execution"}
+  ],
+
+  "premium_tools_preinstalled": [
+    {"name": "outline_editor", "cost": 3, "requires_credentials": true},
+    {"name": "mem_tool", "cost": 5, "requires_credentials": true},
+    {"name": "readwise_tool", "cost": 5, "requires_credentials": true},
+    {"name": "buffer_engine", "cost": 7, "requires_credentials": true},
+    {"name": "ideogram_tool", "cost": 7, "requires_credentials": true},
+    {"name": "github_tool_universal", "cost": 8, "requires_credentials": true},
+    {"name": "automation_engine", "cost": 8, "requires_credentials": false}
+  ],
+
+  "premium_tools_marketplace": [
+    {"name": "notion_tool", "cost": 3, "requires_credentials": true},
+    {"name": "nylasinbox", "cost": 9, "requires_credentials": true},
+    {"name": "convertkit_tool", "cost": 9, "requires_credentials": true},
+    {"name": "gamma_engine", "cost": 9, "requires_credentials": true},
+    {"name": "claude_assistant", "cost": 12, "requires_subscription": "Claude Pro or Team", "setup_script": "auth/setup_claude_auth.sh"}
+  ],
+
+  "user_identity_system": {
+    "identity_file": "~/Library/Application Support/OrchestrateOS/system_identity.json",
+    "structure": {
+      "user_id": "orch-<uuid> format",
+      "installed_at": "ISO timestamp",
+      "ngrok_domain": "optional"
+    },
+    "flow": {
+      "first_run": "Generate UUID -> write system_identity.json -> register with JSONBin",
+      "on_unlock": "Read user_id -> fetch JSONBin ledger -> process -> sync back",
+      "on_referral": "Both referee and referrer get 3 credits via JSONBin"
+    }
+  },
+
+  "unlock_flow": {
+    "sequence": [
+      "1. User calls: unlock_tool('outline_editor')",
+      "2. find_tool_location() checks system_settings.ndjson first, then app_store",
+      "3. sync_from_jsonbin() fetches latest credits from cloud",
+      "4. Check if already unlocked -> return early",
+      "5. Check credits >= cost -> deduct credits",
+      "6. Add tool to tools_unlocked array",
+      "7. Update system_settings.ndjson (locked=false, unlocked=true)",
+      "8. update_unlock_status() updates unlock_status.json",
+      "9. Return success with guided_activation if applicable"
+    ],
+    "post_unlock": {
+      "requires_credentials": "Prompt user to set API key via system_settings.set_credential",
+      "guided_activation": "Multi-step onboarding from unlock_messages.json"
+    }
+  },
+
+  "directory_structure": {
+    "root/": {
+      "jarvis.py": "FastAPI server - main entry point, /execute_task endpoint",
+      "execution_hub.py": "CLI tool execution router, loads from system_settings.ndjson",
+      "system_guard.py": "Validation layer - protects files, auto-corrects params",
+      "SKILL.md": "Tool schema documentation for Claude Code",
+      "system_settings.ndjson": "NDJSON tool registry - source of truth"
+    },
+    "tools/": "21 Python tool scripts",
+    "data/": {
+      "count": "36 JSON files",
+      "key_files": [
+        "claude_task_q1.json", "claude_task_q2.json", "claude_task_q3.json",
+        "claude_task_results.json", "orchestrate_app_store.json",
+        "unlock_status.json", "automation_rules.json", "onboarding_sequence.json"
+      ]
+    },
+    "semantic_memory/": {
+      "SKILL.md": "Complete tool schema reference",
+      "task_board.html": "Task board dashboard",
+      "tool_dashboard.html": "Tool management dashboard",
+      "bullet_journal.html": "Bullet journal dashboard"
+    },
+    ".claude/": "Claude Code config with permissions",
+    "auth/": "setup_claude_auth.sh script",
+    "referral_base/": "entrypoint.sh + macOS launcher",
+    "claude_config_template/": "Template configs for new instances"
+  },
+
+  "key_file_paths": {
+    "tool_registry": "system_settings.ndjson",
+    "app_store": "data/orchestrate_app_store.json",
+    "unlock_status": "data/unlock_status.json",
+    "task_queues": ["data/claude_task_q1.json", "data/claude_task_q2.json", "data/claude_task_q3.json"],
+    "task_results": "data/claude_task_results.json",
+    "credentials": "tools/credentials.json",
+    "execution_log": "execution_log.json",
+    "ngrok_config": "data/ngrok.json",
+    "onboarding": "data/onboarding_sequence.json",
+    "boot_flags": "data/boot_flags.json"
+  },
+
+  "ngrok_flow": {
+    "overview": "All tool calls go through ngrok tunnel -> FastAPI /execute_task endpoint",
+    "execution_pattern": "curl -s -X POST https://YOUR_NGROK_URL/execute_task -H 'Content-Type: application/json' -d '{...}'",
+    "config_file": "data/ngrok.json",
+    "entry_point": "jarvis.py starts FastAPI, entrypoint.sh starts ngrok tunnel"
+  },
+
+  "tool_execution_flow": {
+    "1_api_entry": "POST /execute_task hits jarvis.py FastAPI endpoint",
+    "2_execution_hub": "execution_hub.py loads tool from system_settings.ndjson",
+    "3_validation": "system_guard.py validates params, protects locked files",
+    "4_tool_execution": "subprocess runs tools/{tool_name}.py with action and params",
+    "5_logging": "Result logged to execution_log.json"
+  },
+
+  "onboarding_flow": {
+    "step_1": "Open Docker Desktop",
+    "step_2": "Run DMG installer (GershwinEngine.dmg or Mozart.dmg)",
+    "step_3": "Enter ngrok token + domain",
+    "step_4": "FastAPI starts, wizard auto-launches",
+    "step_5": "Cmd+V 3x to create Custom GPT via clipboard automation",
+    "step_6": "Type 'Load OrchestrateOS' to verify connection",
+    "target_time": "2-3 minutes (vs 20-30 mins manual)"
+  },
+
+  "protected_files": {
+    "system_settings.ndjson": "system_settings tool only",
+    "data/unlock_status.json": "unlock_tool only",
+    "tools/credentials.json": "manual or system_settings.set_credential",
+    "data/claude_task_q*.json": "claude_assistant tool only",
+    "data/automation_rules.json": "automation_engine tool only"
+  },
+
+  "key_functions": {
+    "unlock_tool.py": {
+      "unlock_tool()": "Main entry - routes to preinstalled or marketplace",
+      "unlock_preinstalled_tool()": "Flips flags in system_settings.ndjson",
+      "sync_from_jsonbin()": "Fetches user ledger from cloud",
+      "sync_to_jsonbin()": "Pushes updated ledger to cloud",
+      "get_user_id()": "Reads from system_identity.json"
+    },
+    "system_settings.py": {
+      "set_credential()": "Auto-detects credential key from script, saves to credentials.json",
+      "add_tool()": "Parses script, registers all actions in ndjson"
+    },
+    "refer_user.py": {
+      "refer_user()": "Generates referral package, adds 3 credits to referrer on success"
+    }
+  },
+
+  "common_mistakes": {
+    "wrong_queue_file": {
+      "mistake": "Using claude_task_queue.json",
+      "correct": "Use claude_task_q1.json, q2.json, q3.json"
+    },
+    "direct_unlock_edit": {
+      "mistake": "Directly editing unlock_status.json",
+      "correct": "Use unlock_tool actions"
+    },
+    "skipping_unlock": {
+      "mistake": "Calling locked tools without unlocking",
+      "correct": "Check unlock_status.json or call unlock_tool first"
+    },
+    "direct_ndjson_edit": {
+      "mistake": "Directly editing system_settings.ndjson",
+      "correct": "Use system_settings tool actions"
+    }
+  },
+
+  "pricing_tiers": {
+    "free": {"cost": 0, "tool_count": 10},
+    "tier_1": {"cost": 3, "tools": ["outline_editor", "notion_tool"]},
+    "tier_2": {"cost": "5-7", "tools": ["mem_tool", "readwise_tool", "buffer_engine", "ideogram_tool"]},
+    "tier_3": {"cost": "8-9", "tools": ["github_tool_universal", "automation_engine", "nylasinbox", "convertkit_tool", "gamma_engine"]},
+    "tier_4": {"cost": 12, "tools": ["claude_assistant"]}
+  },
+
+  "debugging_protocol": {
+    "step_1": "Capture actual data - don't guess structures",
+    "step_2": "Read code before responding",
+    "step_3": "Trace data flow - entry point -> functions -> outputs",
+    "step_4": "One fix at a time - verify before next change",
+    "check_unlock": "Read data/unlock_status.json",
+    "check_credits": "Call check_credits.check_credits",
+    "check_identity": "Read ~/Library/Application Support/OrchestrateOS/system_identity.json"
+  }
+}
