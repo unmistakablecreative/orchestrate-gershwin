@@ -1,118 +1,111 @@
-{"tool": "json_manager", "action": "__tool__", "script_path": "tools/json_manager.py", "locked": false, "referral_unlock_cost": 0, "description": "Save and manage tasks, notes, ideas, or any other structured info across your workspace."}
+{"tool": "json_manager", "action": "__tool__", "script_path": "tools/json_manager.py", "locked": false, "referral_unlock_cost": 0, "description": "Save and manage tasks, notes, ideas, or any structured info."}
+{"tool": "json_manager", "action": "add_json_entry", "script_path": "tools/json_manager.py", "params": ["entry_key", "filename"]}
+{"tool": "json_manager", "action": "create_json_file", "script_path": "tools/json_manager.py", "params": ["filename"]}
+{"tool": "json_manager", "action": "list_json_entries", "script_path": "tools/json_manager.py", "params": ["filename", "max_results", "offset"]}
+{"tool": "json_manager", "action": "read_json_entry", "script_path": "tools/json_manager.py", "params": ["entry_key", "filename"]}
+{"tool": "json_manager", "action": "read_json_file", "script_path": "tools/json_manager.py", "params": ["filename"]}
+{"tool": "json_manager", "action": "update_json_entry", "script_path": "tools/json_manager.py", "params": ["entry_key", "filename"]}
+{"tool": "json_manager", "action": "batch_add_json_entries", "script_path": "tools/json_manager.py", "params": ["entries", "filename"]}
 {"tool": "system_settings", "action": "__tool__", "script_path": "tools/system_settings.py", "locked": false, "referral_unlock_cost": 0, "description": "Manage core config \u2014 tools, memory files, routing, and credentials."}
+{"tool": "system_settings", "action": "set_credential", "script_path": "tools/system_settings.py", "params": ["tool_name", "value"]}
+{"tool": "system_settings", "action": "add_tool", "script_path": "tools/system_settings.py", "params": ["locked", "referral_unlock_cost", "script_path", "tool_name"]}
+{"tool": "system_settings", "action": "remove_tool", "script_path": "tools/system_settings.py", "params": ["tool_name"]}
+{"tool": "system_settings", "action": "add_action", "script_path": "tools/system_settings.py", "params": ["action_name", "description", "parameters", "tool_name"]}
+{"tool": "system_settings", "action": "remove_action", "script_path": "tools/system_settings.py", "params": ["action_name", "tool_name"]}
+{"tool": "system_settings", "action": "list_tools", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "list_supported_actions", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "add_memory_file", "script_path": "tools/system_settings.py", "params": ["path"]}
+{"tool": "system_settings", "action": "remove_memory_file", "script_path": "tools/system_settings.py", "params": ["path"]}
+{"tool": "system_settings", "action": "list_memory_files", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "build_working_memory", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "refresh_runtime", "script_path": "tools/system_settings.py"}
 {"tool": "unlock_tool", "action": "__tool__", "script_path": "tools/unlock_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Manually unlock tools using credits or referral triggers."}
-{"tool": "outline_editor", "action": "__tool__", "script_path": "tools/outline_editor.py", "locked": true, "referral_unlock_cost": 3, "description": "Create structured content documents with sections, links, and collections.", "unlocked": true}
-{"tool": "mem_tool", "action": "__tool__", "script_path": "tools/mem_tool.py", "locked": true, "referral_unlock_cost": 5, "description": "Capture personal insights or notes and sync them into Mem.", "unlocked": true}
-{"tool": "readwise_tool", "action": "__tool__", "script_path": "tools/readwise_tool.py", "locked": true, "referral_unlock_cost": 5, "description": "Import and explore highlights from your synced Readwise library.", "unlocked": true}
-{"tool": "buffer_engine", "action": "__tool__", "script_path": "tools/buffer_engine.py", "locked": true, "referral_unlock_cost": 7, "description": "Schedule and auto-publish content to social media platforms."}
-{"tool": "github_tool_universal", "action": "__tool__", "script_path": "tools/github_tool_universal.py", "locked": true, "referral_unlock_cost": 8, "description": "Manage repos, commits, and pushes to GitHub from within GPT."}
-{"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true, "referral_unlock_cost": 7, "description": "Generate beautiful AI-driven images for documents or social posts."}
-{"tool": "terminal", "action": "__tool__", "script_path": "tools/terminal.py", "locked": false, "unlocked": true, "referral_unlock_cost": 0, "description": "Run safe shell commands, tail logs, or stream live output."}
+{"tool": "unlock_tool", "action": "unlock_tool", "script_path": "tools/unlock_tool.py", "params": ["tool_name"]}
+{"tool": "unlock_tool", "action": "list_marketplace_tools", "script_path": "tools/unlock_tool.py"}
+{"tool": "unlock_tool", "action": "get_credits_balance", "script_path": "tools/unlock_tool.py"}
+{"tool": "terminal", "action": "__tool__", "script_path": "tools/terminal.py", "locked": false, "referral_unlock_cost": 0, "description": "Run safe shell commands, tail logs, or stream live output."}
+{"tool": "terminal", "action": "check_safe", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "ls", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "run_terminal_command", "script_path": "tools/terminal.py", "params": ["command"]}
+{"tool": "terminal", "action": "script", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "stream", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "tail", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "find_file", "script_path": "tools/terminal.py", "params": ["filename", "filename_fragment", "keyword"]}
+{"tool": "terminal", "action": "read_file", "script_path": "tools/terminal.py", "params": ["filename", "filename_fragment", "path"]}
+{"tool": "terminal", "action": "write_file", "script_path": "tools/terminal.py", "params": ["content", "filename", "path", "text"]}
+{"tool": "terminal", "action": "append_file", "script_path": "tools/terminal.py", "params": ["content", "filename", "path", "text"]}
+{"tool": "terminal", "action": "move_file", "script_path": "tools/terminal.py", "params": ["destination", "from", "source", "to"]}
 {"tool": "check_credits", "action": "__tool__", "script_path": "tools/check_credits.py", "locked": false, "referral_unlock_cost": 0, "description": "View your remaining unlock credits and tools currently unlocked."}
-{"tool": "refer_user", "action": "__tool__", "script_path": "tools/refer_user.py", "locked": false, "referral_unlock_cost": 0, "description": "Generate a referral package to share with others. Each successful referral earns 3 unlock credits."}
-{"tool": "buffer_engine", "action": "buffer_loop", "script_path": "tools/buffer_engine.py", "params": [], "example": {"tool_name": "buffer_engine", "action": "buffer_loop", "params": {}}}
-{"tool": "buffer_engine", "action": "post_to_platform", "script_path": "tools/buffer_engine.py", "params": ["content", "link", "image_url"], "example": {"tool_name": "buffer_engine", "action": "post_to_platform", "params": {"content": "This is a tweet.", "link": "https://example.com", "image_url": "https://img.url"}}}
-{"tool": "github_tool_universal", "action": "init_repo", "script_path": "tools/github_tool_universal.py", "params": ["path"], "example": {"tool_name": "github_tool_universal", "action": "init_repo", "params": {"path": "./repo"}}}
-{"tool": "github_tool_universal", "action": "status", "script_path": "tools/github_tool_universal.py", "params": ["path"], "example": {"tool_name": "github_tool_universal", "action": "status", "params": {"path": "./repo"}}}
-{"tool": "github_tool_universal", "action": "clone_repo", "script_path": "tools/github_tool_universal.py", "params": ["url", "path"], "example": {"tool_name": "github_tool_universal", "action": "clone_repo", "params": {"url": "https://github.com/your/repo.git", "path": "./repo"}}}
-{"tool": "github_tool_universal", "action": "set_remote", "script_path": "tools/github_tool_universal.py", "params": ["path", "url"], "example": {"tool_name": "github_tool_universal", "action": "set_remote", "params": {"path": "./repo", "url": "https://github.com/your/repo.git"}}}
-{"tool": "github_tool_universal", "action": "add_files", "script_path": "tools/github_tool_universal.py", "params": ["path", "files"], "example": {"tool_name": "github_tool_universal", "action": "add_files", "params": {"path": "./repo", "files": ["file1.py", "file2.txt"]}}}
-{"tool": "github_tool_universal", "action": "commit_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "message"], "example": {"tool_name": "github_tool_universal", "action": "commit_repo", "params": {"path": "./repo", "message": "Initial commit"}}}
-{"tool": "github_tool_universal", "action": "push_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "branch"], "example": {"tool_name": "github_tool_universal", "action": "push_repo", "params": {"path": "./repo", "branch": "main"}}}
-{"tool": "github_tool_universal", "action": "pull_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "branch"], "example": {"tool_name": "github_tool_universal", "action": "pull_repo", "params": {"path": "./repo", "branch": "main"}}}
-{"tool": "github_tool_universal", "action": "archive_repo", "script_path": "tools/github_tool_universal.py", "params": ["path"], "example": {"tool_name": "github_tool_universal", "action": "archive_repo", "params": {"path": "./repo"}}}
-{"tool": "github_tool_universal", "action": "list_repos", "script_path": "tools/github_tool_universal.py", "params": [], "example": {"tool_name": "github_tool_universal", "action": "list_repos", "params": {}}}
-{"tool": "ideogram_tool", "action": "generate_image", "script_path": "tools/ideogram_tool.py", "params": ["input", "options"], "example": {"tool_name": "ideogram_tool", "action": "generate_image", "params": {"input": "A robot in a neon city", "options": {"aspect_ratio": "ASPECT_16_9", "model": "V_2"}}}}
-{"tool": "json_manager", "action": "add_json_entry", "script_path": "tools/json_manager.py", "params": ["filename", "entry_key", "entry_data"], "example": {"tool_name": "json_manager", "action": "add_json_entry", "params": {"filename": "gray_content.json", "entry_key": "adhd_ep1", "entry_data": {"title": "Rituals for Late-Diagnosed Adults"}}}}
-{"tool": "json_manager", "action": "create_json_file", "script_path": "tools/json_manager.py", "params": ["filename"], "example": {"tool_name": "json_manager", "action": "create_json_file", "params": {"filename": "gray_content.json"}}}
-{"tool": "json_manager", "action": "list_json_entries", "script_path": "tools/json_manager.py", "params": ["filename"], "example": {"tool_name": "json_manager", "action": "list_json_entries", "params": {"filename": "gray_content.json"}}}
-{"tool": "json_manager", "action": "read_json_entry", "script_path": "tools/json_manager.py", "params": ["filename", "entry_key"], "example": {"tool_name": "json_manager", "action": "read_json_entry", "params": {"filename": "gray_content.json", "entry_key": "adhd_ep1"}}}
-{"tool": "json_manager", "action": "read_json_file", "script_path": "tools/json_manager.py", "params": ["filename"], "example": {"tool_name": "json_manager", "action": "read_json_file", "params": {"filename": "gray_content.json"}}}
-{"tool": "json_manager", "action": "update_json_entry", "script_path": "tools/json_manager.py", "params": ["filename", "entry_key", "new_data"], "example": {"tool_name": "json_manager", "action": "update_json_entry", "params": {"filename": "gray_content.json", "entry_key": "adhd_ep1", "new_data": {"status": "published"}}}}
-{"tool": "json_manager", "action": "batch_add_json_entries", "script_path": "tools/json_manager.py", "params": ["filename", "entries"], "example": {"tool_name": "json_manager", "action": "batch_add_json_entries", "params": {"filename": "gray_content.json", "entries": [{"entry_key": "ep1", "title": "First Episode", "status": "draft"}, {"entry_key": "ep2", "title": "Second Episode", "status": "published"}]}}}
-{"tool": "outline_editor", "action": "append_section", "script_path": "tools/outline_editor.py", "params": ["doc_id", "new_text"], "example": {"tool_name": "outline_editor", "action": "append_section", "params": {"doc_id": "abc123", "new_text": "## New Section\nText goes here."}}}
-{"tool": "outline_editor", "action": "create_collection", "script_path": "tools/outline_editor.py", "params": ["name"], "optional_params": ["description", "color", "icon", "permission", "sharing"], "description": "Creates a new collection in Outline with name, icon, color, and sharing."}
-{"tool": "outline_editor", "action": "create_doc", "script_path": "tools/outline_editor.py", "params": ["title", "content", "collectionId", "parentDocumentId"], "example": {"tool_name": "outline_editor", "action": "create_doc", "params": {"title": "Test Title", "content": "Some content here.", "collectionId": "Inbox", "parentDocumentId": null}}}
-{"tool": "outline_editor", "action": "delete_collection", "script_path": "tools/outline_editor.py", "params": ["collection_id"], "example": {"tool_name": "outline_editor", "action": "delete_collection", "params": {"collection_id": "abc123"}}}
-{"tool": "outline_editor", "action": "delete_doc", "script_path": "tools/outline_editor.py", "params": ["doc_id"], "example": {"tool_name": "outline_editor", "action": "delete_doc", "params": {"doc_id": "abc123"}}}
-{"tool": "outline_editor", "action": "export_doc", "script_path": "tools/outline_editor.py", "params": ["doc_id", "filename"], "example": {"tool_name": "outline_editor", "action": "export_doc", "params": {"doc_id": "abc123", "filename": "blog.md"}}}
-{"tool": "outline_editor", "action": "get_doc", "script_path": "tools/outline_editor.py", "params": ["doc_id"], "example": {"tool_name": "outline_editor", "action": "get_doc", "params": {"doc_id": "abc123"}}}
-{"tool": "outline_editor", "action": "get_url", "script_path": "tools/outline_editor.py", "params": ["doc_id"], "example": {"tool_name": "outline_editor", "action": "get_url", "params": {"doc_id": "abc123"}}}
-{"tool": "outline_editor", "action": "import_doc_from_file", "script_path": "tools/outline_editor.py", "params": ["file_path", "collectionId", "parentDocumentId", "template", "publish"], "example": {"tool_name": "outline_editor", "action": "import_doc_from_file", "params": {"file_path": "compiled_posts/post.md", "collectionId": "abc123", "parentDocumentId": null, "template": false, "publish": true}}}
-{"tool": "outline_editor", "action": "list_docs", "script_path": "tools/outline_editor.py", "params": ["limit", "offset", "sort", "direction"], "example": {"tool_name": "outline_editor", "action": "list_docs", "params": {"limit": 5, "offset": 0, "sort": "createdAt", "direction": "DESC"}}, "parameters": [{"name": "limit", "required": false, "default": 25}, {"name": "offset", "required": false, "default": 0}, {"name": "sort", "required": false, "default": "updatedAt"}, {"name": "direction", "required": false, "default": "DESC"}, {"name": "collectionId", "required": false}]}
-{"tool": "outline_editor", "action": "move_doc", "script_path": "tools/outline_editor.py", "params": ["doc_id", "collectionId", "parentDocumentId"], "example": {"tool_name": "outline_editor", "action": "move_doc", "params": {"doc_id": "xyz789", "collectionId": "abc123", "parentDocumentId": ""}}}
-{"tool": "outline_editor", "action": "search_docs", "script_path": "tools/outline_editor.py", "params": ["query", "limit", "offset"], "example": {"tool_name": "outline_editor", "action": "search_docs", "params": {"query": "semantic execution", "limit": 5, "offset": 0}}, "parameters": [{"name": "query", "required": true}, {"name": "limit", "required": false, "default": 25}, {"name": "offset", "required": false, "default": 0}]}
-{"tool": "outline_editor", "action": "update_doc", "script_path": "tools/outline_editor.py", "params": ["doc_id", "title", "text", "append", "publish"], "example": {"tool_name": "outline_editor", "action": "update_doc", "params": {"doc_id": "abc123", "title": "Updated Title", "text": "Appended text", "append": true, "publish": false}}}
-{"tool": "readwise_tool", "action": "fetch_books", "script_path": "tools/readwise_tool.py", "params": ["page_size"], "example": {"tool_name": "readwise_tool", "action": "fetch_books", "params": {"page_size": 10}}}
-{"tool": "readwise_tool", "action": "fetch_highlights", "script_path": "tools/readwise_tool.py", "params": ["book_title"], "example": {"tool_name": "readwise_tool", "action": "fetch_highlights", "params": {"book_title": "Atomic Habits"}}}
-{"tool": "system_control", "action": "__tool__", "script_path": "execution_hub.py", "locked": false, "referral_unlock_cost": 0, "description": "Core system control for loading OrchestrateOS runtime."}
-{"tool": "system_control", "action": "load_orchestrate_os", "script_path": "execution_hub.py", "params": [], "example": {"tool_name": "system_control", "action": "load_orchestrate_os", "params": {}}}
-{"tool": "system_settings", "action": "set_credential", "script_path": "tools/system_settings.py", "params": ["tool_name", "value"], "description": "Set credential for a tool by name. Looks up script path automatically.", "example": {"tool_name": "system_settings", "action": "set_credential", "params": {"tool_name": "outline_editor", "value": "sk-outline-abc123"}}}
-{"tool": "system_settings", "action": "add_tool", "script_path": "tools/system_settings.py", "params": ["tool_name", "script_path"], "example": {"tool_name": "system_settings", "action": "add_tool", "params": {"tool_name": "my_tool", "script_path": "tools/my_tool.py"}}}
-{"tool": "system_settings", "action": "remove_tool", "script_path": "tools/system_settings.py", "params": ["tool_name"], "example": {"tool_name": "system_settings", "action": "remove_tool", "params": {"tool_name": "my_tool"}}}
-{"tool": "system_settings", "action": "add_action", "script_path": "tools/system_settings.py", "params": ["tool_name", "action_name", "description", "parameters"], "example": {"tool_name": "system_settings", "action": "add_action", "params": {"tool_name": "json_manager", "action_name": "add_entry", "description": "Add JSON entry", "parameters": [{"name": "filename", "required": true}]}}}
-{"tool": "system_settings", "action": "remove_action", "script_path": "tools/system_settings.py", "params": ["tool_name", "action_name"], "example": {"tool_name": "system_settings", "action": "remove_action", "params": {"tool_name": "json_manager", "action_name": "add_entry"}}}
-{"tool": "system_settings", "action": "list_tools", "script_path": "tools/system_settings.py", "params": [], "example": {"tool_name": "system_settings", "action": "list_tools", "params": {}}}
-{"tool": "system_settings", "action": "list_supported_actions", "script_path": "tools/system_settings.py", "params": [], "example": {"tool_name": "system_settings", "action": "list_supported_actions", "params": {}}}
-{"tool": "system_settings", "action": "add_memory_file", "script_path": "tools/system_settings.py", "params": ["path"], "example": {"tool_name": "system_settings", "action": "add_memory_file", "params": {"path": "data/important_context.json"}}}
-{"tool": "system_settings", "action": "remove_memory_file", "script_path": "tools/system_settings.py", "params": ["path"], "example": {"tool_name": "system_settings", "action": "remove_memory_file", "params": {"path": "data/important_context.json"}}}
-{"tool": "system_settings", "action": "list_memory_files", "script_path": "tools/system_settings.py", "params": [], "example": {"tool_name": "system_settings", "action": "list_memory_files", "params": {}}}
-{"tool": "system_settings", "action": "build_working_memory", "script_path": "tools/system_settings.py", "params": [], "example": {"tool_name": "system_settings", "action": "build_working_memory", "params": {}}}
-{"tool": "system_settings", "action": "refresh_runtime", "script_path": "tools/system_settings.py", "params": [], "example": {"tool_name": "system_settings", "action": "refresh_runtime", "params": {}}}
-{"tool": "terminal", "action": "check_safe", "script_path": "tools/terminal.py", "params": ["command"], "example": {"tool_name": "terminal", "action": "check_safe", "params": {"command": "ls -la"}}}
-{"tool": "terminal", "action": "ls", "script_path": "tools/terminal.py", "params": ["path"], "example": {"tool_name": "terminal", "action": "ls", "params": {"path": "/Users/srinivas"}}}
-{"tool": "terminal", "action": "run_terminal_command", "script_path": "tools/terminal.py", "params": ["command"], "example": {"tool_name": "terminal", "action": "run_terminal_command", "params": {"command": "ls -la"}}}
-{"tool": "terminal", "action": "script", "script_path": "tools/terminal.py", "params": ["path"], "example": {"tool_name": "terminal", "action": "script", "params": {"path": "./deploy.sh"}}}
-{"tool": "terminal", "action": "stream", "script_path": "tools/terminal.py", "params": ["command"], "example": {"tool_name": "terminal", "action": "stream", "params": {"command": "ping google.com"}}}
-{"tool": "terminal", "action": "tail", "script_path": "tools/terminal.py", "params": ["command", "n"], "example": {"tool_name": "terminal", "action": "tail", "params": {"command": "cat log.txt", "n": 10}}}
-{"tool": "unlock_tool", "action": "__tool__", "script_path": "tools/unlock_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Manually unlock tools using credits or referral triggers.", "unlocked": true}
-{"tool": "unlock_tool", "action": "unlock_tool", "script_path": "tools/unlock_tool.py", "params": ["tool_name"], "example": {"tool_name": "unlock_tool", "action": "unlock_tool", "params": {"tool_name": "outline_editor"}}, "description": "Unlock a specific tool by name (pre-installed or marketplace)"}
-{"tool": "unlock_tool", "action": "list_marketplace_tools", "script_path": "tools/unlock_tool.py", "params": [], "example": {"tool_name": "unlock_tool", "action": "list_marketplace_tools", "params": {}}, "description": "List all available marketplace tools with lock status and costs"}
-{"tool": "unlock_tool", "action": "get_credits_balance", "script_path": "tools/unlock_tool.py", "params": [], "example": {"tool_name": "unlock_tool", "action": "get_credits_balance", "params": {}}, "description": "Get current referral credit balance and unlocked tools list"}
-{"tool": "check_credits", "action": "check_credits", "script_path": "tools/check_credits.py", "params": []}
-{"tool": "refer_user", "action": "refer_user", "script_path": "tools/refer_user.py", "params": ["name", "email"], "example": {"tool_name": "refer_user", "action": "refer_user", "params": {"name": "Melissa Lima", "email": "melissa@example.com"}}}
-{"tool": "mem_tool", "action": "create_note", "script_path": "tools/mem_tool.py", "params": ["content"], "example": {"tool_name": "mem_tool", "action": "create_note", "params": {"content": "My note content here"}}}
-{"tool": "mem_tool", "action": "read_note", "script_path": "tools/mem_tool.py", "params": ["note_id"], "example": {"tool_name": "mem_tool", "action": "read_note", "params": {"note_id": "abc123"}}}
-{"tool": "mem_tool", "action": "delete_note", "script_path": "tools/mem_tool.py", "params": ["note_id"], "example": {"tool_name": "mem_tool", "action": "delete_note", "params": {"note_id": "abc123"}}}
-{"tool": "mem_tool", "action": "mem_it", "script_path": "tools/mem_tool.py", "params": ["input", "instructions"], "example": {"tool_name": "mem_tool", "action": "mem_it", "params": {"input": "Text to process", "instructions": "Optional instructions"}}}
-{"tool": "mem_tool", "action": "create_collection", "script_path": "tools/mem_tool.py", "params": ["title", "description"], "example": {"tool_name": "mem_tool", "action": "create_collection", "params": {"title": "My Collection", "description": "Collection description"}}}
-{"tool": "mem_tool", "action": "delete_collection", "script_path": "tools/mem_tool.py", "params": ["collection_id"], "example": {"tool_name": "mem_tool", "action": "delete_collection", "params": {"collection_id": "abc123"}}}
-{"tool": "mem_tool", "action": "ping", "script_path": "tools/mem_tool.py", "params": [], "example": {"tool_name": "mem_tool", "action": "ping", "params": {}}}
-{"tool": "automation_engine", "action": "__tool__", "script_path": "tools/automation_engine.py", "locked": true, "referral_unlock_cost": 8, "description": "Event-driven automation engine for triggering workflows based on file changes, schedules, and custom events."}
-{"tool": "automation_engine", "action": "run_engine", "script_path": "tools/automation_engine.py", "params": [], "example": {"tool_name": "automation_engine", "action": "run_engine", "params": {}}, "description": "Start the automation engine loop"}
-{"tool": "automation_engine", "action": "add_rule", "script_path": "tools/automation_engine.py", "params": ["rule_key", "rule"], "example": {"tool_name": "automation_engine", "action": "add_rule", "params": {"rule_key": "my_rule", "rule": {"trigger": {"type": "entry_added", "file": "data/my_queue.json"}, "action": {"tool": "json_manager", "action": "update_json_entry"}}}}, "description": "Add a new automation rule"}
-{"tool": "automation_engine", "action": "update_rule", "script_path": "tools/automation_engine.py", "params": ["rule_key", "rule"], "example": {"tool_name": "automation_engine", "action": "update_rule", "params": {"rule_key": "my_rule", "rule": {"trigger": {"type": "time", "at": "09:00"}}}}, "description": "Update an existing automation rule"}
-{"tool": "automation_engine", "action": "delete_rule", "script_path": "tools/automation_engine.py", "params": ["rule_key"], "example": {"tool_name": "automation_engine", "action": "delete_rule", "params": {"rule_key": "my_rule"}}, "description": "Delete an automation rule"}
-{"tool": "automation_engine", "action": "get_rule", "script_path": "tools/automation_engine.py", "params": ["rule_key"], "example": {"tool_name": "automation_engine", "action": "get_rule", "params": {"rule_key": "my_rule"}}, "description": "Get a specific automation rule"}
-{"tool": "automation_engine", "action": "get_rules", "script_path": "tools/automation_engine.py", "params": [], "example": {"tool_name": "automation_engine", "action": "get_rules", "params": {}}, "description": "Get all automation rules"}
-{"tool": "automation_engine", "action": "list_rules", "script_path": "tools/automation_engine.py", "params": [], "example": {"tool_name": "automation_engine", "action": "list_rules", "params": {}}, "description": "List automation rules with summary"}
-{"tool": "automation_engine", "action": "validate_rule", "script_path": "tools/automation_engine.py", "params": ["rule"], "example": {"tool_name": "automation_engine", "action": "validate_rule", "params": {"rule": {}}}, "description": "Validate a rule without saving"}
-{"tool": "automation_engine", "action": "dry_run_rule", "script_path": "tools/automation_engine.py", "params": ["rule_id"], "example": {"tool_name": "automation_engine", "action": "dry_run_rule", "params": {"rule_id": "my_rule"}}, "description": "Test what a rule would do without executing"}
-{"tool": "automation_engine", "action": "toggle_rule_enabled", "script_path": "tools/automation_engine.py", "params": ["rule_key", "enabled"], "example": {"tool_name": "automation_engine", "action": "toggle_rule_enabled", "params": {"rule_key": "my_rule", "enabled": false}}, "description": "Enable or disable a rule"}
-{"tool": "automation_engine", "action": "retry_failed", "script_path": "tools/automation_engine.py", "params": ["file"], "example": {"tool_name": "automation_engine", "action": "retry_failed", "params": {"file": "data/my_queue.json"}}, "description": "Retry failed entries in a queue file"}
-{"tool": "automation_engine", "action": "get_execution_history", "script_path": "tools/automation_engine.py", "params": ["rule_id", "since", "status", "limit"], "example": {"tool_name": "automation_engine", "action": "get_execution_history", "params": {"limit": 50}}, "description": "Get execution history with optional filters"}
-{"tool": "automation_engine", "action": "add_event_type", "script_path": "tools/automation_engine.py", "params": ["key", "test"], "example": {"tool_name": "automation_engine", "action": "add_event_type", "params": {"key": "status_changed", "test": "new_entry.get('status') != old_entry.get('status')"}}, "description": "Add a new event type"}
-{"tool": "automation_engine", "action": "get_event_types", "script_path": "tools/automation_engine.py", "params": [], "example": {"tool_name": "automation_engine", "action": "get_event_types", "params": {}}, "description": "Get all event types"}
-{"tool": "terminal", "action": "find_file", "script_path": "tools/terminal.py", "description": "Search for files in dropzone and system directories", "parameters": [{"name": "filename_fragment", "required": true}]}
-{"tool": "terminal", "action": "read_file", "script_path": "tools/terminal.py", "description": "Read file with auto-detection for PDF, DOCX, CSV, HTML, or plain text", "parameters": [{"name": "path", "required": false}, {"name": "filename_fragment", "required": false}]}
-{"tool": "terminal", "action": "write_file", "script_path": "tools/terminal.py", "description": "Write content to a file", "parameters": [{"name": "path", "required": true}, {"name": "content", "required": true}]}
-{"tool": "terminal", "action": "append_file", "script_path": "tools/terminal.py", "description": "Append content to a file", "parameters": [{"name": "path", "required": true}, {"name": "content", "required": true}]}
-{"tool": "terminal", "action": "move_file", "script_path": "tools/terminal.py", "description": "Move or rename a file", "parameters": [{"name": "source", "required": true}, {"name": "destination", "required": true}]}
-{"tool": "terminal", "action": "copy_file", "script_path": "tools/terminal.py", "description": "Copy a file", "parameters": [{"name": "source", "required": true}, {"name": "destination", "required": true}]}
-{"tool": "terminal", "action": "delete_file", "script_path": "tools/terminal.py", "description": "Delete a file", "parameters": [{"name": "path", "required": true}]}
-{"tool": "terminal", "action": "list_files", "script_path": "tools/terminal.py", "description": "List files in a directory with optional recursion", "parameters": [{"name": "path", "required": false, "default": "."}, {"name": "recursive", "required": false, "default": false}]}
-{"tool": "terminal", "action": "replace_lines", "script_path": "tools/terminal.py", "description": "Replace a range of lines in a file", "parameters": [{"name": "path", "required": true}, {"name": "start_line", "required": true}, {"name": "end_line", "required": false}, {"name": "new_content", "required": true}]}
-{"tool": "terminal", "action": "grep_content", "script_path": "tools/terminal.py", "description": "Search file contents for a pattern using ripgrep or grep", "parameters": [{"name": "pattern", "required": true}, {"name": "path", "required": false, "default": "."}, {"name": "type", "required": false}, {"name": "max_results", "required": false, "default": 100}, {"name": "case_insensitive", "required": false, "default": false}]}
-{"tool": "notion_tool", "action": "__tool__", "script_path": "tools/notion_tool.py", "description": "notion_tool tool", "locked": true, "unlocked": true, "referral_unlock_cost": 0}
-{"tool": "notion_tool", "action": "append_block_children", "script_path": "tools/notion_tool.py", "description": "Execute append_block_children", "parameters": [{"name": "params", "required": true}]}
-{"tool": "notion_tool", "action": "create_database", "script_path": "tools/notion_tool.py", "description": "Execute create_database", "parameters": [{"name": "params", "required": true}]}
-{"tool": "notion_tool", "action": "create_page", "script_path": "tools/notion_tool.py", "description": "Execute create_page", "parameters": [{"name": "params", "required": true}]}
-{"tool": "notion_tool", "action": "get_headers", "script_path": "tools/notion_tool.py", "description": "Execute get_headers"}
-{"tool": "notion_tool", "action": "search", "script_path": "tools/notion_tool.py", "description": "Execute search", "parameters": [{"name": "params", "required": true}]}
-{"tool": "notion_tool", "action": "update_page", "script_path": "tools/notion_tool.py", "description": "Execute update_page", "parameters": [{"name": "params", "required": true}]}
-{"tool": "bullet_journal", "action": "__tool__", "script_path": "tools/bullet_journal.py", "description": "Rapid logging for notes, tasks, and events", "locked": false, "referral_unlock_cost": 0}
-{"tool": "bullet_journal", "action": "add_entry", "script_path": "tools/bullet_journal.py", "description": "Add a bullet journal entry. type: note|task|event, content: entry text, collection: category (default: general).", "parameters": [{"name": "type", "required": true}, {"name": "content", "required": true}]}
-{"tool": "bullet_journal", "action": "list_entries", "script_path": "tools/bullet_journal.py", "description": "List journal entries with optional filters"}
-{"tool": "bullet_journal", "action": "update_status", "script_path": "tools/bullet_journal.py", "description": "Update entry status (done, migrated, scheduled, cancelled, irrelevant)", "parameters": [{"name": "entry_key", "required": true}, {"name": "status", "required": true}]}
-{"tool": "bullet_journal", "action": "delete_entry", "script_path": "tools/bullet_journal.py", "description": "Delete an entry", "parameters": [{"name": "entry_key", "required": true}]}
-{"tool": "bullet_journal", "action": "get_collections", "script_path": "tools/bullet_journal.py", "description": "List all unique collections"}
+{"tool": "check_credits", "action": "check_credits", "script_path": "tools/check_credits.py"}
+{"tool": "refer_user", "action": "__tool__", "script_path": "tools/refer_user.py", "locked": false, "referral_unlock_cost": 0, "description": "Generate a referral package to share with others."}
+{"tool": "refer_user", "action": "refer_user", "script_path": "tools/refer_user.py", "params": ["email", "name"]}
+{"tool": "doc_editor", "action": "__tool__", "script_path": "tools/doc_editor.py", "locked": false, "referral_unlock_cost": 0, "description": "Create, search, and link documents with bidirectional links."}
+{"tool": "doc_editor", "action": "create_doc", "script_path": "tools/doc_editor.py", "params": ["title", "content", "collection", "convert_markdown"]}
+{"tool": "doc_editor", "action": "read_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "update_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "find", "replace", "title", "collection"]}
+{"tool": "doc_editor", "action": "delete_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "search_docs", "script_path": "tools/doc_editor.py", "params": ["query", "max_results", "status", "has_field", "collection", "min_words", "max_words"]}
+{"tool": "doc_editor", "action": "list_docs", "script_path": "tools/doc_editor.py", "params": ["collection", "min_words", "max_words"]}
+{"tool": "doc_editor", "action": "link_docs", "script_path": "tools/doc_editor.py", "params": ["source_doc_id", "target_doc_id"]}
+{"tool": "doc_editor", "action": "unlink_docs", "script_path": "tools/doc_editor.py", "params": ["source_doc_id", "target_doc_id"]}
+{"tool": "doc_editor", "action": "read_links", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "read_backlinks", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "append_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "content", "convert_markdown"]}
+{"tool": "doc_editor", "action": "replace_section", "script_path": "tools/doc_editor.py", "params": ["doc_id", "section_header", "new_content", "convert_markdown"]}
+{"tool": "doc_editor", "action": "retrieve_doc", "script_path": "tools/doc_editor.py", "params": ["title", "collection"]}
+{"tool": "doc_editor", "action": "search_within_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "query"]}
+{"tool": "readwise_tool", "action": "__tool__", "script_path": "tools/readwise_tool.py", "locked": true, "referral_unlock_cost": 3, "description": "Import and explore highlights from your synced Readwise library."}
+{"tool": "readwise_tool", "action": "fetch_books", "script_path": "tools/readwise_tool.py", "params": ["api_key", "page_size"]}
+{"tool": "readwise_tool", "action": "fetch_highlights", "script_path": "tools/readwise_tool.py", "params": ["api_key", "book_title"]}
+{"tool": "buffer_engine", "action": "__tool__", "script_path": "tools/buffer_engine.py", "locked": true, "referral_unlock_cost": 7, "description": "Schedule and auto-publish content to social media platforms."}
+{"tool": "buffer_engine", "action": "buffer_loop", "script_path": "tools/buffer_engine.py"}
+{"tool": "buffer_engine", "action": "post_to_platform", "script_path": "tools/buffer_engine.py", "params": ["content"]}
+{"tool": "github_tool_universal", "action": "__tool__", "script_path": "tools/github_tool_universal.py", "locked": true, "referral_unlock_cost": 7, "description": "Manage repos, commits, and pushes to GitHub from within GPT."}
+{"tool": "github_tool_universal", "action": "init_repo", "script_path": "tools/github_tool_universal.py", "params": ["path"]}
+{"tool": "github_tool_universal", "action": "status", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "clone_repo", "script_path": "tools/github_tool_universal.py", "params": ["url", "path"]}
+{"tool": "github_tool_universal", "action": "set_remote", "script_path": "tools/github_tool_universal.py", "params": ["path", "url"]}
+{"tool": "github_tool_universal", "action": "add_files", "script_path": "tools/github_tool_universal.py", "params": ["path", "files"]}
+{"tool": "github_tool_universal", "action": "commit_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "message"]}
+{"tool": "github_tool_universal", "action": "push_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "branch"]}
+{"tool": "github_tool_universal", "action": "pull_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "branch"]}
+{"tool": "github_tool_universal", "action": "archive_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "list_repos", "script_path": "tools/github_tool_universal.py", "params": ["root"]}
+{"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true, "referral_unlock_cost": 5, "description": "Generate beautiful AI-driven images for documents or social posts."}
+{"tool": "ideogram_tool", "action": "generate_image", "script_path": "tools/ideogram_tool.py", "params": ["input", "options"]}
+{"tool": "automation_engine", "action": "__tool__", "script_path": "tools/automation_engine.py", "locked": true, "referral_unlock_cost": 9, "description": "Event-driven automation engine for triggering workflows."}
+{"tool": "automation_engine", "action": "run_engine", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "add_rule", "script_path": "tools/automation_engine.py", "params": ["rule", "rule_key", "skip_validation"]}
+{"tool": "automation_engine", "action": "update_rule", "script_path": "tools/automation_engine.py", "params": ["rule", "rule_key", "skip_validation"]}
+{"tool": "automation_engine", "action": "delete_rule", "script_path": "tools/automation_engine.py", "params": ["rule_key"]}
+{"tool": "automation_engine", "action": "get_rule", "script_path": "tools/automation_engine.py", "params": ["rule_key"]}
+{"tool": "automation_engine", "action": "get_rules", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "list_rules", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "validate_rule", "script_path": "tools/automation_engine.py", "params": ["rule"]}
+{"tool": "automation_engine", "action": "dry_run_rule", "script_path": "tools/automation_engine.py", "params": ["file", "rule_id"]}
+{"tool": "automation_engine", "action": "toggle_rule_enabled", "script_path": "tools/automation_engine.py", "params": ["enabled", "rule_key"]}
+{"tool": "automation_engine", "action": "retry_failed", "script_path": "tools/automation_engine.py", "params": ["file"]}
+{"tool": "automation_engine", "action": "get_execution_history", "script_path": "tools/automation_engine.py", "params": ["limit", "rule_id", "since", "status"]}
+{"tool": "automation_engine", "action": "add_event_type", "script_path": "tools/automation_engine.py", "params": ["key", "test"]}
+{"tool": "automation_engine", "action": "get_event_types", "script_path": "tools/automation_engine.py"}
+{"tool": "bullet_journal", "action": "__tool__", "script_path": "tools/bullet_journal.py", "locked": false, "referral_unlock_cost": 0, "description": "Rapid capture for tasks, notes, and events."}
+{"tool": "bullet_journal", "action": "add_entry", "script_path": "tools/bullet_journal.py", "params": ["collection", "content", "type"]}
+{"tool": "bullet_journal", "action": "list_entries", "script_path": "tools/bullet_journal.py", "params": ["collection", "limit", "status", "type"]}
+{"tool": "bullet_journal", "action": "update_status", "script_path": "tools/bullet_journal.py", "params": ["entry_key", "status"]}
+{"tool": "bullet_journal", "action": "delete_entry", "script_path": "tools/bullet_journal.py", "params": ["entry_key"]}
+{"tool": "bullet_journal", "action": "get_collections", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "batch_update_status", "script_path": "tools/bullet_journal.py", "params": ["entry_keys", "status"]}
+{"tool": "bullet_journal", "action": "batch_add_entries", "script_path": "tools/bullet_journal.py", "params": ["entries"]}
+{"tool": "bullet_journal", "action": "batch_delete_entries", "script_path": "tools/bullet_journal.py", "params": ["entry_keys"]}
+{"tool": "claude_assistant", "action": "__tool__", "script_path": "tools/claude_assistant.py", "locked": true, "referral_unlock_cost": 12, "description": "Task queue for Claude Code autonomous execution."}
+{"tool": "claude_assistant", "action": "assign_task", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "auto_execute", "batch_id", "campaign_id", "cascade_type", "context", "create_output_doc", "description", "doc_id", "priority", "task_id"]}
+{"tool": "claude_assistant", "action": "check_task_status", "script_path": "tools/claude_assistant.py", "params": ["task_id"]}
+{"tool": "claude_assistant", "action": "process_queue", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "peek"]}
+{"tool": "claude_assistant", "action": "execute_queue", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "parallel"]}
+{"tool": "claude_assistant", "action": "stage_task", "script_path": "tools/claude_assistant.py", "params": ["description", "preset"]}
+{"tool": "claude_assistant", "action": "get_staged_tasks", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "cancel_task", "script_path": "tools/claude_assistant.py", "params": ["remove", "task_id"]}
+{"tool": "claude_assistant", "action": "clear_queue", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "mark_task_in_progress", "script_path": "tools/claude_assistant.py", "params": ["card_title", "task_id"]}
+{"tool": "claude_assistant", "action": "log_task_completion", "script_path": "tools/claude_assistant.py", "params": ["actions_taken", "card_stat", "card_title", "errors", "execution_time_seconds", "output", "output_summary", "status", "task_id"]}
+{"tool": "session_tool", "action": "__tool__", "script_path": "tools/session_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Thread/session state management."}

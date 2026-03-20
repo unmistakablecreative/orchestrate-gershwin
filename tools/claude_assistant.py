@@ -16,8 +16,8 @@ import fcntl
 from datetime import datetime, timedelta
 
 
-# === 3-QUEUE PARALLEL EXECUTION SYSTEM ===
-NUM_QUEUES = 3
+# === 7-QUEUE PARALLEL EXECUTION SYSTEM ===
+NUM_QUEUES = 7
 
 def get_queue_file_for_task(task_id):
     """Hash task_id to determine which queue file to use (1, 2, or 3)"""
@@ -131,16 +131,6 @@ def assign_task(params):
     if not batch_id:
         batch_id = f"batch_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{task_id[:8]}"
 
-    try:
-        subprocess.run(
-            ["python3", "execution_hub.py", "load_orchestrate_os"],
-            capture_output=True,
-            timeout=10,
-            cwd=os.getcwd()
-        )
-    except Exception:
-        pass
-
     context = params.get("context", {})
     if not context:
         context = {}
@@ -148,7 +138,7 @@ def assign_task(params):
     context["create_output_doc"] = create_output_doc
 
     if create_output_doc:
-        context["hint"] = "Create an outline document for this task using execution_hub.py with outline_editor.create_doc"
+        context["hint"] = "Create a document for this task using execution_hub.py with doc_editor.create_doc"
 
     tool_build_keywords = ["build tool", "create tool", "new tool", "implement tool", "write tool", "build.*tool"]
     description_lower = description.lower()
@@ -236,6 +226,153 @@ def assign_task(params):
         except Exception as e:
             print(f"Warning: Could not load skills: {e}", file=sys.stderr)
 
+    # === CASCADE TYPE HANDLING ===
+    # If cascade_type is provided, spawn subtasks instead of queuing the parent task
+    cascade_type = params.get("cascade_type")
+    if cascade_type:
+        cascade_file = os.path.join(os.getcwd(), "data/cascade_configs.json")
+        if not os.path.exists(cascade_file):
+            return {"status": "error", "message": f"❌ Cascade config file not found: {cascade_file}"}
+
+        try:
+            with open(cascade_file, 'r', encoding='utf-8') as f:
+                cascade_configs = json.load(f)
+        except Exception as e:
+            return {"status": "error", "message": f"❌ Error reading cascade config: {str(e)}"}
+
+        cascade_config = cascade_configs.get(cascade_type)
+        if not cascade_config:
+            return {"status": "error", "message": f"❌ Unknown cascade_type: {cascade_type}. Available: {list(cascade_configs.keys())}"}
+
+        # Extract doc_id and campaign_id from params/context
+        doc_id = params.get("doc_id") or context.get("doc_id", "")
+        campaign_id = params.get("campaign_id") or context.get("campaign_id", "")
+
+        if not doc_id or not campaign_id:
+            return {"status": "error", "message": "❌ cascade_type requires doc_id and campaign_id in params or context"}
+
+        subtasks = cascade_config.get("subtasks", [])
+        if not subtasks:
+            return {"status": "error", "message": f"❌ No subtasks defined for cascade_type: {cascade_type}"}
+
+        spawned_task_ids = []
+        cascade_batch_id = f"cascade_{cascade_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+
+        # For blog_cascade: spawn score+images first, delay 45s, then spawn revise
+        # This ensures scoring completes and writes blog_revisions.json before revise starts
+        first_batch = []  # score, images (parallel)
+        delayed_batch = []  # revise (after 45s delay)
+
+        for subtask in subtasks:
+            subtask_id_name = subtask.get("id", "")
+            if subtask_id_name == "revise":
+                delayed_batch.append(subtask)
+            else:
+                first_batch.append(subtask)
+
+        # Queue first batch (score + images)
+        for i, subtask in enumerate(first_batch):
+            subtask_desc = subtask.get("description", "")
+            subtask_desc = subtask_desc.replace("{doc_id}", doc_id)
+            subtask_desc = subtask_desc.replace("{campaign_id}", campaign_id)
+
+            subtask_id = f"{cascade_batch_id}_{subtask.get('id', str(i))}"
+            subtask_priority = subtask.get("priority", "high")
+
+            subtask_result = assign_task({
+                "task_id": subtask_id,
+                "description": subtask_desc,
+                "priority": subtask_priority,
+                "context": {"doc_id": doc_id, "campaign_id": campaign_id, "cascade_batch": cascade_batch_id},
+                "batch_id": cascade_batch_id,
+                "agent_id": f"agent_{(i % 3) + 1}",
+                "auto_execute": False
+            })
+
+            if subtask_result.get("status") == "success":
+                spawned_task_ids.append(subtask_id)
+            else:
+                print(f"Warning: Failed to queue subtask {subtask_id}: {subtask_result}", file=sys.stderr)
+
+        # Queue delayed batch (revise) - these tasks also go to queue but we spawn them later
+        delayed_task_ids = []
+        for i, subtask in enumerate(delayed_batch):
+            subtask_desc = subtask.get("description", "")
+            subtask_desc = subtask_desc.replace("{doc_id}", doc_id)
+            subtask_desc = subtask_desc.replace("{campaign_id}", campaign_id)
+
+            subtask_id = f"{cascade_batch_id}_{subtask.get('id', str(i + len(first_batch)))}"
+            subtask_priority = subtask.get("priority", "high")
+
+            subtask_result = assign_task({
+                "task_id": subtask_id,
+                "description": subtask_desc,
+                "priority": subtask_priority,
+                "context": {"doc_id": doc_id, "campaign_id": campaign_id, "cascade_batch": cascade_batch_id},
+                "batch_id": cascade_batch_id,
+                "agent_id": "agent_3",
+                "auto_execute": False
+            })
+
+            if subtask_result.get("status") == "success":
+                spawned_task_ids.append(subtask_id)
+                delayed_task_ids.append(subtask_id)
+            else:
+                print(f"Warning: Failed to queue subtask {subtask_id}: {subtask_result}", file=sys.stderr)
+
+        # Spawn first batch (score + images) immediately
+        if first_batch and not os.environ.get("CLAUDECODE"):
+            clean_env = os.environ.copy()
+            clean_env.pop('CLAUDECODE', None)
+            clean_env.pop('CLAUDE_CODE_ENTRYPOINT', None)
+            hub_path = os.path.join(os.path.dirname(__file__), '..', 'execution_hub.py')
+            params_json = json.dumps({
+                "tool_name": "claude_assistant",
+                "action": "execute_queue",
+                "params": {"parallel": 2}  # 2 agents for score + images
+            })
+            subprocess.Popen(
+                ['bash', '-c', f'sleep 1.5 && python3 "{hub_path}" execute_task --params \'{params_json}\''],
+                env=clean_env,
+                cwd=os.path.dirname(os.path.dirname(__file__)),
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True
+            )
+
+        # Spawn delayed batch (revise) after 45 second delay
+        if delayed_batch and not os.environ.get("CLAUDECODE"):
+            clean_env = os.environ.copy()
+            clean_env.pop('CLAUDECODE', None)
+            clean_env.pop('CLAUDE_CODE_ENTRYPOINT', None)
+            hub_path = os.path.join(os.path.dirname(__file__), '..', 'execution_hub.py')
+            params_json = json.dumps({
+                "tool_name": "claude_assistant",
+                "action": "execute_queue",
+                "params": {"parallel": 1}  # 1 agent for revise
+            })
+            # 45 second delay ensures score task has finished writing blog_revisions.json
+            subprocess.Popen(
+                ['bash', '-c', f'sleep 45 && python3 "{hub_path}" execute_task --params \'{params_json}\''],
+                env=clean_env,
+                cwd=os.path.dirname(os.path.dirname(__file__)),
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True
+            )
+
+        # Return without queuing parent task
+        return {
+            "status": "success",
+            "message": f"✅ Cascade '{cascade_type}' triggered with {len(spawned_task_ids)} subtasks",
+            "cascade_type": cascade_type,
+            "cascade_batch_id": cascade_batch_id,
+            "doc_id": doc_id,
+            "campaign_id": campaign_id,
+            "spawned_task_ids": spawned_task_ids,
+            "execution": {"triggered": True, "parallel": 3}
+        }
+
     # Use hash-based queue selection for parallel execution
     queue_file = get_queue_file_for_task(task_id)
     os.makedirs(os.path.dirname(queue_file), exist_ok=True)
@@ -243,10 +380,13 @@ def assign_task(params):
     queue = safe_read_queue_with_lock(queue_file)
 
     now = datetime.now().isoformat()
+    auto_execute = params.get("auto_execute", True)
+    initial_status = "queued" if not auto_execute else "in_progress"
     task_entry = {
-        "status": "queued",
+        "status": initial_status,
         "created_at": now,
-        "started_at": now,
+        "started_at": now if auto_execute else None,
+        "processing_started_at": now if auto_execute else None,
         "assigned_by": "GPT",
         "priority": priority,
         "description": description,
@@ -259,26 +399,124 @@ def assign_task(params):
 
     safe_write_queue_with_lock(queue_file, queue)
 
-    auto_execute = params.get("auto_execute", True)
+    # Write in_progress stub to results file only when auto-executing (single task spawn)
+    # For batch tasks, the agent writes the stub when it actually starts processing
+    if auto_execute:
+        results_file = os.path.join(os.getcwd(), "data/claude_task_results.json")
+        try:
+            if os.path.exists(results_file):
+                with open(results_file, "r", encoding="utf-8") as f:
+                    results = json.load(f)
+            else:
+                results = {"results": {}}
 
-    if auto_execute and not os.environ.get("CLAUDECODE"):
-        execute_result = execute_queue({})
-        return {
-            "status": "success",
-            "message": f"✅ Task '{task_id}' assigned and execution started",
-            "task_id": task_id,
-            "batch_id": batch_id,
-            "agent_id": agent_id,
-            "execution": execute_result
-        }
+            if task_id not in results.get("results", {}):
+                stub = {
+                    "status": "in_progress",
+                    "started_at": now,
+                    "processing_started_at": now,
+                    "description": description,
+                    "batch_id": batch_id
+                }
+                results["results"][task_id] = stub
+                with open(results_file, "w", encoding="utf-8") as f:
+                    json.dump(results, f, indent=2)
+        except Exception as e:
+            print(f"Warning: Could not write in_progress stub: {e}", file=sys.stderr)
+
+    execution = None
+    if auto_execute:
+        # Spawn Claude directly to process this specific task
+        import shlex
+        clean_env = os.environ.copy()
+        clean_env.pop('ANTHROPIC_API_KEY', None)
+        clean_env.pop('CLAUDECODE', None)
+        clean_env.pop('CLAUDE_CODE_ENTRYPOINT', None)
+        clean_env.pop('CLAUDE_CODE_SSE_PORT', None)
+        clean_env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:' + clean_env.get('PATH', '')
+        
+        prompt = f"""Process this single task:
+
+Task ID: {task_id}
+Description: {description}
+
+1. Mark in progress:
+   python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant", "action": "mark_task_in_progress", "params": {{"task_id": "{task_id}"}}}}'
+
+2. Execute the task as described
+
+3. Log completion:
+   python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant", "action": "log_task_completion", "params": {{"task_id": "{task_id}", "status": "done", "actions_taken": "REPLACE_THIS_WITH_ACTUAL_LIST_OF_ACTIONS_YOU_TOOK"}}}}'
+
+IMPORTANT: Replace the actions_taken placeholder above with a JSON array of strings describing what you actually did. Example: ["read file X", "modified function Y", "created doc Z"]. Do NOT pass '...' as actions_taken.
+
+Project context in .claude/CLAUDE.md"""
+
+        try:
+            log_file = open(os.path.join(os.getcwd(), f"data/claude_execution_{task_id}.log"), "w")
+            process = subprocess.Popen(
+                ["/opt/homebrew/bin/claude", "--add-dir", os.getcwd(), "-p", prompt,
+                 "--permission-mode", "acceptEdits", "--no-session-persistence",
+                 "--allowedTools", "Bash,Read,Write,Edit"],
+                env=clean_env,
+                cwd=os.getcwd(),
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                start_new_session=True
+            )
+            execution = {"triggered": True, "spawned": "direct", "pid": process.pid}
+        except Exception as spawn_error:
+            print(f"Warning: Failed to spawn Claude: {spawn_error}", file=sys.stderr)
+            execution = {"triggered": False, "error": str(spawn_error)}
+
+        # === FALLBACK: if spawn failed or process died immediately ===
+        if not execution or not execution.get("pid") or execution.get("triggered") == False:
+            print(f"NO PID returned, fallback triggering for {task_id}", file=sys.stderr)
+            try:
+                # Mark task as fallback in queue (don't delete - board needs to see it)
+                queue = safe_read_queue_with_lock(queue_file)
+                if task_id in queue.get("tasks", {}):
+                    queue["tasks"][task_id]["spawned_via"] = "fallback"
+                    queue["tasks"][task_id]["status"] = "in_progress"
+                    safe_write_queue_with_lock(queue_file, queue)
+                # Spawn via fallback
+                fallback_prompt = f"""Process this single task:
+
+Task ID: {task_id}
+Description: {description}
+
+1. Mark in progress:
+   python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant_fallback", "action": "mark_task_in_progress", "params": {{"task_id": "{task_id}"}}}}'
+
+2. Execute the task as described
+
+3. Log completion:
+   python3 execution_hub.py execute_task --params '{{"tool_name": "claude_assistant_fallback", "action": "log_task_completion", "params": {{"task_id": "{task_id}", "status": "done", "actions_taken": "REPLACE_THIS_WITH_ACTUAL_LIST_OF_ACTIONS_YOU_TOOK"}}}}'\n\nIMPORTANT: Replace the actions_taken placeholder above with a JSON array of strings describing what you actually did. Example: ["read file X", "modified function Y", "created doc Z"]. Do NOT pass '...' as actions_taken.\n\nProject context in .claude/CLAUDE.md"""
+                import shlex as _shlex
+                fallback_cmd = f"/opt/homebrew/bin/claude --add-dir '{os.getcwd()}' -p {_shlex.quote(fallback_prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
+                fallback_log = open(os.path.join(os.getcwd(), f"data/claude_fallback_{task_id}.log"), "w")
+                fallback_process = subprocess.Popen(
+                    ["/bin/zsh", "-l", "-c", fallback_cmd],
+                    env=clean_env,
+                    cwd=os.getcwd(),
+                    stdout=fallback_log,
+                    stderr=subprocess.STDOUT,
+                    start_new_session=True
+                )
+                execution = {"triggered": True, "spawned": "fallback", "pid": fallback_process.pid, "fallback": True}
+            except Exception as fallback_error:
+                print(f"Fallback also failed: {fallback_error}", file=sys.stderr)
+                execution = {"triggered": False, "error": str(spawn_error), "fallback_error": str(fallback_error)}
+
 
     result = {
         "status": "success",
-        "message": f"✅ Task '{task_id}' assigned to Claude Code queue",
+        "message": f"✅ Task '{task_id}' assigned and execution triggered" if execution else f"✅ Task '{task_id}' assigned to Claude Code queue",
         "task_id": task_id,
         "batch_id": batch_id,
         "agent_id": agent_id,
-        "next_step": "Call execute_queue to trigger processing" if not auto_execute else "Task will be processed in current session"
+        "execution": execution,
+        "next_step": None if execution else "Call execute_queue to trigger processing"
     }
 
     if format_warnings:
@@ -417,9 +655,10 @@ def get_all_results(params):
 
 
 def ask_claude(params):
-    """Quick Q&A - Spawn Claude session to answer a question."""
+    """Quick Q&A - Spawn Claude session to answer a question via stdin pipe."""
     question = params.get("question")
     wait = params.get("wait", True)  # Wait for response by default
+    working_dir = params.get("cwd", "/tmp")  # Default to /tmp, but can override for context
 
     if not question:
         return {"status": "error", "message": "❌ Missing required field: question"}
@@ -434,32 +673,35 @@ def ask_claude(params):
     base_env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:' + base_env.get('PATH', '')
 
     try:
-        import shlex
-        # Use zsh login shell to get the claude alias with CLAUDE.md system prompts
-        claude_cmd = f"claude -p {shlex.quote(question)} --allowedTools 'Bash,Read,Write,Edit'"
+        # Pipe question through stdin instead of command line argument
+        claude_cmd = ["/opt/homebrew/bin/claude", "--print"]
 
         if wait:
-            # Synchronous - wait for response
-            full_cmd = ["/bin/zsh", "-l", "-c", claude_cmd]
+            # Synchronous - wait for response, pipe question via stdin
+            # Use working_dir (default /tmp, or pass cwd for project context)
             result = subprocess.run(
-                full_cmd,
-                env=base_env, cwd=os.getcwd(), capture_output=True, text=True, timeout=120
+                claude_cmd,
+                input=question,
+                env=base_env, cwd=working_dir, capture_output=True, text=True, timeout=120
             )
             return {
                 "status": "success" if result.returncode == 0 else "error",
                 "response": result.stdout.strip(),
                 "stderr": result.stderr.strip() if result.stderr else None,
-                "returncode": result.returncode,
-                "command": claude_cmd,
-                "full_command": full_cmd
+                "returncode": result.returncode
             }
         else:
-            # Async - fire and forget
+            # Async - fire and forget with stdin
             log_file = open(os.path.join(os.getcwd(), "data/claude_ask.log"), "w")
             process = subprocess.Popen(
-                ["/bin/zsh", "-l", "-c", claude_cmd],
-                env=base_env, cwd=os.getcwd(), stdout=log_file, stderr=subprocess.STDOUT, start_new_session=True
+                claude_cmd,
+                stdin=subprocess.PIPE,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                env=base_env, cwd=os.getcwd(), text=True, start_new_session=True
             )
+            process.stdin.write(question)
+            process.stdin.close()
             return {
                 "status": "success",
                 "message": f"🚀 Claude spawned with PID {process.pid}",
@@ -841,57 +1083,7 @@ def execute_queue(params):
     agent_id = params.get("agent_id")
     parallel = params.get("parallel", 3)
     
-    lockfile = os.path.join(os.getcwd(), "data/execute_queue.lock")
-
-    if os.path.exists(lockfile):
-        should_remove = False
-        try:
-            with open(lockfile, 'r') as f:
-                lock_data = json.load(f)
-                pid = lock_data.get("pid")
-                pids = lock_data.get("pids", [])
-                created_at = lock_data.get("created_at")
-
-            if created_at:
-                try:
-                    lock_time = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                    age_minutes = (datetime.now() - lock_time.replace(tzinfo=None)).total_seconds() / 60
-                    if age_minutes > 30:
-                        print(f"⚠️ Removing stale lockfile ({age_minutes:.1f} min old)", file=sys.stderr)
-                        should_remove = True
-                except:
-                    pass
-
-            if not should_remove:
-                all_pids = pids if pids else ([pid] if pid else [])
-                any_alive = False
-                for p in all_pids:
-                    try:
-                        os.kill(p, 0)
-                        any_alive = True
-                        break
-                    except OSError:
-                        pass
-                
-                if any_alive:
-                    return {
-                        "status": "already_running",
-                        "message": f"⏳ Queue execution already in progress",
-                        "hint": "Wait for current batch to complete"
-                    }
-                else:
-                    should_remove = True
-
-            if should_remove:
-                os.remove(lockfile)
-
-        except Exception as e:
-            print(f"Warning: Could not read lockfile: {e}", file=sys.stderr)
-            try:
-                os.remove(lockfile)
-            except:
-                pass
-
+    # No lockfile needed - agents claim tasks directly via claimed_by field
     # Count tasks across all queue files
     task_count = 0
     all_queued_tasks = {}  # task_id -> task_data
@@ -926,9 +1118,14 @@ def execute_queue(params):
     pids = []
 
     if parallel > 1:
+        # Distribute tasks evenly across agents (round-robin)
+        # Don't rely on pre-set agent_id - most tasks don't have it
+        queued_task_ids = list(all_queued_tasks.keys())
         agent_tasks = {}
-        for task_id, task_data in all_queued_tasks.items():
-            aid = task_data.get("agent_id", "agent_1")
+
+        for i, task_id in enumerate(queued_task_ids):
+            agent_num = (i % parallel) + 1
+            aid = f"agent_{agent_num}"
             if aid not in agent_tasks:
                 agent_tasks[aid] = []
             agent_tasks[aid].append(task_id)
@@ -961,7 +1158,7 @@ Project context in .claude/CLAUDE.md"""
 
             try:
                 import shlex
-                claude_cmd = f"claude -p {shlex.quote(prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
+                claude_cmd = f"/opt/homebrew/bin/claude --add-dir '{os.getcwd()}' -p {shlex.quote(prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
                 log_file = open(os.path.join(os.getcwd(), f"data/claude_execution_{aid}.log"), "w")
                 process = subprocess.Popen(
                     ["/bin/zsh", "-l", "-c", claude_cmd],
@@ -1011,7 +1208,7 @@ Project context in .claude/CLAUDE.md"""
 
         try:
             import shlex
-            claude_cmd = f"claude -p {shlex.quote(prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
+            claude_cmd = f"/opt/homebrew/bin/claude --add-dir '{os.getcwd()}' -p {shlex.quote(prompt)} --permission-mode acceptEdits --no-session-persistence --allowedTools 'Bash,Read,Write,Edit'"
             log_file = open(os.path.join(os.getcwd(), "data/claude_execution.log"), "w")
             process = subprocess.Popen(
                 ["/bin/zsh", "-l", "-c", claude_cmd],
@@ -1022,20 +1219,7 @@ Project context in .claude/CLAUDE.md"""
         except Exception as e:
             return {"status": "error", "message": f"❌ Failed to spawn Claude Code: {str(e)}"}
 
-    try:
-        with open(lockfile, 'w') as f:
-            json.dump({
-                "created_at": datetime.now().isoformat(),
-                "pid": pids[0] if len(pids) == 1 else None,
-                "pids": pids,
-                "task_count": task_count,
-                "parallel": parallel,
-                "agents": [s.get("agent_id") for s in spawned if s.get("agent_id")]
-            }, f, indent=2)
-        print(f"🔒 Created lockfile for {task_count} task(s)", file=sys.stderr)
-    except Exception as e:
-        print(f"Warning: Could not create lockfile: {e}", file=sys.stderr)
-
+    # No lockfile - agents claim tasks directly
     return {
         "status": "task_started",
         "message": f"✅ {len(spawned)} agent(s) started to process {task_count} task(s)",
@@ -1046,43 +1230,28 @@ Project context in .claude/CLAUDE.md"""
 
 
 def kill_agents(params):
-    """Kill all running parallel agents and clean up lockfile."""
-    lockfile = os.path.join(os.getcwd(), "data/execute_queue.lock")
-    
-    killed = []
-    failed = []
-    
-    if os.path.exists(lockfile):
-        try:
-            with open(lockfile, 'r') as f:
-                lock_data = json.load(f)
-            
-            pids = lock_data.get("pids", [])
-            if not pids and lock_data.get("pid"):
-                pids = [lock_data["pid"]]
-            
-            for pid in pids:
-                try:
-                    os.kill(pid, 9)
-                    killed.append(pid)
-                except OSError:
-                    failed.append(pid)
-            
-            os.remove(lockfile)
-            
-        except Exception as e:
-            return {"status": "error", "message": f"❌ Error: {e}"}
-    
+    """Kill all running parallel agents."""
+    killed = 0
+
+    # Kill any claude processes running with -p flag (task agents)
     try:
-        subprocess.run(["pkill", "-f", "claude.*-p"], capture_output=True, timeout=5)
+        result = subprocess.run(["pkill", "-f", "claude.*-p"], capture_output=True, timeout=5)
+        if result.returncode == 0:
+            killed += 1
     except:
         pass
-    
+
+    # Clean up any stale lockfile if it exists (legacy cleanup)
+    lockfile = os.path.join(os.getcwd(), "data/execute_queue.lock")
+    if os.path.exists(lockfile):
+        try:
+            os.remove(lockfile)
+        except:
+            pass
+
     return {
         "status": "success",
-        "message": f"✅ Killed {len(killed)} agent(s)",
-        "killed_pids": killed,
-        "already_dead": failed
+        "message": f"✅ Killed agents and cleaned up"
     }
 
 
@@ -1231,6 +1400,10 @@ def log_task_completion(params):
                     for archived_task_id, result_data in to_archive.items():
                         # Skip if already archived
                         if archived_task_id in existing_task_ids:
+                            continue
+
+                        # Skip stubs that never completed — actions_taken will be empty
+                        if result_data.get('status') == 'in_progress':
                             continue
 
                         desc = result_data.get('description', '')
@@ -1490,8 +1663,49 @@ def batch_assign_tasks(params):
         summary += f" ({failed_count} failed)"
 
     execution = None
-    if success_count > 0 and not os.environ.get("CLAUDECODE"):
-        execution = execute_queue({"parallel": parallel})
+    if success_count > 0:
+        # Spawn execute_queue in subprocess with clean env (no CLAUDECODE)
+        # This triggers agent spawn immediately instead of waiting for engine
+        import json as _json
+        clean_env = os.environ.copy()
+        clean_env.pop('CLAUDECODE', None)
+        clean_env.pop('CLAUDE_CODE_ENTRYPOINT', None)
+        eq_log = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'execute_queue_spawn.log'), 'w')
+        eq_process = subprocess.Popen(
+            ['python3', os.path.join(os.path.dirname(__file__), '..', 'execution_hub.py'),
+             'execute_task', '--params', _json.dumps({
+                 "tool_name": "claude_assistant",
+                 "action": "execute_queue",
+                 "params": {"parallel": parallel}
+             })],
+            env=clean_env,
+            cwd=os.path.dirname(os.path.dirname(__file__)),
+            stdout=eq_log,
+            stderr=subprocess.STDOUT,
+            start_new_session=True
+        )
+        execution = {"triggered": True, "parallel": parallel, "eq_pid": eq_process.pid}
+
+        # === FALLBACK: if no PID returned, retry via fallback ===
+        if not eq_process.pid:
+            print(f"NO PID returned from batch spawn, fallback triggering", file=sys.stderr)
+            try:
+                fallback_process = subprocess.Popen(
+                    ['python3', os.path.join(os.path.dirname(__file__), '..', 'execution_hub.py'),
+                     'execute_task', '--params', _json.dumps({
+                         "tool_name": "claude_assistant_fallback",
+                         "action": "execute_queue",
+                         "params": {"parallel": parallel}
+                     })],
+                    env=clean_env,
+                    cwd=os.path.dirname(os.path.dirname(__file__)),
+                    stdout=eq_log,
+                    stderr=subprocess.STDOUT,
+                    start_new_session=True
+                )
+                execution = {"triggered": True, "parallel": parallel, "eq_pid": fallback_process.pid, "fallback": True}
+            except Exception as fallback_error:
+                print(f"Batch fallback also failed: {fallback_error}", file=sys.stderr)
 
     return {
         "status": "success" if success_count > 0 else "error",
@@ -1502,6 +1716,130 @@ def batch_assign_tasks(params):
         "details": results,
         "parallel": parallel,
         "execution": execution
+    }
+
+
+def assign_mockup_batch(params):
+    """
+    Fan out a mockup description into N parallel variations.
+
+    Required:
+    - description: the mockup task description
+
+    Optional:
+    - base_name: explicit filename base (e.g., 'built_by_claude' -> built_by_claude_v1.html)
+                 If not provided, derives from description keywords.
+    - variations: number of variations to create (default: 4)
+    - parallel: number of agents (default: 3)
+    - styles: array of style directions (e.g., ["minimalist sparse", "dense galaxy", "neon cyberpunk"])
+              If provided, each variation gets its own style appended to description.
+              If fewer styles than variations, cycles through them.
+              If not provided, auto-generates distinct style directions.
+
+    Each variation gets:
+    - Unique version suffix (v1, v2, ... vN)
+    - Unique output filename baked into description (e.g., semantic_memory/mockups/built_by_claude_v1.html)
+    - Unique style direction to ensure visual variety
+    """
+    description = params.get("description")
+    variations = params.get("variations", 4)
+    parallel = params.get("parallel", 3)
+    base_name = params.get("base_name")
+    styles = params.get("styles")
+
+    if not description:
+        return {"status": "error", "message": "❌ Missing required field: description"}
+
+    if not isinstance(variations, int) or variations < 1:
+        return {"status": "error", "message": "❌ variations must be a positive integer"}
+
+    if variations > 50:
+        return {"status": "error", "message": "❌ variations capped at 50 to avoid queue flooding"}
+
+    # Auto-generate styles if not provided
+    default_styles = [
+        "minimalist with sparse cards, lots of negative space, clean lines",
+        "dense galaxy layout with hundreds of tiny interactive elements",
+        "neon cyberpunk aesthetic with glowing edges and dark backgrounds",
+        "organic flowing curves with soft gradients and natural colors",
+        "brutalist raw concrete aesthetic with sharp edges and bold typography",
+        "glassmorphism with frosted layers and depth effects",
+        "retro 80s synthwave with grid lines and sunset gradients",
+        "newspaper editorial style with columns and serif typography",
+        "geometric bauhaus with primary colors and strong shapes",
+        "hand-drawn sketch aesthetic with wobbly lines and paper texture"
+    ]
+
+    if styles and isinstance(styles, list) and len(styles) > 0:
+        style_list = styles
+    else:
+        style_list = default_styles
+
+    # Use explicit base_name if provided, otherwise derive from description
+    if not base_name:
+        desc_lower = description.lower()
+        stopwords = ['a', 'an', 'the', 'for', 'to', 'of', 'and', 'with', 'that', 'this', 'create', 'make', 'build', 'design']
+        words = re.sub(r'[^\w\s]', '', desc_lower).split()
+        keywords = [w for w in words if w not in stopwords and len(w) > 2][:3]
+        base_name = '_'.join(keywords) if keywords else 'mockup'
+
+    # Sanitize base_name (remove spaces, special chars)
+    base_name = re.sub(r'[^\w]', '_', base_name.lower()).strip('_')
+    base_name = re.sub(r'_+', '_', base_name)  # collapse multiple underscores
+
+    # Build task list
+    tasks = []
+    for i in range(1, variations + 1):
+        version_suffix = f"v{i}"
+        output_filename = f"semantic_memory/mockups/{base_name}_{version_suffix}.html"
+
+        # Cycle through styles if fewer styles than variations
+        style_index = (i - 1) % len(style_list)
+        style_direction = style_list[style_index]
+
+        # Bake unique filename AND style directly into task description
+        versioned_description = f"""{description}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VERSION: {version_suffix} (variation {i} of {variations})
+OUTPUT FILE: {output_filename}
+STYLE DIRECTION: {style_direction}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚨 CRITICAL: You MUST save your mockup to exactly this path:
+   {output_filename}
+
+🎨 STYLE: Your design MUST follow this aesthetic direction:
+   {style_direction}
+
+This filename is unique to your task. Other agents have different filenames.
+Your style direction is DIFFERENT from other variations - embrace it fully."""
+
+        tasks.append({
+            "description": versioned_description,
+            "context": {
+                "version": version_suffix,
+                "variation_number": i,
+                "total_variations": variations,
+                "output_file": output_filename,
+                "create_output_doc": False
+            },
+            "priority": "medium"
+        })
+
+    # Use batch_assign_tasks to queue them
+    result = batch_assign_tasks({
+        "tasks": tasks,
+        "parallel": parallel
+    })
+
+    return {
+        "status": result.get("status"),
+        "message": f"🎨 Spawned {variations} mockup variations across {parallel} agents",
+        "base_name": base_name,
+        "variations": variations,
+        "output_pattern": f"semantic_memory/mockups/{base_name}_v*.html",
+        "batch_result": result
     }
 
 
@@ -2136,6 +2474,7 @@ def main():
     actions = {
         'assign_task': assign_task,
         'assign_demo_task': assign_demo_task,
+        'assign_mockup_batch': assign_mockup_batch,
         'batch_assign_tasks': batch_assign_tasks,
         'check_task_status': check_task_status,
         'get_task_result': get_task_result,

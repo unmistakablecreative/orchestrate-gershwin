@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 # === BASE DIR ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = BASE_DIR
 
 from tools import json_manager
 from tools.smart_json_dispatcher import orchestrate_write
@@ -136,12 +137,12 @@ def run_script(tool_name, action, params):
 # === Startup Hook ===
 @app.on_event("startup")
 def startup_routines():
+    logging.info("🔥 FASTAPI STARTUP HOOK TRIGGERED")
+
     try:
-        logging.info("🔥 FASTAPI STARTUP HOOK TRIGGERED")
         sync_repo_and_merge_registry()
-        # Tool UI merge is now done in-memory on-demand via get_merged_tool_ui()
     except Exception as e:
-        logging.warning(f"⚠️ Startup routines failed: {e}")
+        logging.warning(f"⚠️ Startup sync failed: {e}")
 
     try:
         if os.path.exists(NGROK_CONFIG_PATH):
@@ -159,22 +160,6 @@ def startup_routines():
                 logging.info("🔁 ngrok already running.")
     except Exception as e:
         logging.warning(f"⚠️ Ngrok relaunch failed: {e}")
-
-    try:
-        from claude_queue_processor import ClaudeQueueProcessor
-        processor = ClaudeQueueProcessor()
-        processor.start_background()
-        logging.info("✅ Claude Code queue processor started")
-    except Exception as e:
-        logging.warning(f"⚠️ Claude queue processor failed to start: {e}")
-
-try:
-    python_exe = sys.executable
-    referral_script = os.path.join(BASE_DIR, "tools", "referral_engine.py")
-    subprocess.Popen([python_exe, referral_script])
-    logging.info("📣 Referral engine launched unconditionally.")
-except Exception as e:
-    logging.warning(f"⚠️ Failed to launch referral engine: {e}")
 
 # === Execute Task ===
 @app.post("/execute_task")
@@ -207,8 +192,6 @@ async def execute_task(request: Request):
 def get_supported_actions():
     try:
         sync_repo_and_merge_registry()
-        # get_merged_tool_ui() returns in-memory, called on-demand where needed
-
         with open(SYSTEM_REGISTRY, "r") as f:
             entries = [json.loads(line.strip()) for line in f if line.strip()]
 
@@ -635,3 +618,226 @@ def get_tool_catalog():
     except Exception as e:
         logging.error(f"Failed to build tool catalog: {e}")
         return {"status": "error", "message": str(e)}
+
+# ============ DOC ENDPOINTS ============
+DOCS_FILE = os.path.join(BASE_DIR, "data", "docs.json")
+_docs_cache = {"data": None, "mtime": 0}
+
+def load_docs():
+    if not os.path.exists(DOCS_FILE):
+        return {"docs": {}}
+    mtime = os.path.getmtime(DOCS_FILE)
+    if _docs_cache["data"] is not None and mtime == _docs_cache["mtime"]:
+        return _docs_cache["data"]
+    with open(DOCS_FILE, 'r') as f:
+        data = json.load(f)
+    _docs_cache["data"] = data
+    _docs_cache["mtime"] = mtime
+    return data
+
+def save_docs(data):
+    with open(DOCS_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+    _docs_cache["data"] = data
+    _docs_cache["mtime"] = os.path.getmtime(DOCS_FILE)
+
+@app.get("/docs/list")
+async def list_docs():
+    """List all docs"""
+    import re
+    data = load_docs()
+    docs_list = []
+    for doc_id, doc in data.get("docs", {}).items():
+        # Calculate word count from content (strip HTML tags)
+        content = doc.get("content", "")
+        text = re.sub(r'<[^>]*>', ' ', content) if content else ""
+        words = [w for w in text.split() if w]
+        word_count = len(words)
+
+        docs_list.append({
+            "id": doc_id,
+            "title": doc.get("title", "Untitled"),
+            "collection": doc.get("collection", ""),
+            "updated_at": doc.get("updated_at", ""),
+            "created_at": doc.get("created_at", ""),
+            "word_count": word_count,
+            "description": doc.get("description", ""),
+            "status": doc.get("status", ""),
+            "campaign_id": doc.get("campaign_id", ""),
+            "published_url": doc.get("published_url", "")
+        })
+    return {"status": "success", "docs": docs_list}
+
+@app.get("/docs/get/{doc_id}")
+async def get_doc(doc_id: str):
+    """Get single doc by ID"""
+    data = load_docs()
+    doc = data.get("docs", {}).get(doc_id)
+    if not doc:
+        return {"status": "error", "message": "Doc not found"}
+    return {"status": "success", "doc": doc}
+
+@app.post("/docs/save")
+async def save_doc(request: Request):
+    """Save/update doc"""
+    body = await request.json()
+    doc_id = body.get("id")
+
+    data = load_docs()
+
+    if not doc_id:
+        # New doc
+        import uuid
+        doc_id = f"doc_{uuid.uuid4().hex[:8]}"
+
+    existing_doc = data.get("docs", {}).get(doc_id, {})
+    data["docs"][doc_id] = {
+        "id": doc_id,
+        "title": body.get("title", existing_doc.get("title", "Untitled")),
+        "content": body.get("content", existing_doc.get("content", "")),
+        "collection": body.get("collection", existing_doc.get("collection", "Notes")),
+        "description": body.get("description", existing_doc.get("description", "")),
+        "status": body.get("status", existing_doc.get("status", "")),
+        "campaign_id": body.get("campaign_id", existing_doc.get("campaign_id", "")),
+        "published_url": body.get("published_url", existing_doc.get("published_url", "")),
+        "created_at": existing_doc.get("created_at", datetime.now().isoformat()),
+        "updated_at": datetime.now().isoformat()
+    }
+    
+    save_docs(data)
+    return {"status": "success", "doc_id": doc_id}
+
+@app.delete("/docs/delete/{doc_id}")
+async def delete_doc(doc_id: str):
+    """Delete doc"""
+    data = load_docs()
+    if doc_id in data.get("docs", {}):
+        del data["docs"][doc_id]
+        save_docs(data)
+        return {"status": "success"}
+    return {"status": "error", "message": "Doc not found"}
+
+@app.get("/docs/backlinks/{doc_id}")
+async def get_backlinks(doc_id: str):
+    """Get backlinks for a doc"""
+    data = load_docs()
+    doc = data.get("docs", {}).get(doc_id)
+    if not doc:
+        return {"status": "error", "message": "Doc not found"}
+    
+    backlinks = []
+    for bl_id in doc.get("backlinks", []):
+        bl_doc = data.get("docs", {}).get(bl_id)
+        if bl_doc:
+            backlinks.append({
+                "doc_id": bl_id,
+                "title": bl_doc.get("title", "Untitled"),
+                "collection": bl_doc.get("collection", "")
+            })
+    
+    return {"status": "success", "backlinks": backlinks}
+
+@app.post("/docs/link")
+async def create_doc_link(request: Request):
+    """Create bidirectional link between docs"""
+    body = await request.json()
+    source_doc_id = body.get("source_doc_id")
+    target_doc_id = body.get("target_doc_id")
+    
+    if not source_doc_id or not target_doc_id:
+        return {"status": "error", "message": "source_doc_id and target_doc_id required"}
+    
+    data = load_docs()
+    
+    source_doc = data.get("docs", {}).get(source_doc_id)
+    target_doc = data.get("docs", {}).get(target_doc_id)
+    
+    if not source_doc or not target_doc:
+        return {"status": "error", "message": "One or both docs not found"}
+    
+    # Initialize links/backlinks arrays if missing
+    if "links" not in source_doc:
+        source_doc["links"] = []
+    if "backlinks" not in target_doc:
+        target_doc["backlinks"] = []
+    
+    # Add link if not already present
+    if target_doc_id not in source_doc["links"]:
+        source_doc["links"].append(target_doc_id)
+    if source_doc_id not in target_doc["backlinks"]:
+        target_doc["backlinks"].append(source_doc_id)
+    
+    save_docs(data)
+    return {"status": "success", "message": f"Linked {source_doc_id} -> {target_doc_id}"}
+
+
+# ============== DOC EDITOR BETA ROUTES ==============
+# Mirrors /docs/ routes but uses docs_beta.json for isolated testing
+
+DOCS_BETA_FILE = os.path.join(BASE_DIR, "data", "docs_beta.json")
+
+def load_docs_beta():
+    if not os.path.exists(DOCS_BETA_FILE):
+        return {"docs": {}}
+    mtime = os.path.getmtime(DOCS_BETA_FILE)
+    if _docs_beta_cache["data"] is not None and mtime == _docs_beta_cache["mtime"]:
+        return _docs_beta_cache["data"]
+    with open(DOCS_BETA_FILE, 'r') as f:
+        data = json.load(f)
+    _docs_beta_cache["data"] = data
+    _docs_beta_cache["mtime"] = mtime
+    return data
+
+def save_docs_beta(data):
+    with open(DOCS_BETA_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+    _docs_beta_cache["data"] = data
+    _docs_beta_cache["mtime"] = os.path.getmtime(DOCS_BETA_FILE)
+
+@app.post("/upload_file")
+async def upload_file(request: Request):
+    """Write file content to disk. Security: only allows paths within project root."""
+    try:
+        body = await request.json()
+        path = body.get("path")
+        content = body.get("content")
+
+        if not path:
+            return {"status": "error", "message": "Missing required field: path"}
+        if content is None:
+            return {"status": "error", "message": "Missing required field: content"}
+
+        # Security: Resolve path and ensure it's within project root
+        # Handle both absolute and relative paths
+        if os.path.isabs(path):
+            resolved_path = os.path.realpath(path)
+        else:
+            resolved_path = os.path.realpath(os.path.join(PROJECT_ROOT, path))
+
+        # Normalize project root for comparison
+        normalized_root = os.path.realpath(PROJECT_ROOT)
+
+        # Check if resolved path is within project root
+        if not resolved_path.startswith(normalized_root + os.sep) and resolved_path != normalized_root:
+            return {"status": "error", "message": f"Path '{path}' is outside project root. Access denied."}
+
+        # Ensure parent directory exists
+        parent_dir = os.path.dirname(resolved_path)
+        if not os.path.exists(parent_dir):
+            os.makedirs(parent_dir, exist_ok=True)
+
+        # Write the file
+        with open(resolved_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+
+        return {"status": "success", "path": resolved_path}
+
+    except json.JSONDecodeError:
+        return {"status": "error", "message": "Invalid JSON body"}
+    except PermissionError:
+        return {"status": "error", "message": f"Permission denied writing to '{path}'"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+# 🔗 Dynamic URL Aliases - catch-all route (MUST be LAST - after all other routes)

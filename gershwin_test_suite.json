@@ -1,0 +1,206 @@
+{
+  "description": "Ordered, stateful test suite for Gershwin installation validation",
+  "generated_at": "2026-03-20T06:42:46.226221",
+  "group_count": 3,
+  "test_count": 23,
+  "groups": [
+    {
+      "group_name": "json_manager",
+      "description": "JSON file operations - create, add entries, read, cleanup",
+      "ordered": true,
+      "tests": [
+        {
+          "tool_name": "json_manager",
+          "action": "create_json_file",
+          "params": {
+            "filename": "gershwin_test_fixture.json"
+          },
+          "capture_as": "json_create"
+        },
+        {
+          "tool_name": "json_manager",
+          "action": "add_json_entry",
+          "params": {
+            "filename": "gershwin_test_fixture.json",
+            "entry_key": "test_entry_001",
+            "entry_data": {
+              "test_field": "test_value",
+              "number": 42
+            }
+          },
+          "capture_as": "json_add_entry"
+        },
+        {
+          "tool_name": "json_manager",
+          "action": "list_json_entries",
+          "params": {
+            "filename": "gershwin_test_fixture.json"
+          }
+        },
+        {
+          "tool_name": "json_manager",
+          "action": "read_json_entry",
+          "params": {
+            "filename": "gershwin_test_fixture.json",
+            "entry_key": "test_entry_001"
+          }
+        },
+        {
+          "tool_name": "json_manager",
+          "action": "read_json_file",
+          "params": {
+            "filename": "gershwin_test_fixture.json"
+          }
+        }
+      ]
+    },
+    {
+      "group_name": "doc_editor",
+      "description": "Document operations - create doc, search, read, check links, cleanup",
+      "ordered": true,
+      "tests": [
+        {
+          "tool_name": "doc_editor",
+          "action": "create_doc",
+          "params": {
+            "title": "Gershwin Test Doc",
+            "content": "Test content for automated testing. This document validates the doc_editor tool.",
+            "collection": "test"
+          },
+          "capture_as": "doc_create",
+          "capture_key": "doc_id"
+        },
+        {
+          "tool_name": "doc_editor",
+          "action": "search_docs",
+          "params": {
+            "query": "Gershwin Test"
+          }
+        },
+        {
+          "tool_name": "doc_editor",
+          "action": "read_doc",
+          "params": {},
+          "inject": [
+            {
+              "capture_from": "doc_create",
+              "capture_key": "doc_id",
+              "inject_as": "doc_id"
+            }
+          ]
+        },
+        {
+          "tool_name": "doc_editor",
+          "action": "list_docs",
+          "params": {
+            "collection": "test"
+          }
+        },
+        {
+          "tool_name": "doc_editor",
+          "action": "read_links",
+          "params": {},
+          "inject": [
+            {
+              "capture_from": "doc_create",
+              "capture_key": "doc_id",
+              "inject_as": "doc_id"
+            }
+          ]
+        },
+        {
+          "tool_name": "doc_editor",
+          "action": "read_backlinks",
+          "params": {},
+          "inject": [
+            {
+              "capture_from": "doc_create",
+              "capture_key": "doc_id",
+              "inject_as": "doc_id"
+            }
+          ]
+        },
+        {
+          "tool_name": "doc_editor",
+          "action": "search_within_doc",
+          "params": {
+            "query": "automated"
+          },
+          "inject": [
+            {
+              "capture_from": "doc_create",
+              "capture_key": "doc_id",
+              "inject_as": "doc_id"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group_name": "stateless",
+      "description": "Read-only stateless operations that can run in any order",
+      "ordered": false,
+      "tests": [
+        {
+          "tool_name": "system_settings",
+          "action": "list_tools",
+          "params": {}
+        },
+        {
+          "tool_name": "system_settings",
+          "action": "list_supported_actions",
+          "params": {}
+        },
+        {
+          "tool_name": "system_settings",
+          "action": "list_memory_files",
+          "params": {}
+        },
+        {
+          "tool_name": "unlock_tool",
+          "action": "list_marketplace_tools",
+          "params": {}
+        },
+        {
+          "tool_name": "unlock_tool",
+          "action": "get_credits_balance",
+          "params": {}
+        },
+        {
+          "tool_name": "check_credits",
+          "action": "check_credits",
+          "params": {}
+        },
+        {
+          "tool_name": "terminal",
+          "action": "ls",
+          "params": {
+            "path": "."
+          }
+        },
+        {
+          "tool_name": "terminal",
+          "action": "read_file",
+          "params": {
+            "filename": "jarvis.py"
+          }
+        },
+        {
+          "tool_name": "terminal",
+          "action": "check_safe",
+          "params": {}
+        },
+        {
+          "tool_name": "bullet_journal",
+          "action": "list_entries",
+          "params": {}
+        },
+        {
+          "tool_name": "bullet_journal",
+          "action": "get_collections",
+          "params": {}
+        }
+      ]
+    }
+  ]
+}

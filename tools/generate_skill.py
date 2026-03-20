@@ -264,8 +264,8 @@ def generate_skill(params=None):
     skill_path = os.path.join(OUTPUT_DIR, skill_filename)
 
     with zipfile.ZipFile(skill_path, 'w', zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("SKILL.md", skill_md)
-        zf.writestr("schema.md", schema_md)
+        # Must be in a folder matching skill name for Claude to accept it
+        zf.writestr("orchestrate-gershwin/SKILL.md", skill_md)
 
     file_size = os.path.getsize(skill_path)
 

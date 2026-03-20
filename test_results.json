@@ -1,0 +1,205 @@
+{
+  "passed": 21,
+  "total": 23,
+  "pass_rate": "91.3%",
+  "by_group": {
+    "json_manager": {
+      "passed": 5,
+      "failed": 0
+    },
+    "doc_editor": {
+      "passed": 7,
+      "failed": 0
+    },
+    "stateless": {
+      "passed": 9,
+      "failed": 2
+    }
+  },
+  "results": [
+    {
+      "group": "json_manager",
+      "tool": "json_manager",
+      "action": "create_json_file",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "json_manager",
+      "tool": "json_manager",
+      "action": "add_json_entry",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "json_manager",
+      "tool": "json_manager",
+      "action": "list_json_entries",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "json_manager",
+      "tool": "json_manager",
+      "action": "read_json_entry",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "json_manager",
+      "tool": "json_manager",
+      "action": "read_json_file",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "create_doc",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "search_docs",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "read_doc",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "list_docs",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "read_links",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "read_backlinks",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "doc_editor",
+      "tool": "doc_editor",
+      "action": "search_within_doc",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "system_settings",
+      "action": "list_tools",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "system_settings",
+      "action": "list_supported_actions",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "system_settings",
+      "action": "list_memory_files",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "unlock_tool",
+      "action": "list_marketplace_tools",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "unlock_tool",
+      "action": "get_credits_balance",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "check_credits",
+      "action": "check_credits",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "terminal",
+      "action": "ls",
+      "passed": false,
+      "reason": "Got error: Unknown action ls",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "terminal",
+      "action": "read_file",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "terminal",
+      "action": "check_safe",
+      "passed": false,
+      "reason": "Got error: Unknown action check_safe",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "bullet_journal",
+      "action": "list_entries",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    },
+    {
+      "group": "stateless",
+      "tool": "bullet_journal",
+      "action": "get_collections",
+      "passed": true,
+      "reason": "OK",
+      "status_code": 200
+    }
+  ]
+}

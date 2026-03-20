@@ -1,32 +1,108 @@
 {
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block_native_file_ops.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/force_vector_db.py"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/inject_tool_schema.py"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/route_to_hub.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/inject_schemas.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Review the task that was just worked on. Check if ALL steps were completed - especially archive steps, cleanup steps, and tagging steps. If the task said to do multiple things (like 'create doc AND archive emails'), verify BOTH were done. If any step was skipped, respond with {\"ok\": false, \"reason\": \"STEP SKIPPED: [describe what was not done]\"}. If all steps complete, respond with {\"ok\": true}.",
+            "statusMessage": "Verifying all task steps completed..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/capture_token_telemetry.py"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "deny": [
+      "Bash(sed *)",
+      "Bash(* sed *)",
+      "Bash(* | sed *)",
       "Edit(data/claude_task_queue.json)",
       "Edit(data/claude_task_results.json)",
-      "Edit(credentials.json)",
+      "Edit(data/automation_state.json)",
+      "Edit(data/execution_log.json)",
+      "Edit(data/youtube_published.json)",
+      "Edit(data/youtube_publish_queue.json)",
+      "Edit(data/working_memory.json)",
+      "Edit(data/automation_rules.json)",
+      "Edit(data/engine_registry.json)",
+      "Edit(data/podcast_index.json)",
       "Write(data/claude_task_queue.json)",
       "Write(data/claude_task_results.json)",
-      "Write(credentials.json)",
-      "Bash(python3 tools/*.py:*)",
-      "Bash(python tools/*.py:*)"
+      "Write(data/automation_state.json)",
+      "Write(data/execution_log.json)",
+      "Write(data/youtube_published.json)",
+      "Write(data/youtube_publish_queue.json)",
+      "Write(data/working_memory.json)",
+      "Write(data/automation_rules.json)",
+      "Write(data/engine_registry.json)",
+      "Write(data/podcast_index.json)",
+      "Bash(python3 tools/json_manager.py:*outline_queue.json:*)",
+      "Bash(python tools/json_manager.py:*outline_queue.json:*)"
     ],
     "allow": [
       "Bash(python3 execution_hub.py:*)",
-      "Bash(python execution_hub.py:*)",
-      "Read(data/**)",
-      "Read(tools/**)",
-      "Read(.claude/**)",
-      "Read(tests/**)",
-      "Write(/orchestrate_user/**)",
-      "Write(data/**)",
-      "Write(/opt/orchestrate-core-runtime/data/**)"
+      "Bash(python3 tools/*.py:*)",
+      "Bash(python tools/*.py:*)"
     ]
   },
   "env": {
-    "ORCHESTRATE_RUNTIME_DIR": "/opt/orchestrate-core-runtime",
-    "ORCHESTRATE_USER_DIR": "/orchestrate_user",
-    "ORCHESTRATE_DATA_DIR": "/opt/orchestrate-core-runtime/data",
-    "ORCHESTRATE_TASK_QUEUE": "/opt/orchestrate-core-runtime/data/claude_task_queue.json",
-    "ORCHESTRATE_TASK_RESULTS": "/opt/orchestrate-core-runtime/data/claude_task_results.json"
+    "ORCHESTRATE_TASK_QUEUE": "data/claude_task_queue.json",
+    "ORCHESTRATE_TASK_RESULTS": "data/claude_task_results.json",
+    "ORCHESTRATE_EXECUTION_HUB": "http://localhost:5001/execute_task",
+    "ORCHESTRATE_SUPPORTED_ACTIONS": "http://localhost:5001/get_supported_actions",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
+    "DISABLE_AUTOUPDATER": "1"
   }
 }

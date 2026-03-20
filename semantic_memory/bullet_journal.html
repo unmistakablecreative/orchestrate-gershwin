@@ -18,10 +18,16 @@
         .stat-num.yellow { color: #f59e0b; }
         .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
-        .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filters { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
         .filter { padding: 10px 20px; border-radius: 24px; background: #16161A; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: 500; border: 1px solid transparent; transition: all 0.15s; }
         .filter:hover { border-color: rgba(255,255,255,0.1); }
         .filter.active { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #000; }
+
+        .collection-dropdown { position: relative; margin-left: auto; }
+        .collection-select { padding: 10px 36px 10px 16px; border-radius: 24px; background: #16161A; color: #a78bfa; font-size: 13px; font-weight: 500; border: 1px solid #6d28d9; appearance: none; cursor: pointer; font-family: inherit; min-width: 160px; }
+        .collection-select:hover { border-color: #a78bfa; background: rgba(109,40,217,0.1); }
+        .collection-select:focus { outline: none; border-color: #a78bfa; }
+        .collection-dropdown::after { content: '▼'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #a78bfa; pointer-events: none; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 
@@ -68,7 +74,7 @@
         .btn-save { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #000; }
         .btn-save:hover { opacity: 0.9; }
 
-        .sync-btn { padding: 10px 20px; border-radius: 24px; background: #16161A; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,0.1); margin-left: auto; }
+        .sync-btn { padding: 10px 20px; border-radius: 24px; background: #16161A; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,0.1); }
         .sync-btn:hover { border-color: #22c55e; color: #22c55e; }
 
         .empty-state { text-align: center; padding: 60px 20px; color: #475569; }
@@ -100,6 +106,11 @@
         <div class="filter" data-filter="event">Events</div>
         <div class="filter" data-filter="note">Notes</div>
         <div class="filter" data-filter="done">Done</div>
+        <div class="collection-dropdown" id="collectionFilters">
+            <select class="collection-select" id="collectionSelect">
+                <option value="">All Collections</option>
+            </select>
+        </div>
         <button class="sync-btn" onclick="loadData()">Refresh</button>
     </div>
 
@@ -124,7 +135,7 @@
             </div>
             <div class="form-group">
                 <label>Collection</label>
-                <input type="text" id="entryCollection" placeholder="e.g. work, personal, ideas">
+                <input type="text" id="entryCollection" placeholder="SHIP, HANDLE, PUBLISH, or IDEAS">
             </div>
             <div class="modal-actions">
                 <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
@@ -137,10 +148,11 @@
         const TRUNCATE_THRESHOLD = 120;
         let allEntries = [];
         let currentFilter = 'all';
+        let currentCollection = null;
 
         async function loadData() {
             try {
-                const response = await fetch('/data-nocache/bullet_journal.json');
+                const response = await fetch('/data/bullet_journal.json');
                 const data = await response.json();
 
                 allEntries = Object.entries(data.entries || {}).map(([id, entry]) => ({
@@ -149,6 +161,7 @@
                 })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
                 updateStats();
+                renderCollectionDropdown();
                 renderEntries();
             } catch (err) {
                 console.error('Failed to load data:', err);
@@ -166,19 +179,45 @@
             document.getElementById('noteCount').textContent = notes.length;
         }
 
+        function renderCollectionDropdown() {
+            const select = document.getElementById('collectionSelect');
+            const collections = [...new Set(allEntries.map(e => e.collection || 'uncategorized'))].sort();
+
+            select.innerHTML = '<option value="">All Collections</option>' +
+                collections.map(col =>
+                    '<option value="' + col + '"' + (currentCollection === col ? ' selected' : '') + '>' + col + '</option>'
+                ).join('');
+
+            select.onchange = function() {
+                currentCollection = this.value || null;
+                renderEntries();
+            };
+        }
+
         function renderEntries() {
             const grid = document.getElementById('entriesGrid');
 
             let filtered = allEntries;
-            if (currentFilter === 'done') {
-                // Show only done items
-                filtered = allEntries.filter(e => e.status === 'done');
-            } else if (currentFilter === 'task' || currentFilter === 'event' || currentFilter === 'note') {
-                // Show type but exclude done
-                filtered = allEntries.filter(e => e.type === currentFilter && e.status !== 'done');
+
+            // Apply collection filter first (if active)
+            if (currentCollection) {
+                filtered = filtered.filter(e => (e.collection || 'uncategorized') === currentCollection);
+                // When collection is active, exclude done items unless done filter is selected
+                if (currentFilter !== 'done') {
+                    filtered = filtered.filter(e => e.status !== 'done');
+                }
             } else {
-                // 'all' - exclude done items by default
-                filtered = allEntries.filter(e => e.status !== 'done');
+                // No collection filter - apply type filters
+                if (currentFilter === 'done') {
+                    // Show only done items
+                    filtered = allEntries.filter(e => e.status === 'done');
+                } else if (currentFilter === 'task' || currentFilter === 'event' || currentFilter === 'note') {
+                    // Show type but exclude done
+                    filtered = allEntries.filter(e => e.type === currentFilter && e.status !== 'done');
+                } else {
+                    // 'all' - exclude done items by default
+                    filtered = allEntries.filter(e => e.status !== 'done');
+                }
             }
 
             if (filtered.length === 0) {
@@ -278,8 +317,6 @@
                 if (result.status === 'success') {
                     closeModal();
                     loadData();
-                } else if (result.status === 'locked') {
-                    alert('Tool Locked\n\n' + result.message);
                 } else {
                     alert('Failed to save: ' + (result.message || result.error || 'Unknown error'));
                 }
@@ -301,6 +338,10 @@
         });
 
         loadData();
+    
+        // Global keyboard shortcuts (Cmd+0 to return home)
+        const shortcuts = { '0': 'command_center.html', '1': 'task_board.html', '2': 'doc_editor.html', '3': 'bullet_journal.html', '4': 'calendar_dashboard.html', '5': 'inbox_dashboard.html', '6': 'crm_dashboard.html' };
+        document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && shortcuts[e.key]) { e.preventDefault(); window.location.href = shortcuts[e.key]; } });
     </script>
 </body>
 </html>

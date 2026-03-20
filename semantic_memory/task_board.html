@@ -48,6 +48,29 @@
         }
         .task-textarea:focus { outline: none; border-color: #E44332; background: #1E1E22; }
         .task-textarea::placeholder { color: #444; }
+        .textarea-wrapper {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .mic-btn {
+            background: rgba(228, 67, 50, 0.15);
+            border: 1px solid rgba(228, 67, 50, 0.3);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .mic-btn:hover { background: rgba(228, 67, 50, 0.25); }
+        .mic-btn.recording {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.6);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
         .btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; }
         .btn {
             padding: 10px 20px; font-size: 15px; font-weight: 600;
@@ -159,6 +182,13 @@
             animation: spin 0.7s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse-green {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px 5px rgba(16,185,129,0.2); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+        }
+        .task-card.completing { border-color: rgba(16,185,129,0.3); }
+        .task-card.completing .card-stat { color: #10B981; }
 
         .card-stat { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; line-height: 1.1; }
         .card-title { font-size: 15px; font-weight: 500; color: #ccc; line-height: 1.3; }
@@ -278,11 +308,13 @@
                 <select class="preset-select" id="presetSelect" onchange="updatePlaceholder()">
                     <option value="custom">✏️ Custom Task</option>
                     <option value="image">📸 Generate Images</option>
-                    <option value="outline">📝 Outline Doc</option>
+                    <option value="document">📝 Document</option>
                     <option value="research">🔍 Research</option>
                     <option value="social">📱 Social Post</option>
                     <option value="newsletter">📧 Newsletter</option>
                     <option value="code">💻 Code Task</option>
+                    <option value="automation">⚙️ Add Automation Rule</option>
+                    <option value="mockup">🎨 Site Mockup</option>
                 </select>
                 <select class="preset-select collection-select" id="collectionSelect" style="display:none">
                     <option value="Inbox">📥 Inbox</option>
@@ -296,7 +328,10 @@
                     <option value="Permanent Notes">💎 Permanent Notes</option>
                 </select>
             </div>
-            <textarea class="task-textarea" id="taskTextarea" placeholder="Describe what Claude should do..."></textarea>
+            <div class="textarea-wrapper">
+                <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Click to speak">🎤</button>
+                <textarea class="task-textarea" id="taskTextarea" placeholder="Describe what Claude should do..."></textarea>
+            </div>
             <div class="btn-row">
                 <button class="btn btn-add" onclick="addToStaging()">+ Add Another</button>
                 <button class="btn btn-execute" onclick="executeNow()">Execute Now</button>
@@ -352,36 +387,42 @@
 
     <script>
         const API_BASE = '';
-        const QUEUE_FILES = ['claude_task_q1.json', 'claude_task_q2.json', 'claude_task_q3.json'];
+        const QUEUE_FILES = ['claude_task_q1.json', 'claude_task_q2.json', 'claude_task_q3.json', 'claude_task_q4.json', 'claude_task_q5.json', 'claude_task_q6.json', 'claude_task_q7.json'];
         const RESULTS_FILE = 'claude_task_results.json';
         const STAGED_FILE = 'staged_tasks.json';
 
         let stagedTasks = [];
         let activeTasks = [];
         let recentTasks = [];
+        let completingTasks = [];  // Tasks that just finished - show briefly before moving to done
+        let previousActiveIds = new Set();  // Track IDs from last poll
         let runningTimers = {};
         let lastActiveHash = '';
         let lastRecentHash = '';
         let isExpanded = false;
 
-        const presetLabels = { custom:'Custom', image:'Images', outline:'Outline', research:'Research', social:'Social', newsletter:'Newsletter', code:'Code' };
+        const presetLabels = { custom:'Custom', image:'Images', document:'Document', research:'Research', social:'Social', newsletter:'Newsletter', code:'Code', automation:'Automation', mockup:'Mockup' };
         const placeholders = {
             custom: "Write your custom task description...",
             image: "Enter topic for image generation\n\nExample: sunset landscapes, tech workspace, product mockups",
-            outline: "Enter document title and content\n\nExample: Q1 OKRs - sales targets and marketing initiatives",
+            document: "Enter document title and content\n\nExample: Q1 OKRs - sales targets and marketing initiatives",
             research: "Enter research topic\n\nExample: AI coordination infrastructure market analysis",
             social: "Enter post topic or theme\n\nExample: Thread on why SaaS is dead, LinkedIn post on AI automation",
             newsletter: "Enter newsletter subject or theme\n\nExample: Weekly update on OrchestrateOS progress",
-            code: "Describe the coding task\n\nExample: Add webhook endpoint for Stripe payments"
+            code: "Describe the coding task\n\nExample: Add webhook endpoint for Stripe payments",
+            automation: "Describe trigger and action in plain English\n\nExample: When a new podcast is added to podcast_index.json, auto-rename the audio file",
+            mockup: "Enter: Site name/brand, description, style preferences\n\nExample: TechFlow AI - SaaS dashboard for ML ops, dark theme, minimal"
         };
         const presetTemplates = {
             custom: (text, col) => text,
             image: (text, col) => `Generate image batch:\n- Topic: ${text}\n- Style: cinematic, 16:9 aspect ratio\n- Count: 5 images\n- Output: semantic_memory/images/`,
-            outline: (text, col) => `Create Outline document:\n- Title: ${text}\n- Collection: ${col || 'Inbox'}\n- Content: #${(col || 'inbox').toLowerCase().replace(/\s+/g, '')}`,
-            research: (text, col) => `Deep research task:\n- Topic: ${text}\n- Output: Create summary document with key findings\n- Sources: Web search, existing knowledge base\n- Format: Bullet points with citations`,
+            document: (text, col) => `Create document via doc_editor:\n- Title: ${text}\n- Collection: ${col || 'Inbox'}\n- Use doc_editor.create_doc action`,
+            research: (text, col) => `Deep research using deep_research tool:\n\n1. Generate 10-15 subqueries for topic: "${text}"\n   Include angles: statistics, challenges, case studies, market data, expert analysis, best practices\n\n2. Execute: deep_research.search with subqueries array\n\n3. Execute: deep_research.prepare_synthesis with top_n=30\n\n4. Read data/research_synthesis.json and write comprehensive report\n\n5. Create document via doc_editor.create_doc:\n   - Title: "Deep Research: ${text}"\n   - Collection: Inbox\n   - Content: Full research report with citations\n\nDO NOT skip any step. Use the actual deep_research tool actions.`,
             social: (text, col) => `Create social media content:\n- Topic: ${text}\n- Platforms: LinkedIn, Twitter/X\n- Style: Professional but conversational\n- Include: Hook, value, CTA\n- Output: Post draft in Outline doc`,
             newsletter: (text, col) => `Draft newsletter email:\n- Subject: ${text}\n- Audience: Subscribers\n- Tone: Personal, insightful\n- Sections: Opening hook, main content, CTA\n- Output: Draft in Outline doc for review`,
-            code: (text, col) => `Development task:\n- Task: ${text}\n- Follow existing patterns in codebase\n- Test after implementation\n- Document any significant changes`
+            code: (text, col) => `Development task:\n- Task: ${text}\n- Follow existing patterns in codebase\n- Test after implementation\n- Document any significant changes`,
+            automation: (text, col) => `Add automation rule via automation_engine.add_rule:\n\nParse user request: "${text}"\n\nExtract:\n1. rule_key: snake_case identifier derived from the description\n2. trigger: { "file": "<data file to watch>", "type": "entry_added|file_changed|schedule" }\n3. action: { "tool": "<tool_name>", "action": "<action_name>", "params": { <relevant params with {placeholders}> } }\n\nCall automation_engine.add_rule with:\n- rule_key: the generated key\n- rule: { "trigger": {...}, "action": {...}, "enabled": true }\n\nCommon triggers:\n- file watch: {"file": "data/some_file.json", "type": "entry_added"}\n- schedule: {"type": "schedule", "cron": "0 9 * * *"}\n\nConfirm rule was added successfully.`,
+            mockup: (text, col) => `Generate site mockup variations via claude_assistant.assign_mockup_batch:\n\nUser input: "${text}"\n\nParse the input to extract:\n- Site name/brand\n- Description/purpose\n- Style preferences\n\nCall claude_assistant.assign_mockup_batch with:\n- description: Include site name, purpose, and style extracted above\n- Output path MUST be: semantic_memory/mockups/\n\nEach mockup variation should:\n1. Generate complete HTML file with inline CSS\n2. Save to semantic_memory/mockups/{site_name}_v{N}.html\n3. Create 3-5 unique design variations\n4. Include responsive design\n5. Use professional UI patterns\n\nDO NOT save mockups anywhere except semantic_memory/mockups/`
         };
         const doneColors = ['#10B981','#7C5CFC','#E44332','#F5A623','#00B4D8'];
 
@@ -427,8 +468,8 @@
             const c = document.getElementById('collectionSelect');
             t.placeholder = placeholders[s.value] || placeholders.custom;
             t.value = '';
-            // Show collection dropdown only for outline preset
-            c.style.display = s.value === 'outline' ? 'block' : 'none';
+            // Show collection dropdown only for document preset
+            c.style.display = s.value === 'document' ? 'block' : 'none';
             t.focus();
         }
 
@@ -502,7 +543,7 @@
                 <div class="staged-item" data-staged-id="${t.id}">
                     <div class="staged-num">${i+1}</div>
                     <div class="staged-text">${escapeHtml(t.text)}</div>
-                    <span class="staged-preset-tag">${t.label}${t.preset === 'outline' && t.collection ? ' → ' + t.collection : ''}</span>
+                    <span class="staged-preset-tag">${t.label}${t.preset === 'document' && t.collection ? ' → ' + t.collection : ''}</span>
                     <button class="staged-remove" onclick="removeStagedTask('${t.id}')">&#10005;</button>
                 </div>`).join('');
         }
@@ -565,12 +606,20 @@
         async function pollActiveTasks() {
             const allTasks = [];
 
+            // Fetch results FIRST so we can skip tasks that are already done
+            const resultsData = await fetchJson('/data-nocache/' + RESULTS_FILE);
+
             for (const qf of QUEUE_FILES) {
                 const data = await fetchJson('/data-nocache/' + qf);
                 if (data && data.tasks) {
                     for (const [taskId, taskData] of Object.entries(data.tasks)) {
                         const status = taskData.status || 'queued';
                         if (status === 'queued' || status === 'in_progress') {
+                            // Skip if results already shows this task as done/error/cancelled
+                            if (resultsData && resultsData.results && resultsData.results[taskId]) {
+                                const resultStatus = resultsData.results[taskId].status;
+                                if (resultStatus === 'done' || resultStatus === 'error') continue;
+                            }
                             allTasks.push({
                                 id: taskId,
                                 status: status,
@@ -578,12 +627,43 @@
                                 card_title: taskData.card_title || generateCardTitle(taskData.description || taskId),
                                 created_at: taskData.created_at,
                                 started_at: taskData.started_at,
-                                processing_started_at: taskData.processing_started_at
+                                processing_started_at: taskData.processing_started_at,
+                                spawned_via: taskData.spawned_via || null
                             });
                         }
                     }
                 }
             }
+
+            // Check for tasks that just disappeared (completed)
+            const currentIds = new Set(allTasks.map(t => t.id));
+            const completingIds = new Set(completingTasks.map(t => t.id));
+
+            for (const prevId of previousActiveIds) {
+                if (!currentIds.has(prevId) && !completingIds.has(prevId)) {
+                    // Task vanished - check if it completed (resultsData already fetched above)
+                    if (resultsData && resultsData.results && resultsData.results[prevId]) {
+                        const result = resultsData.results[prevId];
+                        // Add to completing tasks with card info
+                        completingTasks.push({
+                            id: prevId,
+                            status: 'completing',
+                            card_title: result.card_title || generateCardTitle(result.description || prevId),
+                            card_stat: result.card_stat || 'done',
+                            execution_time: result.execution_time_seconds
+                        });
+                        // Remove after 2.5 seconds (shows completion animation)
+                        setTimeout(() => {
+                            completingTasks = completingTasks.filter(t => t.id !== prevId);
+                            renderActive();
+                            pollRecentTasks();  // Refresh recent to show the completed task
+                        }, 2500);
+                    }
+                }
+            }
+
+            // Update previous IDs for next poll
+            previousActiveIds = currentIds;
 
             // Sort: running first, then by created_at
             allTasks.sort((a, b) => {
@@ -592,8 +672,8 @@
                 return (a.created_at || '') > (b.created_at || '') ? 1 : -1;
             });
 
-            // Only re-render if data changed
-            const newHash = JSON.stringify(allTasks.map(t => t.id + t.status));
+            // Only re-render if data changed (include completing tasks in hash)
+            const newHash = JSON.stringify(allTasks.map(t => t.id + t.status)) + JSON.stringify(completingTasks.map(t => t.id));
             if (newHash !== lastActiveHash) {
                 lastActiveHash = newHash;
                 activeTasks = allTasks;
@@ -643,16 +723,32 @@
         function renderActive() {
             const section = document.getElementById('activeSection');
             const track = document.getElementById('activeTrack');
-            document.getElementById('activeCountBadge').textContent = activeTasks.length;
+            const totalActive = activeTasks.length + completingTasks.length;
+            document.getElementById('activeCountBadge').textContent = totalActive;
 
-            if (activeTasks.length === 0) {
+            if (totalActive === 0) {
                 section.classList.add('hidden');
                 return;
             }
             section.classList.remove('hidden');
 
             let queuePos = 0;
-            track.innerHTML = activeTasks.map((t, i) => {
+
+            // Render completing tasks first (green checkmark animation)
+            const completingHtml = completingTasks.map(t => {
+                const timeStr = t.execution_time ? formatDuration(t.execution_time) : '';
+                return `<div class="task-card completing" data-card-id="${t.id}" style="animation: pulse-green 0.5s ease-out">
+                    <div class="card-top-row">
+                        <svg class="card-icon" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="rgba(16,185,129,0.15)"/><path d="M11 17l4 4 8-8" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="status-badge" style="background:rgba(16,185,129,0.15);color:#10B981">✓ ${timeStr}</span>
+                    </div>
+                    <div class="card-stat" style="color:#10B981">${escapeHtml(t.card_stat)}</div>
+                    <div class="card-title">${escapeHtml(t.card_title)}</div>
+                </div>`;
+            }).join('');
+
+            // Render active tasks
+            const activeHtml = activeTasks.map((t, i) => {
                 const isRunning = t.status === 'in_progress';
                 if (!isRunning) queuePos++;
 
@@ -662,7 +758,7 @@
                     return `<div class="task-card running" data-card-id="${t.id}">
                         <div class="card-top-row">
                             <svg class="card-icon" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="rgba(245,166,35,0.12)"/><path d="M17 11v6l4 2" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="17" r="6.5" stroke="#F5A623" stroke-width="1.5"/></svg>
-                            <span class="status-badge running"><span class="mini-spinner"></span><span class="elapsed-time">${formatTime(elapsed)}</span></span>
+                            <span class="status-badge running"><span class="mini-spinner"></span><span class="elapsed-time">${formatTime(elapsed)}</span>${t.spawned_via === 'fallback' ? ' <span style="font-size:9px;background:rgba(228,67,50,0.2);color:#E44332;padding:2px 5px;border-radius:4px;margin-left:4px">FALLBACK</span>' : ''}</span>
                         </div>
                         <div class="card-stat">running</div>
                         <div class="card-title">${escapeHtml(t.card_title)}</div>
@@ -682,7 +778,8 @@
                 }
             }).join('');
 
-            updateRowNav('active', activeTasks.length);
+            track.innerHTML = completingHtml + activeHtml;
+            updateRowNav('active', totalActive);
             startTimers();
         }
 
@@ -955,8 +1052,8 @@
         async function init() {
             await Promise.all([pollActiveTasks(), pollRecentTasks(), pollStagedTasks()]);
 
-            // Poll active tasks every 2s
-            setInterval(pollActiveTasks, 2000);
+            // Poll active tasks every 500ms (fast enough to catch running state)
+            setInterval(pollActiveTasks, 500);
             // Poll recent tasks every 5s
             setInterval(pollRecentTasks, 5000);
             // Poll staged tasks every 3s
@@ -964,6 +1061,94 @@
         }
 
         init();
+
+        // Global keyboard shortcuts
+        const shortcuts = {
+            '1': 'task_board.html',
+            '2': 'doc_editor.html',
+            '3': 'bullet_journal.html',
+            '4': 'calendar_dashboard.html',
+            '5': 'inbox_dashboard.html',
+            '6': 'crm_dashboard.html',
+            '0': 'command_center.html'
+        };
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && shortcuts[e.key]) {
+                e.preventDefault();
+                window.location.href = shortcuts[e.key];
+            }
+        });
+
+        // Speech recognition
+        let recognition = null;
+        let isRecording = false;
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                document.getElementById('micBtn').style.display = 'none';
+                return;
+            }
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                const textarea = document.getElementById('taskTextarea');
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    }
+                }
+
+                if (finalTranscript) {
+                    textarea.value = (textarea.value + ' ' + finalTranscript).trim();
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech error:', event.error);
+                stopRecording();
+            };
+
+            recognition.onend = () => {
+                if (isRecording) {
+                    recognition.start();
+                }
+            };
+        }
+
+        function toggleMic() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            if (!recognition) initSpeechRecognition();
+            if (!recognition) return;
+
+            isRecording = true;
+            document.getElementById('micBtn').classList.add('recording');
+            document.getElementById('micBtn').textContent = '⏹️';
+            recognition.start();
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('micBtn').classList.remove('recording');
+            document.getElementById('micBtn').textContent = '🎤';
+            if (recognition) recognition.stop();
+        }
+
+        // Init speech recognition on load
+        initSpeechRecognition();
     </script>
 </body>
 </html>

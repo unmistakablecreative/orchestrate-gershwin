@@ -1,0 +1,111 @@
+{"tool": "json_manager", "action": "__tool__", "script_path": "tools/json_manager.py", "locked": false, "referral_unlock_cost": 0, "description": "Save and manage tasks, notes, ideas, or any structured info."}
+{"tool": "json_manager", "action": "add_json_entry", "script_path": "tools/json_manager.py"}
+{"tool": "json_manager", "action": "create_json_file", "script_path": "tools/json_manager.py"}
+{"tool": "json_manager", "action": "list_json_entries", "script_path": "tools/json_manager.py"}
+{"tool": "json_manager", "action": "read_json_entry", "script_path": "tools/json_manager.py"}
+{"tool": "json_manager", "action": "read_json_file", "script_path": "tools/json_manager.py"}
+{"tool": "json_manager", "action": "update_json_entry", "script_path": "tools/json_manager.py"}
+{"tool": "json_manager", "action": "batch_add_json_entries", "script_path": "tools/json_manager.py"}
+{"tool": "system_settings", "action": "__tool__", "script_path": "tools/system_settings.py", "locked": false, "referral_unlock_cost": 0, "description": "Manage core config \u2014 tools, memory files, routing, and credentials."}
+{"tool": "system_settings", "action": "set_credential", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "add_tool", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "remove_tool", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "add_action", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "remove_action", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "list_tools", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "list_supported_actions", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "add_memory_file", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "remove_memory_file", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "list_memory_files", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "build_working_memory", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "refresh_runtime", "script_path": "tools/system_settings.py"}
+{"tool": "unlock_tool", "action": "__tool__", "script_path": "tools/unlock_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Manually unlock tools using credits or referral triggers."}
+{"tool": "unlock_tool", "action": "unlock_tool", "script_path": "tools/unlock_tool.py"}
+{"tool": "unlock_tool", "action": "list_marketplace_tools", "script_path": "tools/unlock_tool.py"}
+{"tool": "unlock_tool", "action": "get_credits_balance", "script_path": "tools/unlock_tool.py"}
+{"tool": "terminal", "action": "__tool__", "script_path": "tools/terminal.py", "locked": false, "referral_unlock_cost": 0, "description": "Run safe shell commands, tail logs, or stream live output."}
+{"tool": "terminal", "action": "check_safe", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "ls", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "run_terminal_command", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "script", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "stream", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "tail", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "find_file", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "read_file", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "write_file", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "append_file", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "move_file", "script_path": "tools/terminal.py"}
+{"tool": "check_credits", "action": "__tool__", "script_path": "tools/check_credits.py", "locked": false, "referral_unlock_cost": 0, "description": "View your remaining unlock credits and tools currently unlocked."}
+{"tool": "check_credits", "action": "check_credits", "script_path": "tools/check_credits.py"}
+{"tool": "refer_user", "action": "__tool__", "script_path": "tools/refer_user.py", "locked": false, "referral_unlock_cost": 0, "description": "Generate a referral package to share with others."}
+{"tool": "refer_user", "action": "refer_user", "script_path": "tools/refer_user.py"}
+{"tool": "doc_editor", "action": "__tool__", "script_path": "tools/doc_editor.py", "locked": false, "referral_unlock_cost": 0, "description": "Create, search, and link documents with bidirectional links."}
+{"tool": "doc_editor", "action": "create_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "read_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "update_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "delete_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "search_docs", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "list_docs", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "link_docs", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "unlink_docs", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "read_links", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "read_backlinks", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "append_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "replace_section", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "retrieve_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "doc_editor", "action": "search_within_doc", "script_path": "tools/doc_editor.py"}
+{"tool": "readwise_tool", "action": "__tool__", "script_path": "tools/readwise_tool.py", "locked": true, "referral_unlock_cost": 3, "description": "Import and explore highlights from your synced Readwise library."}
+{"tool": "readwise_tool", "action": "fetch_books", "script_path": "tools/readwise_tool.py"}
+{"tool": "readwise_tool", "action": "fetch_highlights", "script_path": "tools/readwise_tool.py"}
+{"tool": "buffer_engine", "action": "__tool__", "script_path": "tools/buffer_engine.py", "locked": true, "referral_unlock_cost": 7, "description": "Schedule and auto-publish content to social media platforms."}
+{"tool": "buffer_engine", "action": "buffer_loop", "script_path": "tools/buffer_engine.py"}
+{"tool": "buffer_engine", "action": "post_to_platform", "script_path": "tools/buffer_engine.py"}
+{"tool": "github_tool_universal", "action": "__tool__", "script_path": "tools/github_tool_universal.py", "locked": true, "referral_unlock_cost": 7, "description": "Manage repos, commits, and pushes to GitHub from within GPT."}
+{"tool": "github_tool_universal", "action": "init_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "status", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "clone_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "set_remote", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "add_files", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "commit_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "push_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "pull_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "archive_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "list_repos", "script_path": "tools/github_tool_universal.py"}
+{"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true, "referral_unlock_cost": 5, "description": "Generate beautiful AI-driven images for documents or social posts."}
+{"tool": "ideogram_tool", "action": "generate_image", "script_path": "tools/ideogram_tool.py"}
+{"tool": "automation_engine", "action": "__tool__", "script_path": "tools/automation_engine.py", "locked": true, "referral_unlock_cost": 9, "description": "Event-driven automation engine for triggering workflows."}
+{"tool": "automation_engine", "action": "run_engine", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "add_rule", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "update_rule", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "delete_rule", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "get_rule", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "get_rules", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "list_rules", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "validate_rule", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "dry_run_rule", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "toggle_rule_enabled", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "retry_failed", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "get_execution_history", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "add_event_type", "script_path": "tools/automation_engine.py"}
+{"tool": "automation_engine", "action": "get_event_types", "script_path": "tools/automation_engine.py"}
+{"tool": "bullet_journal", "action": "__tool__", "script_path": "tools/bullet_journal.py", "locked": false, "referral_unlock_cost": 0, "description": "Rapid capture for tasks, notes, and events."}
+{"tool": "bullet_journal", "action": "add_entry", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "list_entries", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "update_status", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "delete_entry", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "get_collections", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "batch_update_status", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "batch_add_entries", "script_path": "tools/bullet_journal.py"}
+{"tool": "bullet_journal", "action": "batch_delete_entries", "script_path": "tools/bullet_journal.py"}
+{"tool": "claude_assistant", "action": "__tool__", "script_path": "tools/claude_assistant.py", "locked": true, "referral_unlock_cost": 12, "description": "Task queue for Claude Code autonomous execution."}
+{"tool": "claude_assistant", "action": "assign_task", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "check_task_status", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "process_queue", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "execute_queue", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "stage_task", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "get_staged_tasks", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "cancel_task", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "clear_queue", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "mark_task_in_progress", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "log_task_completion", "script_path": "tools/claude_assistant.py"}
+{"tool": "session_tool", "action": "__tool__", "script_path": "tools/session_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Thread/session state management."}
