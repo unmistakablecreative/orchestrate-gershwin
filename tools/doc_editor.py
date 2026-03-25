@@ -34,9 +34,27 @@ INDEX_MTIME_MARKER = os.path.join(BASE_DIR, "data", "whoosh_index", ".last_build
 
 
 def get_db():
-    """Get SQLite connection with Row factory for dict-like access."""
+    """Get SQLite connection with Row factory for dict-like access. Auto-creates table on first use."""
     conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.execute("""CREATE TABLE IF NOT EXISTS docs (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT DEFAULT '',
+        collection TEXT DEFAULT 'Notes',
+        meta_description TEXT DEFAULT '',
+        word_count INTEGER DEFAULT 0,
+        description TEXT DEFAULT '',
+        status TEXT DEFAULT '',
+        campaign_id TEXT DEFAULT '',
+        published_url TEXT DEFAULT '',
+        outline_id TEXT DEFAULT '',
+        stitched_from TEXT DEFAULT '',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        last_action TEXT DEFAULT ''
+    )""")
+    conn.commit()
     return conn
 
 
