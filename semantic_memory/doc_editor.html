@@ -1673,6 +1673,7 @@
         let currentDocId = null;
         let currentDisplayedDocs = []; // Track currently displayed docs for navigation
         let saveTimeout = null;
+        let pendingSave = false; // Prevent auto-refresh from overwriting unsaved edits
         let docs = [];
         let docOpenedFromCollection = null; // Track collection context when opening doc
         let navDocsLocked = false; // Lock nav list while viewing a doc from timeline
@@ -2352,6 +2353,7 @@
         function scheduleAutoSave() {
             document.getElementById('saveStatus').textContent = 'Editing...';
             document.getElementById('saveStatus').className = 'save-status';
+            pendingSave = true;
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(saveDoc, 800);
         }
@@ -2380,6 +2382,7 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
+                    pendingSave = false;
                     if (!currentDocId) {
                         currentDocId = data.doc_id;
                         document.getElementById('deleteBtn').style.display = 'block';
@@ -3417,8 +3420,8 @@
                 loadDocList();
             }
 
-            // Refresh current doc if it was updated externally
-            if (currentDocId && !isEditing) {
+            // Refresh current doc if it was updated externally (skip if pending save)
+            if (currentDocId && !isEditing && !pendingSave) {
                 try {
                     const resp = await fetch(`/docs/get/${currentDocId}`);
                     if (resp.ok) {

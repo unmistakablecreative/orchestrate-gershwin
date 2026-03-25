@@ -1,1 +1,25 @@
-{"docs": {}}
+{
+  "docs": {
+    "doc_2aa128e0": {
+      "id": "doc_2aa128e0",
+      "title": "Test Will it stikc",
+      "content": "this is a docc&nbsp;",
+      "collection": "Notes",
+      "description": "",
+      "status": "",
+      "campaign_id": "",
+      "published_url": "",
+      "created_at": "2026-03-24T10:05:28.754775",
+      "updated_at": "2026-03-24T10:05:36.290808"
+    },
+    "doc_758385fb": {
+      "id": "doc_758385fb",
+      "title": "Gershwin Test Doc",
+      "content": "<p>Test content for automated testing. This document validates the doc_editor tool.</p>",
+      "collection": "Test",
+      "created_at": "2026-03-24T10:38:32.808020",
+      "updated_at": "2026-03-24T10:38:32.808020",
+      "last_action": "content_update"
+    }
+  }
+}

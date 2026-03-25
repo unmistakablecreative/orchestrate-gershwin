@@ -11434,6 +11434,1152 @@
                     "IDEAS": "permanent notes, insights, reading list, ideas, architecture"
                 }
             }
+        },
+        {
+            "tool": "json_manager",
+            "action": "create_json_file",
+            "params": {
+                "filename": "gershwin_test_fixture.json"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "message": "\u2705 File initialized."
+            }
+        },
+        {
+            "tool": "json_manager",
+            "action": "add_json_entry",
+            "params": {
+                "filename": "gershwin_test_fixture.json",
+                "entry_key": "test_entry_001",
+                "entry_data": {
+                    "test_field": "test_value",
+                    "number": 42
+                }
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "message": "\u2705 Entry 'test_entry_001' added with 2 fields."
+            }
+        },
+        {
+            "tool": "json_manager",
+            "action": "list_json_entries",
+            "params": {
+                "filename": "gershwin_test_fixture.json"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "entries": {
+                    "test_entry_001": {
+                        "test_field": "test_value",
+                        "number": 42
+                    }
+                },
+                "entry_count": 1,
+                "total_entries": 1,
+                "offset": 0,
+                "has_more": false
+            }
+        },
+        {
+            "tool": "json_manager",
+            "action": "read_json_entry",
+            "params": {
+                "filename": "gershwin_test_fixture.json",
+                "entry_key": "test_entry_001"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "entry": {
+                    "test_field": "test_value",
+                    "number": 42
+                }
+            }
+        },
+        {
+            "tool": "json_manager",
+            "action": "read_json_file",
+            "params": {
+                "filename": "gershwin_test_fixture.json"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "entries": {
+                    "test_entry_001": {
+                        "test_field": "test_value",
+                        "number": 42
+                    }
+                }
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "create_doc",
+            "params": {
+                "title": "Gershwin Test Doc",
+                "content": "Test content for automated testing. This document validates the doc_editor tool.",
+                "collection": "test"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "doc_id": "doc_758385fb",
+                "message": "Created doc 'Gershwin Test Doc' in Test"
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "search_docs",
+            "params": {
+                "query": "Gershwin Test"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "query": "gershwin test",
+                "count": 1,
+                "docs": [
+                    {
+                        "id": "doc_758385fb",
+                        "title": "Gershwin Test Doc",
+                        "collection": "Test",
+                        "updated_at": "2026-03-24T10:38:32.808020",
+                        "word_count": 11,
+                        "score": 13.93
+                    }
+                ]
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "read_doc",
+            "params": {
+                "doc_id": "doc_758385fb"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "doc": {
+                    "id": "doc_758385fb",
+                    "title": "Gershwin Test Doc",
+                    "content": "<p>Test content for automated testing. This document validates the doc_editor tool.</p>",
+                    "collection": "Test",
+                    "created_at": "2026-03-24T10:38:32.808020",
+                    "updated_at": "2026-03-24T10:38:32.808020",
+                    "last_action": "content_update"
+                }
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "list_docs",
+            "params": {
+                "collection": "test"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "count": 1,
+                "docs": [
+                    {
+                        "id": "doc_758385fb",
+                        "title": "Gershwin Test Doc",
+                        "collection": "Test",
+                        "updated_at": "2026-03-24T10:38:32.808020",
+                        "word_count": 11,
+                        "last_action": "content_update"
+                    }
+                ]
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "read_links",
+            "params": {
+                "doc_id": "doc_758385fb"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "doc_id": "doc_758385fb",
+                "links": [],
+                "count": 0
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "read_backlinks",
+            "params": {
+                "doc_id": "doc_758385fb"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "doc_id": "doc_758385fb",
+                "backlinks": [],
+                "count": 0
+            }
+        },
+        {
+            "tool": "doc_editor",
+            "action": "search_within_doc",
+            "params": {
+                "query": "automated",
+                "doc_id": "doc_758385fb"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "doc_id": "doc_758385fb",
+                "doc_title": "Gershwin Test Doc",
+                "query": "automated",
+                "matches": [
+                    {
+                        "text": "Test content for automated testing. This document validates the doc_editor tool.",
+                        "position": 17
+                    }
+                ],
+                "match_count": 1
+            }
+        },
+        {
+            "tool": "system_settings",
+            "action": "list_tools",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "tools": [
+                    {
+                        "name": "json_manager",
+                        "unlocked": false,
+                        "description": "Save and manage tasks, notes, ideas, or any structured info."
+                    },
+                    {
+                        "name": "system_settings",
+                        "unlocked": false,
+                        "description": "Manage core config \u2014 tools, memory files, routing, and credentials."
+                    },
+                    {
+                        "name": "unlock_tool",
+                        "unlocked": false,
+                        "description": "Manually unlock tools using credits or referral triggers."
+                    },
+                    {
+                        "name": "terminal",
+                        "unlocked": false,
+                        "description": "Run safe shell commands, tail logs, or stream live output."
+                    },
+                    {
+                        "name": "check_credits",
+                        "unlocked": false,
+                        "description": "View your remaining unlock credits and tools currently unlocked."
+                    },
+                    {
+                        "name": "refer_user",
+                        "unlocked": false,
+                        "description": "Generate a referral package to share with others."
+                    },
+                    {
+                        "name": "doc_editor",
+                        "unlocked": false,
+                        "description": "Create, search, and link documents with bidirectional links."
+                    },
+                    {
+                        "name": "readwise_tool",
+                        "unlocked": false,
+                        "description": "Import and explore highlights from your synced Readwise library."
+                    },
+                    {
+                        "name": "buffer_engine",
+                        "unlocked": false,
+                        "description": "Schedule and auto-publish content to social media platforms."
+                    },
+                    {
+                        "name": "github_tool_universal",
+                        "unlocked": false,
+                        "description": "Manage repos, commits, and pushes to GitHub from within GPT."
+                    },
+                    {
+                        "name": "ideogram_tool",
+                        "unlocked": false,
+                        "description": "Generate beautiful AI-driven images for documents or social posts."
+                    },
+                    {
+                        "name": "automation_engine",
+                        "unlocked": false,
+                        "description": "Event-driven automation engine for triggering workflows."
+                    },
+                    {
+                        "name": "bullet_journal",
+                        "unlocked": false,
+                        "description": "Rapid capture for tasks, notes, and events."
+                    },
+                    {
+                        "name": "claude_assistant",
+                        "unlocked": false,
+                        "description": "Task queue for Claude Code autonomous execution."
+                    },
+                    {
+                        "name": "session_tool",
+                        "unlocked": false,
+                        "description": "Thread/session state management."
+                    }
+                ]
+            }
+        },
+        {
+            "tool": "system_settings",
+            "action": "list_supported_actions",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "actions": [
+                    {
+                        "tool": "json_manager",
+                        "action": "add_json_entry",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "json_manager",
+                        "action": "create_json_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "json_manager",
+                        "action": "list_json_entries",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "json_manager",
+                        "action": "read_json_entry",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "json_manager",
+                        "action": "read_json_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "json_manager",
+                        "action": "update_json_entry",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "json_manager",
+                        "action": "batch_add_json_entries",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "set_credential",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "add_tool",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "remove_tool",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "add_action",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "remove_action",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "list_tools",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "list_supported_actions",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "add_memory_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "remove_memory_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "list_memory_files",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "build_working_memory",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "system_settings",
+                        "action": "refresh_runtime",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "unlock_tool",
+                        "action": "unlock_tool",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "unlock_tool",
+                        "action": "list_marketplace_tools",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "unlock_tool",
+                        "action": "get_credits_balance",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "check_safe",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "ls",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "run_terminal_command",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "script",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "stream",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "tail",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "find_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "read_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "write_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "append_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "terminal",
+                        "action": "move_file",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "check_credits",
+                        "action": "check_credits",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "refer_user",
+                        "action": "refer_user",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "create_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "read_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "update_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "delete_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "search_docs",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "list_docs",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "link_docs",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "unlink_docs",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "read_links",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "read_backlinks",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "append_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "replace_section",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "retrieve_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "doc_editor",
+                        "action": "search_within_doc",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "readwise_tool",
+                        "action": "fetch_books",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "readwise_tool",
+                        "action": "fetch_highlights",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "buffer_engine",
+                        "action": "buffer_loop",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "buffer_engine",
+                        "action": "post_to_platform",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "init_repo",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "status",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "clone_repo",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "set_remote",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "add_files",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "commit_repo",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "push_repo",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "pull_repo",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "archive_repo",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "github_tool_universal",
+                        "action": "list_repos",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "ideogram_tool",
+                        "action": "generate_image",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "run_engine",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "add_rule",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "update_rule",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "delete_rule",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "get_rule",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "get_rules",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "list_rules",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "validate_rule",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "dry_run_rule",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "toggle_rule_enabled",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "retry_failed",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "get_execution_history",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "add_event_type",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "automation_engine",
+                        "action": "get_event_types",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "add_entry",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "list_entries",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "update_status",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "delete_entry",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "get_collections",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "batch_update_status",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "batch_add_entries",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "bullet_journal",
+                        "action": "batch_delete_entries",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "assign_task",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "check_task_status",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "process_queue",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "execute_queue",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "stage_task",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "get_staged_tasks",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "cancel_task",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "clear_queue",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "mark_task_in_progress",
+                        "description": "",
+                        "params": []
+                    },
+                    {
+                        "tool": "claude_assistant",
+                        "action": "log_task_completion",
+                        "description": "",
+                        "params": []
+                    }
+                ]
+            }
+        },
+        {
+            "tool": "system_settings",
+            "action": "list_memory_files",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "memory_files": []
+            }
+        },
+        {
+            "tool": "unlock_tool",
+            "action": "list_marketplace_tools",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "credits_available": 2,
+                "tools": [
+                    {
+                        "name": "notion_tool",
+                        "label": "Notion",
+                        "description": "Create pages, update tasks, or search workspace content using Orchestrate-powered flows.",
+                        "cost": 3,
+                        "priority": 1,
+                        "locked": false,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "outline_editor",
+                        "label": "Outline Editor",
+                        "description": "Create and manage structured documents in Outline. Perfect for wikis, docs, and knowledge bases.",
+                        "cost": 3,
+                        "priority": 2,
+                        "locked": false,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "mem_tool",
+                        "label": "Mem",
+                        "description": "Capture personal insights and notes, syncing them into your Mem workspace automatically.",
+                        "cost": 3,
+                        "priority": 3,
+                        "locked": false,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "readwise_tool",
+                        "label": "Readwise",
+                        "description": "Import and explore highlights from your synced Readwise library. Search across all your book notes.",
+                        "cost": 6,
+                        "priority": 4,
+                        "locked": false,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "buffer_engine",
+                        "label": "Buffer Engine",
+                        "description": "Schedule and auto-publish content to social media. Queue posts, manage campaigns, track engagement.",
+                        "cost": 6,
+                        "priority": 5,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "ideogram_tool",
+                        "label": "Ideogram",
+                        "description": "Generate beautiful AI-driven images for documents, social posts, or presentations.",
+                        "cost": 6,
+                        "priority": 6,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "automation_engine",
+                        "label": "Automation Engine",
+                        "description": "Event-driven automation for triggering workflows based on file changes, schedules, and custom events.",
+                        "cost": 9,
+                        "priority": 7,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": false
+                    },
+                    {
+                        "name": "github_tool_universal",
+                        "label": "GitHub",
+                        "description": "Manage repos, commits, and pushes to GitHub directly from OrchestrateOS.",
+                        "cost": 9,
+                        "priority": 8,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "nylasinbox",
+                        "label": "Nylas Inbox",
+                        "description": "Read, send, and manage emails directly inside your system using structured API control.",
+                        "cost": 9,
+                        "priority": 9,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "convertkit_tool",
+                        "label": "ConvertKit",
+                        "description": "Create, update, and analyze email broadcasts and subscriber activity inside OrchestrateOS.",
+                        "cost": 9,
+                        "priority": 10,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "gamma_tool",
+                        "label": "Gamma",
+                        "description": "Generate slide decks automatically from structured text using the Gamma API \u2013 no design skills needed.",
+                        "cost": 9,
+                        "priority": 11,
+                        "locked": true,
+                        "requires_subscription": false,
+                        "subscription_type": null,
+                        "requires_credentials": true
+                    },
+                    {
+                        "name": "claude_assistant",
+                        "label": "Claude Assistant",
+                        "description": "AUTONOMOUS TASK EXECUTION - Assign complex tasks and Claude executes them while you sleep. Requires Claude Pro/Team subscription.",
+                        "cost": 12,
+                        "priority": 12,
+                        "locked": true,
+                        "requires_subscription": true,
+                        "subscription_type": "Claude Pro or Team",
+                        "requires_credentials": false
+                    }
+                ]
+            }
+        },
+        {
+            "tool": "unlock_tool",
+            "action": "get_credits_balance",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "credits": 2,
+                "referral_count": 5,
+                "tools_unlocked": [
+                    "json_manager",
+                    "outline_editor",
+                    "mem_tool",
+                    "readwise_tool",
+                    "notion_tool"
+                ]
+            }
+        },
+        {
+            "tool": "check_credits",
+            "action": "check_credits",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "user_id": "orch-3f262daa-2f82-41df-9c6d-326d1a571252",
+                "credits": 2,
+                "tools_unlocked": [
+                    "json_manager",
+                    "outline_editor",
+                    "mem_tool",
+                    "readwise_tool",
+                    "notion_tool"
+                ],
+                "timestamp": "2026-02-04T22:07:41Z"
+            }
+        },
+        {
+            "tool": "terminal",
+            "action": "ls",
+            "params": {
+                "path": "."
+            },
+            "status": "success",
+            "output": {
+                "status": "error",
+                "message": "Unknown action ls"
+            }
+        },
+        {
+            "tool": "terminal",
+            "action": "read_file",
+            "params": {
+                "filename": "jarvis.py"
+            },
+            "status": "success",
+            "output": {
+                "status": "success",
+                "filename": "jarvis.py",
+                "path": "jarvis.py",
+                "extension": ".py",
+                "content": "from fastapi import FastAPI, HTTPException, Request\nfrom fastapi.responses import JSONResponse\nfrom datetime import datetime\nimport sys\nimport subprocess\nimport json\nimport os\nimport logging\nfrom fastapi.staticfiles import StaticFiles\n\n# === BASE DIR ===\nBASE_DIR = os.path.dirname(os.path.abspath(__file__))\nPROJECT_ROOT = BASE_DIR\n\nfrom tools import json_manager\nfrom tools.smart_json_dispatcher import orchestrate_write\nfrom system_guard import validate_action, ContractViolation\n\n# === Init ===\napp = FastAPI()\n\nSYSTEM_REGISTRY = f\"{BASE_DIR}/system_settings.ndjson\"\nWORKING_MEMORY_PATH = f\"{BASE_DIR}/data/working_memory.json\"\nUNLOCK_STATUS_PATH = os.path.join(BASE_DIR, \"data\", \"unlock_status.json\")\nTOOL_UI_PATH = os.path.join(BASE_DIR, \"data\", \"orchestrate_tool_ui.json\")\nNGROK_CONFIG_PATH = os.path.join(BASE_DIR, \"data\", \"ngrok.json\")\nEXEC_HUB_PATH = f\"{BASE_DIR}/execution_hub.py\"\nREFERRAL_PATH = os.path.join(BASE_DIR, \"container_state\", \"referrals.json\")\n\nlogging.basicConfig(level=logging.INFO, format=\"%(asctime)s - %(levelname)s - %(message)s\")\n\n# === Dropzone Mount ===\nDROPZONE_DIR = os.path.expanduser(\"~/Documents/Orchestrate/dropzone\")\nif os.path.exists(DROPZONE_DIR):\n    app.mount(\"/dropzone\", StaticFiles(directory=DROPZONE_DIR), name=\"dropzone\")\nelse:\n    logging.warning(f\"\u26a0\ufe0f Dropzone directory not found: {DROPZONE_DIR}\")\n\n# === System Identity Mount ===\nSTATE_DIR = \"/Library/Application Support/OrchestrateOS\"\nif not os.path.exists(STATE_DIR):\n    STATE_DIR = os.path.expanduser(\"~/Library/Application Support/OrchestrateOS\")\nif os.path.exists(STATE_DIR):\n    app.mount(\"/state\", StaticFiles(directory=STATE_DIR), name=\"state\")\nelse:\n    logging.warning(f\"\u26a0\ufe0f State directory not found, skipping mount\")\n\n# === Semantic Memory Mount ===\nSEMANTIC_MEMORY_DIR = os.path.join(BASE_DIR, \"semantic_memory\")\nif os.path.exists(SEMANTIC_MEMORY_DIR):\n    app.mount(\"/semantic_memory\", StaticFiles(directory=SEMANTIC_MEMORY_DIR, html=True), name=\"semantic_memory\")\nelse:\n    os.makedirs(SEMANTIC_MEMORY_DIR, exist_ok=True)\n    app.mount(\"/semantic_memory\", StaticFiles(directory=SEMANTIC_MEMORY_DIR, html=True), name=\"semantic_memory\")\n    logging.info(f\"\ud83d\udcc1 Created semantic_memory directory: {SEMANTIC_MEMORY_DIR}\")\n\n# === Merge Logic (in-memory, no file writes) ===\ndef get_merged_tool_ui():\n    \"\"\"Merge tool UI with unlock status in memory. No file writes.\"\"\"\n    try:\n        with open(TOOL_UI_PATH, \"r\") as f:\n            raw = json.load(f)\n            tool_ui = raw.get(\"entries\", {})\n\n        if os.path.exists(UNLOCK_STATUS_PATH):\n            with open(UNLOCK_STATUS_PATH, \"r\") as f:\n                unlock_data = json.load(f)\n                unlocked = set(unlock_data.get(\"tools_unlocked\", []))\n        else:\n            unlocked = set()\n\n        merged = []\n        for tool_name, meta in tool_ui.items():\n            merged.append({\n                \"name\": tool_name,\n                \"label\": meta.get(\"label\", tool_name),\n                \"description\": meta.get(\"description\", \"\"),\n                \"priority\": meta.get(\"priority\", 0),\n                \"referral_unlock_cost\": meta.get(\"referral_unlock_cost\", 0),\n                \"locked\": tool_name not in unlocked\n            })\n\n        return merged\n\n    except Exception as e:\n        logging.warning(f\"\u26a0\ufe0f Failed to merge tool UI: {e}\")\n        return []\n\n# === Repo Sync + Registry Merge ===\ndef sync_repo_and_merge_registry():\n    try:\n        logging.info(\"\ud83d\udd04 Syncing Orchestrate repo...\")\n        subprocess.run([\"git\", \"-C\", BASE_DIR, \"pull\"], check=True)\n\n        with open(SYSTEM_REGISTRY, \"r\") as f:\n            updated_registry = [json.loads(line.strip()) for line in f if line.strip()]\n\n        unlocked_tools = set()\n        if os.path.exists(REFERRAL_PATH):\n            with open(REFERRAL_PATH, \"r\") as f:\n                referral_data = json.load(f)\n            unlocked_tools = set(referral_data.get(\"tools_unlocked\", []))\n\n        for entry in updated_registry:\n            if entry.get(\"tool\") in unlocked_tools:\n                entry[\"unlocked\"] = True\n\n        with open(SYSTEM_REGISTRY, \"w\") as f:\n            for entry in updated_registry:\n                f.write(json.dumps(entry) + \"\\n\")\n\n        repo_path = os.path.join(BASE_DIR, \"data\", \"update_messages.json\")\n        git_path = os.path.join(BASE_DIR, \".git\", \"..\", \"data\", \"update_messages.json\")\n        if os.path.exists(git_path):\n            subprocess.run([\"cp\", git_path, repo_path])\n            logging.info(\"\ud83d\udce2 update_messages.json refreshed from git.\")\n\n        logging.info(\"\u2705 Repo + registry sync complete.\")\n\n    except Exception as e:\n        logging.error(f\"\u274c Repo sync failed: {e}\")\n\n# === Tool Executor ===\ndef run_script(tool_name, action, params):\n    python_exe = sys.executable\n    command = [python_exe, EXEC_HUB_PATH, \"execute_task\", \"--params\", json.dumps({\n        \"tool_name\": tool_name,\n        \"action\": action,\n        \"params\": params\n    })]\n    try:\n        result = subprocess.run(command, capture_output=True, text=True, timeout=90)\n        return json.loads(result.stdout.strip())\n    except Exception as e:\n        return {\"error\": \"Execution failed\", \"details\": str(e)}\n\n# === Startup Hook ===\n@app.on_event(\"startup\")\ndef startup_routines():\n    logging.info(\"\ud83d\udd25 FASTAPI STARTUP HOOK TRIGGERED\")\n\n    try:\n        sync_repo_and_merge_registry()\n    except Exception as e:\n        logging.warning(f\"\u26a0\ufe0f Startup sync failed: {e}\")\n\n    try:\n        if os.path.exists(NGROK_CONFIG_PATH):\n            with open(NGROK_CONFIG_PATH) as f:\n                cfg = json.load(f)\n                token = cfg.get(\"token\")\n                domain = cfg.get(\"domain\")\n\n            running = subprocess.getoutput(\"pgrep -f 'ngrok http'\")\n            if not running:\n                subprocess.Popen([\"ngrok\", \"config\", \"add-authtoken\", token])\n                subprocess.Popen([\"ngrok\", \"http\", \"--domain=\" + domain, \"8000\"])\n                logging.info(\"\ud83d\ude80 ngrok tunnel relaunched.\")\n            else:\n                logging.info(\"\ud83d\udd01 ngrok already running.\")\n    except Exception as e:\n        logging.warning(f\"\u26a0\ufe0f Ngrok relaunch failed: {e}\")\n\n# === Execute Task ===\n@app.post(\"/execute_task\")\nasync def execute_task(request: Request):\n    try:\n        request_data = await request.json()\n        tool_name = request_data.get(\"tool_name\")\n        action_name = request_data.get(\"action\")\n        params = request_data.get(\"params\", {})\n\n        if not tool_name or not action_name:\n            raise HTTPException(status_code=400, detail=\"Missing tool_name or action.\")\n\n        if tool_name == \"json_manager\" and action_name == \"orchestrate_write\":\n            return orchestrate_write(**params)\n\n        params = validate_action(tool_name, action_name, params)\n        result = run_script(tool_name, action_name, params)\n        if \"error\" in result:\n            raise HTTPException(status_code=500, detail=result)\n        return result\n\n    except ContractViolation as e:\n        return JSONResponse(status_code=400, content={\"error\": str(e)})\n    except Exception as e:\n        return JSONResponse(status_code=500, content={\"error\": \"Execution failed\", \"details\": str(e)})\n\n# === Supported Actions + Messages ===\n@app.get(\"/get_supported_actions\")\ndef get_supported_actions():\n    try:\n        sync_repo_and_merge_registry()\n        with open(SYSTEM_REGISTRY, \"r\") as f:\n            entries = [json.loads(line.strip()) for line in f if line.strip()]\n\n        for entry in entries:\n            if entry.get(\"action\") == \"__tool__\":\n                is_locked = entry.get(\"locked\", True)\n                entry[\"\ud83d\udd12 Lock State\"] = \"\u2705 Unlocked\" if not is_locked else \"\u274c Locked\"\n\n        update_messages_path = os.path.join(BASE_DIR, \"data\", \"update_messages.json\")\n        update_messages = []\n        if os.path.exists(update_messages_path):\n            with open(update_messages_path, \"r\") as f:\n                obj = json.load(f)\n                update_messages = obj if isinstance(obj, list) else [obj]\n\n        return {\n            \"status\": \"success\",\n            \"supported_actions\": entries,\n            \"update_messages\": update_messages\n        }\n\n    except Exception as e:\n        logging.error(f\"\ud83d\udea8 Failed to load registry or update messages: {e}\")\n        raise HTTPException(status_code=500, detail=\"Could not load registry or update messages.\")\n\n# === Memory Loader ===\n@app.post(\"/load_memory\")\ndef load_memory():\n    try:\n        with open(WORKING_MEMORY_PATH, \"r\", encoding=\"utf-8\") as f:\n            memory = json.load(f)\n        return {\n            \"status\": \"success\",\n            \"loaded\": len(memory),\n            \"memory\": memory\n        }\n    except Exception as e:\n        raise HTTPException(status_code=500, detail={\n            \"error\": \"Cannot load working_memory.json\",\n            \"details\": str(e)\n        })\n\n# === Dashboard Rendering ===\nDASHBOARD_INDEX_PATH = os.path.join(BASE_DIR, \"data/dashboard_index.json\")\n\ndef load_dashboard_data():\n    try:\n        with open(DASHBOARD_INDEX_PATH, 'r', encoding='utf-8') as f:\n            dashboard_config = json.load(f)\n\n        dashboard_data = {}\n\n        for item in dashboard_config.get(\"dashboard_items\", []):\n            key = item.get(\"key\")\n            source_type = item.get(\"source\")\n\n            try:\n                if source_type == \"file\":\n                    filepath = os.path.join(BASE_DIR, item.get(\"file\"))\n\n                    if filepath.endswith('.ndjson'):\n                        with open(filepath, 'r', encoding='utf-8') as f:\n                            data = [json.loads(line.strip()) for line in f if line.strip()]\n                            dashboard_data[key] = data\n                    else:\n                        with open(filepath, 'r', encoding='utf-8') as f:\n                            data = json.load(f)\n                            dashboard_data[key] = data\n\n                elif source_type == \"tool_action\":\n                    tool_name = item.get(\"tool\")\n                    action = item.get(\"action\")\n                    params = item.get(\"params\", {})\n                    result = run_script(tool_name, action, params)\n                    dashboard_data[key] = result\n\n            except Exception as e:\n                dashboard_data[key] = {\"error\": f\"Could not load {key}: {str(e)}\"}\n\n        formatted_output = format_dashboard_display(dashboard_data, dashboard_config)\n\n        return {\n            \"status\": \"success\",\n            \"dashboard_data\": formatted_output\n        }\n\n    except Exception as e:\n        return {\"error\": f\"Failed to load dashboard: {str(e)}\"}\n\ndef format_dashboard_display(data, config):\n    formatted = {}\n\n    for item in config.get(\"dashboard_items\", []):\n        key = item.get(\"key\")\n        formatter = item.get(\"formatter\")\n\n        if key not in data:\n            continue\n\n        raw_data = data[key]\n\n        if formatter == \"toolkit_list\":\n            formatted[key] = format_toolkit_list(raw_data, item.get(\"limit\", 50))\n        elif formatter == \"app_store_list\":\n            formatted[key] = format_app_store_list(raw_data, item.get(\"limit\", 10))\n        elif formatter == \"calendar_list\":\n            formatted[key] = format_calendar_events(raw_data)\n        elif formatter == \"thread_log_list\":\n            formatted[key] = format_thread_log(raw_data, item.get(\"limit\", 5))\n        elif formatter == \"ideas_list\":\n            formatted[key] = format_ideas_reminders(raw_data, item.get(\"limit\", 10))\n        else:\n            formatted[key] = raw_data\n\n    return formatted\n\ndef format_toolkit_list(data, limit=50):\n    if not data:\n        return {\"display_table\": \"No tools available\", \"tools\": []}\n\n    if isinstance(data, str):\n        entries = [json.loads(line.strip()) for line in data.split('\\n') if line.strip()]\n    elif isinstance(data, list):\n        entries = data\n    else:\n        return {\"display_table\": \"Error loading toolkit\", \"tools\": []}\n\n    tools = [e for e in entries if e.get(\"action\") == \"__tool__\"]\n\n    if not tools:\n        return {\"display_table\": \"No tools available\", \"tools\": []}\n\n    # Merge with unlock_status.json to get accurate unlock state\n    unlocked_tools = set()\n    if os.path.exists(UNLOCK_STATUS_PATH):\n        try:\n            with open(UNLOCK_STATUS_PATH, 'r') as f:\n                unlock_data = json.load(f)\n                unlocked_tools = set(unlock_data.get(\"tools_unlocked\", []))\n        except Exception:\n            pass\n\n    # Apply unlock status from unlock_status.json\n    for tool in tools:\n        tool_name = tool.get(\"tool\", \"\")\n        if tool_name in unlocked_tools:\n            tool[\"locked\"] = False\n        # Also respect the existing locked field if already unlocked\n        elif not tool.get(\"locked\", True):\n            pass  # Keep unlocked\n\n    unlocked = sorted([t for t in tools if not t.get(\"locked\", True)],\n                     key=lambda x: x.get(\"tool\", \"\").lower())\n    locked = sorted([t for t in tools if t.get(\"locked\", True)],\n                   key=lambda x: x.get(\"referral_unlock_cost\", 999))\n\n    table = \"| Status | Tool | Description | Unlock Cost |\\n\"\n    table += \"|--------|------|-------------|-------------|\\n\"\n\n    for tool in unlocked[:limit]:\n        name = tool.get(\"tool\", \"Unknown\")\n        desc = tool.get(\"description\", \"\")[:60]\n        table += f\"| \u2705 | **{name}** | {desc} | - |\\n\"\n\n    for tool in locked[:limit]:\n        name = tool.get(\"tool\", \"Unknown\")\n        desc = tool.get(\"description\", \"\")[:60]\n        cost = tool.get(\"referral_unlock_cost\", \"?\")\n        table += f\"| \ud83d\udd12 | {name} | {desc} | {cost} credits |\\n\"\n\n    return {\"display_table\": table, \"tools\": tools}\n\ndef format_app_store_list(data, limit=10):\n    if not isinstance(data, dict):\n        return {\"display_table\": \"Error loading app store\", \"tools\": {}}\n\n    entries = data.get(\"entries\", {})\n    if not entries:\n        return {\"display_table\": \"No tools available\", \"tools\": {}}\n\n    sorted_tools = sorted(entries.items(), key=lambda x: x[1].get(\"priority\", 999))\n\n    table = \"| Tool | Cost | Description |\\n\"\n    table += \"|------|------|-------------|\\n\"\n\n    for tool_name, meta in sorted_tools[:limit]:\n        label = meta.get(\"label\", tool_name)\n        desc = meta.get(\"description\", \"\")[:80]\n        cost = meta.get(\"referral_unlock_cost\", \"?\")\n        table += f\"| **{label}** | {cost} credits | {desc} |\\n\"\n\n    return {\"display_table\": table, \"tools\": entries}\n\ndef format_calendar_events(data):\n    events = []\n\n    if isinstance(data, dict):\n        if \"events\" in data:\n            events = data[\"events\"]\n        elif \"data\" in data:\n            events = data[\"data\"]\n    elif isinstance(data, list):\n        events = data\n\n    if events:\n        cal_list = \"\ud83d\udcc5 **Calendar Events:**\\n\\n\"\n        for event in events[:5]:\n            title = event.get(\"title\", \"No title\")\n            when = event.get(\"when\", {})\n            start_time = when.get(\"start_time\", when.get(\"start\", \"\"))\n            if isinstance(start_time, (int, float)):\n                start_time = datetime.fromtimestamp(start_time).strftime(\"%m/%d %H:%M\")\n\n            participants = event.get(\"participants\", [])\n            user_email = \"srinirao\"\n\n            other_participants = [\n                p for p in participants\n                if p.get(\"email\") != user_email\n            ]\n\n            participant_names = []\n            for p in other_participants:\n                name = p.get(\"name\") or p.get(\"email\", \"\")\n                if name:\n                    participant_names.append(name)\n\n            if participant_names:\n                participants_str = \" + \".join(participant_names)\n                cal_list += f\"\u2022 **{start_time}**: {title} (with {participants_str})\\n\"\n            else:\n                cal_list += f\"\u2022 **{start_time}**: {title}\\n\"\n\n        return cal_list\n    else:\n        return \"\ud83d\udcc5 **Calendar Events:** No upcoming events\"\n\ndef format_thread_log(data, limit=5):\n    if not isinstance(data, dict):\n        return \"\ud83d\udccb **Thread Log:** No entries\"\n\n    entries_data = data.get(\"entries\", data)\n    if entries_data:\n        thread_list = \"\ud83d\udccb **Thread Log:**\\n\\n\"\n        for key, entry in list(entries_data.items())[-limit:]:\n            status = entry.get(\"status\", \"unknown\").upper()\n            goal = entry.get(\"context_goal\", key)[:60]\n            thread_list += f\"\u2022 **{status}**: {goal}\\n\"\n        return thread_list\n    else:\n        return \"\ud83d\udccb **Thread Log:** No entries\"\n\ndef format_ideas_reminders(data, limit=10):\n    if not isinstance(data, dict):\n        return \"\ud83d\udca1 **Ideas & Reminders:** No entries\"\n\n    entries_data = data.get(\"entries\", data)\n    if entries_data:\n        ideas_list = \"\ud83d\udca1 **Ideas & Reminders:**\\n\\n\"\n        for key, item in list(entries_data.items())[-limit:]:\n            if isinstance(item, dict):\n                item_type = item.get(\"type\", \"idea\")\n                title = item.get(\"title\", item.get(\"content\", key))[:60]\n                ideas_list += f\"\u2022 **{item_type.title()}**: {title}\\n\"\n            else:\n                ideas_list += f\"\u2022 **Idea**: {str(item)[:60]}\\n\"\n        return ideas_list\n    else:\n        return \"\ud83d\udca1 **Ideas & Reminders:** No entries\"\n\n@app.get(\"/get_dashboard_file/{file_key}\")\ndef get_dashboard_file(file_key: str):\n    if file_key == \"full_dashboard\":\n        dashboard = load_dashboard_data()\n        return dashboard\n\n    file_map = {\n        \"phrase_promotions\": \"data/phrase_insight_promotions.json\",\n        \"runtime_contract\": \"orchestrate_runtime_contract.json\",\n        \"tool_build_protocol\": \"data/tool_build_protocol.json\",\n        \"podcast_prep_rules\": \"podcast_prep_guidelines.json\",\n        \"thread_log_full\": \"data/thread_log.json\",\n        \"ideas_and_reminders_full\": \"data/ideas_reminders.json\"\n    }\n\n    if file_key not in file_map:\n        raise HTTPException(status_code=404, detail=f\"File key '{file_key}' not found\")\n\n    try:\n        filepath = file_map[file_key]\n        abs_path = os.path.join(BASE_DIR, filepath)\n\n        with open(abs_path, 'r', encoding='utf-8') as f:\n            data = json.load(f)\n\n        return {\n            \"status\": \"success\",\n            \"file_key\": file_key,\n            \"data\": data\n        }\n\n    except Exception as e:\n        return JSONResponse(status_code=500, content={\n            \"error\": f\"Could not load {file_key}\",\n            \"details\": str(e)\n        })\n\n@app.get(\"/\")\ndef root():\n    return {\"status\": \"Jarvis core is online.\"}\n\n@app.get(\"/data-nocache/{filename:path}\")\nasync def get_data_nocache(filename: str):\n    \"\"\"Serve data files with no-cache headers for real-time polling\"\"\"\n    from fastapi.responses import FileResponse\n    filepath = os.path.join(BASE_DIR, \"data\", filename)\n    if not os.path.exists(filepath):\n        return {\"error\": \"File not found\"}\n    return FileResponse(\n        filepath,\n        headers={\n            \"Cache-Control\": \"no-store, no-cache, must-revalidate, max-age=0\",\n            \"Pragma\": \"no-cache\",\n            \"Expires\": \"0\"\n        }\n    )\n\n# === Tool Catalog Endpoint ===\n@app.get(\"/get_tool_catalog\")\ndef get_tool_catalog():\n    \"\"\"\n    Unified tool catalog merging system_settings.ndjson + orchestrate_app_store.json.\n    Returns single list with unlock status, metadata, and costs.\n    \"\"\"\n    try:\n        # Load system_settings.ndjson (user's installed tools)\n        installed_tools = {}\n        if os.path.exists(SYSTEM_REGISTRY):\n            with open(SYSTEM_REGISTRY, \"r\") as f:\n                for line in f:\n                    if line.strip():\n                        entry = json.loads(line.strip())\n                        if entry.get(\"action\") == \"__tool__\":\n                            installed_tools[entry.get(\"tool\")] = entry\n\n        # Load orchestrate_app_store.json (marketplace) - try GitHub first for latest tools\n        GITHUB_APP_STORE_URL = \"https://raw.githubusercontent.com/unmistakablecreative/orchestrate-gershwin/main/data/orchestrate_app_store.json\"\n        app_store_path = os.path.join(BASE_DIR, \"data\", \"orchestrate_app_store.json\")\n        app_store = {}\n\n        # Try GitHub first (gets latest marketplace tools)\n        try:\n            import requests\n            resp = requests.get(GITHUB_APP_STORE_URL, timeout=3)\n            if resp.status_code == 200:\n                data = resp.json()\n                app_store = data.get(\"entries\", {})\n        except:\n            pass  # Fall through to local file\n\n        # Fallback to local file if GitHub failed\n        if not app_store and os.path.exists(app_store_path):\n            with open(app_store_path, \"r\") as f:\n                data = json.load(f)\n                app_store = data.get(\"entries\", {})\n\n        # Load unlock_status.json\n        unlocked_tools = set()\n        if os.path.exists(UNLOCK_STATUS_PATH):\n            with open(UNLOCK_STATUS_PATH, \"r\") as f:\n                unlock_data = json.load(f)\n                unlocked_tools = set(unlock_data.get(\"tools_unlocked\", []))\n\n        # Merge: app_store has metadata, system_settings has install status\n        catalog = []\n        \n        # All tools from app_store (marketplace view)\n        for tool_name, meta in app_store.items():\n            is_installed = tool_name in installed_tools\n            is_unlocked = tool_name in unlocked_tools or (is_installed and not installed_tools.get(tool_name, {}).get(\"locked\", True))\n            \n            catalog.append({\n                \"name\": tool_name,\n                \"label\": meta.get(\"label\", tool_name),\n                \"description\": meta.get(\"description\", \"\"),\n                \"priority\": meta.get(\"priority\", 99),\n                \"cost\": meta.get(\"referral_unlock_cost\", 0),\n                \"unlocked\": is_unlocked,\n                \"installed\": is_installed,\n                \"requires_credentials\": meta.get(\"requires_credentials\", False),\n                \"credential_fields\": meta.get(\"credential_fields\", []),\n                \"unlock_message\": meta.get(\"unlock_message\", \"\"),\n                \"post_unlock_nudge\": meta.get(\"post_unlock_nudge\", \"\")\n            })\n\n        # Add any installed tools not in app_store (core tools)\n        for tool_name, entry in installed_tools.items():\n            if tool_name not in app_store:\n                is_unlocked = tool_name in unlocked_tools or not entry.get(\"locked\", True)\n                catalog.append({\n                    \"name\": tool_name,\n                    \"label\": tool_name.replace(\"_\", \" \").title(),\n                    \"description\": entry.get(\"description\", \"\"),\n                    \"priority\": 999,\n                    \"cost\": entry.get(\"referral_unlock_cost\", 0),\n                    \"unlocked\": is_unlocked,\n                    \"installed\": True,\n                    \"requires_credentials\": False,\n                    \"credential_fields\": [],\n                    \"unlock_message\": \"\",\n                    \"post_unlock_nudge\": \"\"\n                })\n\n        # Sort by priority, then unlocked first\n        catalog.sort(key=lambda x: (not x[\"unlocked\"], x[\"priority\"], x[\"name\"]))\n\n        return {\n            \"status\": \"success\",\n            \"tools\": catalog,\n            \"total\": len(catalog),\n            \"unlocked_count\": sum(1 for t in catalog if t[\"unlocked\"])\n        }\n\n    except Exception as e:\n        logging.error(f\"Failed to build tool catalog: {e}\")\n        return {\"status\": \"error\", \"message\": str(e)}\n\n# ============ DOC ENDPOINTS ============\nDOCS_FILE = os.path.join(BASE_DIR, \"data\", \"docs.json\")\n_docs_cache = {\"data\": None, \"mtime\": 0}\n\ndef load_docs():\n    if not os.path.exists(DOCS_FILE):\n        return {\"docs\": {}}\n    mtime = os.path.getmtime(DOCS_FILE)\n    if _docs_cache[\"data\"] is not None and mtime == _docs_cache[\"mtime\"]:\n        return _docs_cache[\"data\"]\n    with open(DOCS_FILE, 'r') as f:\n        data = json.load(f)\n    _docs_cache[\"data\"] = data\n    _docs_cache[\"mtime\"] = mtime\n    return data\n\ndef save_docs(data):\n    with open(DOCS_FILE, 'w') as f:\n        json.dump(data, f, indent=2)\n    _docs_cache[\"data\"] = data\n    _docs_cache[\"mtime\"] = os.path.getmtime(DOCS_FILE)\n\n@app.get(\"/docs/list\")\nasync def list_docs():\n    \"\"\"List all docs\"\"\"\n    import re\n    data = load_docs()\n    docs_list = []\n    for doc_id, doc in data.get(\"docs\", {}).items():\n        # Calculate word count from content (strip HTML tags)\n        content = doc.get(\"content\", \"\")\n        text = re.sub(r'<[^>]*>', ' ', content) if content else \"\"\n        words = [w for w in text.split() if w]\n        word_count = len(words)\n\n        docs_list.append({\n            \"id\": doc_id,\n            \"title\": doc.get(\"title\", \"Untitled\"),\n            \"collection\": doc.get(\"collection\", \"\"),\n            \"updated_at\": doc.get(\"updated_at\", \"\"),\n            \"created_at\": doc.get(\"created_at\", \"\"),\n            \"word_count\": word_count,\n            \"description\": doc.get(\"description\", \"\"),\n            \"status\": doc.get(\"status\", \"\"),\n            \"campaign_id\": doc.get(\"campaign_id\", \"\"),\n            \"published_url\": doc.get(\"published_url\", \"\")\n        })\n    return {\"status\": \"success\", \"docs\": docs_list}\n\n@app.get(\"/docs/get/{doc_id}\")\nasync def get_doc(doc_id: str):\n    \"\"\"Get single doc by ID\"\"\"\n    data = load_docs()\n    doc = data.get(\"docs\", {}).get(doc_id)\n    if not doc:\n        return {\"status\": \"error\", \"message\": \"Doc not found\"}\n    return {\"status\": \"success\", \"doc\": doc}\n\n@app.post(\"/docs/save\")\nasync def save_doc(request: Request):\n    \"\"\"Save/update doc\"\"\"\n    body = await request.json()\n    doc_id = body.get(\"id\")\n\n    data = load_docs()\n\n    if not doc_id:\n        # New doc\n        import uuid\n        doc_id = f\"doc_{uuid.uuid4().hex[:8]}\"\n\n    existing_doc = data.get(\"docs\", {}).get(doc_id, {})\n    data[\"docs\"][doc_id] = {\n        \"id\": doc_id,\n        \"title\": body.get(\"title\", existing_doc.get(\"title\", \"Untitled\")),\n        \"content\": body.get(\"content\", existing_doc.get(\"content\", \"\")),\n        \"collection\": body.get(\"collection\", existing_doc.get(\"collection\", \"Notes\")),\n        \"description\": body.get(\"description\", existing_doc.get(\"description\", \"\")),\n        \"status\": body.get(\"status\", existing_doc.get(\"status\", \"\")),\n        \"campaign_id\": body.get(\"campaign_id\", existing_doc.get(\"campaign_id\", \"\")),\n        \"published_url\": body.get(\"published_url\", existing_doc.get(\"published_url\", \"\")),\n        \"created_at\": existing_doc.get(\"created_at\", datetime.now().isoformat()),\n        \"updated_at\": datetime.now().isoformat()\n    }\n    \n    save_docs(data)\n    return {\"status\": \"success\", \"doc_id\": doc_id}\n\n@app.delete(\"/docs/delete/{doc_id}\")\nasync def delete_doc(doc_id: str):\n    \"\"\"Delete doc\"\"\"\n    data = load_docs()\n    if doc_id in data.get(\"docs\", {}):\n        del data[\"docs\"][doc_id]\n        save_docs(data)\n        return {\"status\": \"success\"}\n    return {\"status\": \"error\", \"message\": \"Doc not found\"}\n\n@app.get(\"/docs/backlinks/{doc_id}\")\nasync def get_backlinks(doc_id: str):\n    \"\"\"Get backlinks for a doc\"\"\"\n    data = load_docs()\n    doc = data.get(\"docs\", {}).get(doc_id)\n    if not doc:\n        return {\"status\": \"error\", \"message\": \"Doc not found\"}\n    \n    backlinks = []\n    for bl_id in doc.get(\"backlinks\", []):\n        bl_doc = data.get(\"docs\", {}).get(bl_id)\n        if bl_doc:\n            backlinks.append({\n                \"doc_id\": bl_id,\n                \"title\": bl_doc.get(\"title\", \"Untitled\"),\n                \"collection\": bl_doc.get(\"collection\", \"\")\n            })\n    \n    return {\"status\": \"success\", \"backlinks\": backlinks}\n\n@app.post(\"/docs/link\")\nasync def create_doc_link(request: Request):\n    \"\"\"Create bidirectional link between docs\"\"\"\n    body = await request.json()\n    source_doc_id = body.get(\"source_doc_id\")\n    target_doc_id = body.get(\"target_doc_id\")\n    \n    if not source_doc_id or not target_doc_id:\n        return {\"status\": \"error\", \"message\": \"source_doc_id and target_doc_id required\"}\n    \n    data = load_docs()\n    \n    source_doc = data.get(\"docs\", {}).get(source_doc_id)\n    target_doc = data.get(\"docs\", {}).get(target_doc_id)\n    \n    if not source_doc or not target_doc:\n        return {\"status\": \"error\", \"message\": \"One or both docs not found\"}\n    \n    # Initialize links/backlinks arrays if missing\n    if \"links\" not in source_doc:\n        source_doc[\"links\"] = []\n    if \"backlinks\" not in target_doc:\n        target_doc[\"backlinks\"] = []\n    \n    # Add link if not already present\n    if target_doc_id not in source_doc[\"links\"]:\n        source_doc[\"links\"].append(target_doc_id)\n    if source_doc_id not in target_doc[\"backlinks\"]:\n        target_doc[\"backlinks\"].append(source_doc_id)\n    \n    save_docs(data)\n    return {\"status\": \"success\", \"message\": f\"Linked {source_doc_id} -> {target_doc_id}\"}\n\n\n# ============== DOC EDITOR BETA ROUTES ==============\n# Mirrors /docs/ routes but uses docs_beta.json for isolated testing\n\nDOCS_BETA_FILE = os.path.join(BASE_DIR, \"data\", \"docs_beta.json\")\n\ndef load_docs_beta():\n    if not os.path.exists(DOCS_BETA_FILE):\n        return {\"docs\": {}}\n    mtime = os.path.getmtime(DOCS_BETA_FILE)\n    if _docs_beta_cache[\"data\"] is not None and mtime == _docs_beta_cache[\"mtime\"]:\n        return _docs_beta_cache[\"data\"]\n    with open(DOCS_BETA_FILE, 'r') as f:\n        data = json.load(f)\n    _docs_beta_cache[\"data\"] = data\n    _docs_beta_cache[\"mtime\"] = mtime\n    return data\n\ndef save_docs_beta(data):\n    with open(DOCS_BETA_FILE, 'w') as f:\n        json.dump(data, f, indent=2)\n    _docs_beta_cache[\"data\"] = data\n    _docs_beta_cache[\"mtime\"] = os.path.getmtime(DOCS_BETA_FILE)\n\n@app.post(\"/upload_file\")\nasync def upload_file(request: Request):\n    \"\"\"Write file content to disk. Security: only allows paths within project root.\"\"\"\n    try:\n        body = await request.json()\n        path = body.get(\"path\")\n        content = body.get(\"content\")\n\n        if not path:\n            return {\"status\": \"error\", \"message\": \"Missing required field: path\"}\n        if content is None:\n            return {\"status\": \"error\", \"message\": \"Missing required field: content\"}\n\n        # Security: Resolve path and ensure it's within project root\n        # Handle both absolute and relative paths\n        if os.path.isabs(path):\n            resolved_path = os.path.realpath(path)\n        else:\n            resolved_path = os.path.realpath(os.path.join(PROJECT_ROOT, path))\n\n        # Normalize project root for comparison\n        normalized_root = os.path.realpath(PROJECT_ROOT)\n\n        # Check if resolved path is within project root\n        if not resolved_path.startswith(normalized_root + os.sep) and resolved_path != normalized_root:\n            return {\"status\": \"error\", \"message\": f\"Path '{path}' is outside project root. Access denied.\"}\n\n        # Ensure parent directory exists\n        parent_dir = os.path.dirname(resolved_path)\n        if not os.path.exists(parent_dir):\n            os.makedirs(parent_dir, exist_ok=True)\n\n        # Write the file\n        with open(resolved_path, 'w', encoding='utf-8') as f:\n            f.write(content)\n\n        return {\"status\": \"success\", \"path\": resolved_path}\n\n    except json.JSONDecodeError:\n        return {\"status\": \"error\", \"message\": \"Invalid JSON body\"}\n    except PermissionError:\n        return {\"status\": \"error\", \"message\": f\"Permission denied writing to '{path}'\"}\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n\n\n# \ud83d\udd17 Dynamic URL Aliases - catch-all route (MUST be LAST - after all other routes)\n"
+            }
+        },
+        {
+            "tool": "terminal",
+            "action": "check_safe",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "error",
+                "message": "Unknown action check_safe"
+            }
+        },
+        {
+            "tool": "bullet_journal",
+            "action": "list_entries",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "count": 0,
+                "entries": {}
+            }
+        },
+        {
+            "tool": "bullet_journal",
+            "action": "get_collections",
+            "params": {},
+            "status": "success",
+            "output": {
+                "status": "success",
+                "collections": [
+                    "SHIP",
+                    "HANDLE",
+                    "PUBLISH",
+                    "IDEAS"
+                ],
+                "descriptions": {
+                    "SHIP": "code, bugs, tools, features, infrastructure, launches, customers, demos",
+                    "HANDLE": "inbox, meetings, daily ops, personal",
+                    "PUBLISH": "blogs, videos, podcasts, newsletters, social posts",
+                    "IDEAS": "permanent notes, insights, reading list, ideas, architecture"
+                }
+            }
         }
     ]
 }

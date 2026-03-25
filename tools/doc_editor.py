@@ -1,14 +1,15 @@
 #!/Users/srinivas/venv/bin/python3
 """
-Native Doc Editor Tool
-Programmatic CRUD for docs stored in data/docs.json
-Replaces outline_editor for local document management
+Native Doc Editor Tool - SQLite Version
+Programmatic CRUD for docs stored in data/docs.db
+Replaces doc_editor.py JSON backend with SQLite
 """
 
-import fcntl
 import json
+import logging
 import os
 import re
+import sqlite3
 import uuid
 from datetime import datetime
 
@@ -25,13 +26,27 @@ from whoosh import scoring
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WHOOSH_INDEX_DIR = os.path.join(BASE_DIR, "data", "whoosh_index")
-DOCS_JSON_PATH = os.path.join(BASE_DIR, "data", "docs.json")
+DB_PATH = os.path.join(BASE_DIR, "data", "docs.db")
 
-# Track docs.json modification time for automatic reindexing
+# Track database modification time for automatic reindexing
 _last_index_mtime = 0
+INDEX_MTIME_MARKER = os.path.join(BASE_DIR, "data", "whoosh_index", ".last_build_mtime")
 
 
-# Lazy import for semantic search to avoid circular dependency and slow startup
+def get_db():
+    """Get SQLite connection with Row factory for dict-like access."""
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _row_to_dict(row):
+    """Convert sqlite3.Row to dict."""
+    if row is None:
+        return None
+    return dict(row)
+
+
 def _get_semantic_search():
     """Lazy-load semantic_search from docs_vector_indexer."""
     from docs_vector_indexer import semantic_search
@@ -47,6 +62,59 @@ def _count_words(content: str) -> int:
     # Normalize whitespace and count words
     words = text.split()
     return len(words)
+
+
+def _extract_meta_description(content: str) -> tuple:
+    """Extract meta_description from content if ---summary--- marker is present.
+
+    Args:
+        content: The document content to scan
+
+    Returns:
+        tuple: (cleaned_content, meta_description or None)
+    """
+    if not content:
+        return content, None
+
+    # Regex to find ---summary--- marker (case-insensitive) and capture everything after it
+    pattern = re.compile(r'---summary---\s*(.+?)\s*$', re.DOTALL | re.IGNORECASE)
+    match = pattern.search(content)
+
+    if match:
+        meta_description = match.group(1).strip()
+        # Strip any HTML tags that may have been captured
+        meta_description = re.sub(r'<[^>]+>', '', meta_description).strip()
+        # Remove the marker and summary from content
+        cleaned_content = content[:match.start()].rstrip()
+        return cleaned_content, meta_description
+
+    return content, None
+
+
+def _snapshot_revision(conn, doc_id: str, content: str) -> int:
+    """Snapshot current content as a new revision.
+
+    Args:
+        conn: Active database connection
+        doc_id: Document ID to snapshot
+        content: Content to save as revision
+
+    Returns:
+        The new revision number
+    """
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT COALESCE(MAX(revision_number), 0) FROM revisions WHERE doc_id = ?",
+        (doc_id,)
+    )
+    max_rev = cursor.fetchone()[0]
+    new_rev = max_rev + 1
+
+    cursor.execute(
+        "INSERT INTO revisions (doc_id, revision_number, content, created_at) VALUES (?, ?, ?, ?)",
+        (doc_id, new_rev, content, datetime.now().isoformat())
+    )
+    return new_rev
 
 
 def _render_table(rows: list) -> str:
@@ -256,38 +324,12 @@ def _convert_wiki_links(html: str) -> str:
 
 def _lookup_doc_by_title(title: str) -> str:
     """Look up a document by exact title match. Returns doc_id or empty string."""
-    data = load_docs()
-    all_docs = data.get("docs", {})
-
-    # Exact title match (case-insensitive)
-    title_lower = title.lower()
-    for doc_id, doc in all_docs.items():
-        if doc.get("title", "").lower() == title_lower:
-            return doc_id
-
-    return ""
-DOCS_FILE = os.path.join(BASE_DIR, "data", "docs.json")
-
-
-def load_docs():
-    if os.path.exists(DOCS_FILE):
-        with open(DOCS_FILE, 'r') as f:
-            return json.load(f)
-    return {"docs": {}}
-
-
-def save_docs(data):
-    # Create file if it doesn't exist
-    if not os.path.exists(DOCS_FILE):
-        with open(DOCS_FILE, 'w') as f:
-            json.dump({"docs": {}}, f, indent=2)
-
-    with open(DOCS_FILE, 'r+') as f:
-        fcntl.flock(f, fcntl.LOCK_EX)  # exclusive lock, blocks until acquired
-        f.seek(0)
-        f.truncate()
-        json.dump(data, f, indent=2)
-        fcntl.flock(f, fcntl.LOCK_UN)  # release lock
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM docs WHERE LOWER(title) = LOWER(?)", (title,))
+    row = cursor.fetchone()
+    conn.close()
+    return row['id'] if row else ""
 
 
 def resolve_collection(input_collection: str) -> str:
@@ -320,9 +362,12 @@ def resolve_collection(input_collection: str) -> str:
 
     input_normalized = normalize(input_collection)
 
-    # Load existing collections
-    data = load_docs()
-    existing_collections = set(doc.get('collection', '') for doc in data.get('docs', {}).values())
+    # Load existing collections from SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT DISTINCT collection FROM docs")
+    existing_collections = set(row['collection'] for row in cursor.fetchall())
+    conn.close()
 
     # Find matching collection
     for existing in existing_collections:
@@ -349,8 +394,7 @@ def ensure_link_fields(doc):
 def link_docs(source_doc_id: str, target_doc_id: str) -> dict:
     """
     Create bidirectional link from source to target.
-    Source doc's links array gets target_doc_id.
-    Target doc's backlinks array gets source_doc_id.
+    Adds entry to links table.
 
     Args:
         source_doc_id: The doc containing the link
@@ -362,29 +406,38 @@ def link_docs(source_doc_id: str, target_doc_id: str) -> dict:
     if source_doc_id == target_doc_id:
         return {"status": "error", "message": "Cannot link doc to itself"}
 
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if source_doc_id not in data.get("docs", {}):
+    # Check both docs exist
+    cursor.execute("SELECT id, title FROM docs WHERE id = ?", (source_doc_id,))
+    source = cursor.fetchone()
+    if not source:
+        conn.close()
         return {"status": "error", "message": f"Source doc {source_doc_id} not found"}
-    if target_doc_id not in data.get("docs", {}):
+
+    cursor.execute("SELECT id, title FROM docs WHERE id = ?", (target_doc_id,))
+    target = cursor.fetchone()
+    if not target:
+        conn.close()
         return {"status": "error", "message": f"Target doc {target_doc_id} not found"}
 
-    source = ensure_link_fields(data["docs"][source_doc_id])
-    target = ensure_link_fields(data["docs"][target_doc_id])
+    # Insert link (ignore if already exists)
+    try:
+        cursor.execute(
+            "INSERT OR IGNORE INTO links (source_id, target_id) VALUES (?, ?)",
+            (source_doc_id, target_doc_id)
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        conn.close()
+        return {"status": "error", "message": str(e)}
 
-    # Add link if not already present
-    if target_doc_id not in source["links"]:
-        source["links"].append(target_doc_id)
-
-    # Add backlink if not already present
-    if source_doc_id not in target["backlinks"]:
-        target["backlinks"].append(source_doc_id)
-
-    save_docs(data)
+    conn.close()
 
     return {
         "status": "success",
-        "message": f"Linked {source.get('title', source_doc_id)} → {target.get('title', target_doc_id)}",
+        "message": f"Linked {source['title']} → {target['title']}",
         "source_doc_id": source_doc_id,
         "target_doc_id": target_doc_id
     }
@@ -401,29 +454,33 @@ def unlink_docs(source_doc_id: str, target_doc_id: str) -> dict:
     Returns:
         {status, message}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if source_doc_id not in data.get("docs", {}):
+    # Check both docs exist
+    cursor.execute("SELECT id, title FROM docs WHERE id = ?", (source_doc_id,))
+    source = cursor.fetchone()
+    if not source:
+        conn.close()
         return {"status": "error", "message": f"Source doc {source_doc_id} not found"}
-    if target_doc_id not in data.get("docs", {}):
+
+    cursor.execute("SELECT id, title FROM docs WHERE id = ?", (target_doc_id,))
+    target = cursor.fetchone()
+    if not target:
+        conn.close()
         return {"status": "error", "message": f"Target doc {target_doc_id} not found"}
 
-    source = ensure_link_fields(data["docs"][source_doc_id])
-    target = ensure_link_fields(data["docs"][target_doc_id])
-
-    # Remove link
-    if target_doc_id in source["links"]:
-        source["links"].remove(target_doc_id)
-
-    # Remove backlink
-    if source_doc_id in target["backlinks"]:
-        target["backlinks"].remove(source_doc_id)
-
-    save_docs(data)
+    # Delete link
+    cursor.execute(
+        "DELETE FROM links WHERE source_id = ? AND target_id = ?",
+        (source_doc_id, target_doc_id)
+    )
+    conn.commit()
+    conn.close()
 
     return {
         "status": "success",
-        "message": f"Unlinked {source.get('title', source_doc_id)} ↛ {target.get('title', target_doc_id)}"
+        "message": f"Unlinked {source['title']} ↛ {target['title']}"
     }
 
 
@@ -437,22 +494,32 @@ def read_backlinks(doc_id: str) -> dict:
     Returns:
         {status, backlinks: [{id, title, collection}]}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    # Check doc exists
+    cursor.execute("SELECT id FROM docs WHERE id = ?", (doc_id,))
+    if not cursor.fetchone():
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    doc = ensure_link_fields(data["docs"][doc_id])
-    backlinks = []
+    # Get all docs that link to this doc
+    cursor.execute("""
+        SELECT d.id, d.title, d.collection
+        FROM links l
+        JOIN docs d ON l.source_id = d.id
+        WHERE l.target_id = ?
+    """, (doc_id,))
 
-    for bl_id in doc.get("backlinks", []):
-        if bl_id in data["docs"]:
-            bl_doc = data["docs"][bl_id]
-            backlinks.append({
-                "id": bl_id,
-                "title": bl_doc.get("title", "Untitled"),
-                "collection": bl_doc.get("collection", "")
-            })
+    backlinks = []
+    for row in cursor.fetchall():
+        backlinks.append({
+            "id": row['id'],
+            "title": row['title'],
+            "collection": row['collection']
+        })
+
+    conn.close()
 
     return {
         "status": "success",
@@ -472,22 +539,32 @@ def read_links(doc_id: str) -> dict:
     Returns:
         {status, links: [{id, title, collection}]}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    # Check doc exists
+    cursor.execute("SELECT id FROM docs WHERE id = ?", (doc_id,))
+    if not cursor.fetchone():
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    doc = ensure_link_fields(data["docs"][doc_id])
-    links = []
+    # Get all docs this doc links to
+    cursor.execute("""
+        SELECT d.id, d.title, d.collection
+        FROM links l
+        JOIN docs d ON l.target_id = d.id
+        WHERE l.source_id = ?
+    """, (doc_id,))
 
-    for link_id in doc.get("links", []):
-        if link_id in data["docs"]:
-            link_doc = data["docs"][link_id]
-            links.append({
-                "id": link_id,
-                "title": link_doc.get("title", "Untitled"),
-                "collection": link_doc.get("collection", "")
-            })
+    links = []
+    for row in cursor.fetchall():
+        links.append({
+            "id": row['id'],
+            "title": row['title'],
+            "collection": row['collection']
+        })
+
+    conn.close()
 
     return {
         "status": "success",
@@ -510,12 +587,14 @@ def create_doc(title: str, content: str, collection: str = "Notes", convert_mark
     Returns:
         {"status": "success", "doc_id": "doc_xxx", "message": "..."}
     """
-    data = load_docs()
     doc_id = f"doc_{uuid.uuid4().hex[:8]}"
     now = datetime.now().isoformat()
 
     # Resolve collection to match existing collection names
     collection = resolve_collection(collection)
+
+    # Extract meta_description if ---summary--- marker is present
+    content, meta_description = _extract_meta_description(content)
 
     # Convert markdown to HTML if needed
     html_content = markdown_to_html(content) if convert_markdown else content
@@ -525,17 +604,30 @@ def create_doc(title: str, content: str, collection: str = "Notes", convert_mark
     html_content = lint_result.get("fixed_text", html_content)
     lint_changes = lint_result.get("change_log", [])
 
-    data["docs"][doc_id] = {
-        "id": doc_id,
-        "title": title,
-        "content": html_content,
-        "collection": collection,
-        "created_at": now,
-        "updated_at": now,
-        "last_action": "content_update"  # Track action type for exec_briefing filtering
-    }
+    # Strip duplicate H1 title if agents passed title both as param AND as H1 in content
+    h1_pattern = re.compile(r'^<h1>([^<]+)</h1>\s*', re.IGNORECASE)
+    h1_match = h1_pattern.match(html_content)
+    if h1_match and h1_match.group(1).strip().lower() == title.strip().lower():
+        html_content = html_content[h1_match.end():]
 
-    save_docs(data)
+    # Strip leading collection hashtag lines like <p>#newsletter</p> or <p>#newsletters</p>
+    hashtag_pattern = re.compile(r'^<p>#\w+</p>\s*', re.IGNORECASE)
+    while hashtag_pattern.match(html_content):
+        html_content = hashtag_pattern.sub('', html_content, count=1)
+
+    # Calculate word count
+    word_count = _count_words(html_content)
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO docs (id, title, content, collection, meta_description, word_count, created_at, updated_at, last_action)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (doc_id, title, html_content, collection, meta_description or '', word_count, now, now, 'content_update'))
+
+    conn.commit()
+    conn.close()
 
     # Auto-sync content calendar for content collections
     if collection.lower() in ['blogs', 'video', 'newsletters']:
@@ -546,11 +638,13 @@ def create_doc(title: str, content: str, collection: str = "Notes", convert_mark
         "doc_id": doc_id,
         "message": f"Created doc '{title}' in {collection}"
     }
+
+    if not meta_description:
+        result['message'] += f'. BEFORE logging this task complete: append a ---summary--- to {doc_id} using docs.append_doc with a 1-2 sentence summary of this docs content.'
+
     if lint_changes:
         result["lint_changes"] = lint_changes
     return result
-
-
 
 
 def update_doc(doc_id: str, find: str, replace: str, title: str = None, collection: str = None) -> dict:
@@ -567,22 +661,32 @@ def update_doc(doc_id: str, find: str, replace: str, title: str = None, collecti
     Returns:
         {"status": "success/error", "message": "..."}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT id, title, content, collection FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    doc = data["docs"][doc_id]
+    doc = _row_to_dict(row)
     content = doc.get("content", "")
 
     # Count occurrences
     count = content.count(find)
 
     if count == 0:
+        conn.close()
         return {"status": "error", "message": f"Content not found: '{find[:50]}...' was not found in the document"}
 
     if count > 1:
+        conn.close()
         return {"status": "error", "message": f"Ambiguous match: '{find[:50]}...' appears {count} times. Provide a more specific string."}
+
+    # Snapshot current content as revision before making changes
+    _snapshot_revision(conn, doc_id, content)
 
     # Auto-lint the replacement content for AI writing patterns
     lint_result = lint(replace)
@@ -590,20 +694,31 @@ def update_doc(doc_id: str, find: str, replace: str, title: str = None, collecti
     lint_changes = lint_result.get("change_log", [])
 
     # Perform the replacement
-    doc["content"] = content.replace(find, linted_replace, 1)
+    new_content = content.replace(find, linted_replace, 1)
 
-    if title is not None:
-        doc["title"] = title
-    if collection is not None:
-        doc["collection"] = resolve_collection(collection)
+    # Extract meta_description if ---summary--- marker is present in the updated content
+    new_content, meta_description = _extract_meta_description(new_content)
 
-    doc["updated_at"] = datetime.now().isoformat()
-    doc["last_action"] = "content_update"  # Track action type for exec_briefing filtering
+    # Calculate word count
+    word_count = _count_words(new_content)
+    now = datetime.now().isoformat()
 
-    save_docs(data)
+    new_title = title if title is not None else doc['title']
+    new_collection = resolve_collection(collection) if collection is not None else doc['collection']
+
+    cursor.execute("""
+        UPDATE docs
+        SET content = ?, title = ?, collection = ?, meta_description = COALESCE(?, meta_description),
+            word_count = ?, updated_at = ?, last_action = ?
+        WHERE id = ?
+    """, (new_content, new_title, new_collection, meta_description, word_count, now, 'content_update', doc_id))
+
+    conn.commit()
+    conn.close()
+
     result = {
         "status": "success",
-        "message": f"Updated doc '{doc.get('title')}' - replaced 1 occurrence"
+        "message": f"Updated doc '{new_title}' - replaced 1 occurrence"
     }
     if lint_changes:
         result["lint_changes"] = lint_changes
@@ -626,12 +741,17 @@ def replace_section(doc_id: str, section_header: str, new_content: str, convert_
     Returns:
         {"status": "success/error", "message": "..."}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT id, title, content FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    doc = data["docs"][doc_id]
+    doc = _row_to_dict(row)
     content = doc.get("content", "")
 
     # Pattern to find section headers (h2 or h3)
@@ -647,11 +767,13 @@ def replace_section(doc_id: str, section_header: str, new_content: str, convert_
         header_text = match.group(2).strip()
         if header_text.lower() == section_header.lower():
             if target_match is not None:
+                conn.close()
                 return {"status": "error", "message": f"Ambiguous: Multiple sections found with header '{section_header}'"}
             target_match = match
             target_level = int(match.group(1)[1])  # Get level number from h2/h3
 
     if target_match is None:
+        conn.close()
         return {"status": "error", "message": f"Section not found: No h2 or h3 header matching '{section_header}'"}
 
     # Find where this section ends (next header of same or higher level)
@@ -672,14 +794,20 @@ def replace_section(doc_id: str, section_header: str, new_content: str, convert_
 
     # Perform the replacement
     new_doc_content = content[:section_start] + replacement + content[section_end:]
-    doc["content"] = new_doc_content
-    doc["updated_at"] = datetime.now().isoformat()
-    doc["last_action"] = "content_update"  # Track action type for exec_briefing filtering
+    word_count = _count_words(new_doc_content)
+    now = datetime.now().isoformat()
 
-    save_docs(data)
+    cursor.execute("""
+        UPDATE docs SET content = ?, word_count = ?, updated_at = ?, last_action = ?
+        WHERE id = ?
+    """, (new_doc_content, word_count, now, 'content_update', doc_id))
+
+    conn.commit()
+    conn.close()
+
     return {
         "status": "success",
-        "message": f"Replaced section '{section_header}' in doc '{doc.get('title')}'"
+        "message": f"Replaced section '{section_header}' in doc '{doc['title']}'"
     }
 
 
@@ -695,10 +823,17 @@ def append_doc(doc_id: str, content: str, convert_markdown: bool = True) -> dict
     Returns:
         {"status": "success/error", "message": "..."}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT id, title, content FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
+
+    doc = _row_to_dict(row)
 
     # Convert markdown to HTML if needed
     html_content = markdown_to_html(content) if convert_markdown else content
@@ -708,16 +843,26 @@ def append_doc(doc_id: str, content: str, convert_markdown: bool = True) -> dict
     html_content = lint_result.get("fixed_text", html_content)
     lint_changes = lint_result.get("change_log", [])
 
-    doc = data["docs"][doc_id]
     existing = doc.get("content", "")
-    doc["content"] = existing + html_content
-    doc["updated_at"] = datetime.now().isoformat()
-    doc["last_action"] = "content_update"  # Track action type for exec_briefing filtering
+    combined_content = existing + html_content
 
-    save_docs(data)
+    # Extract meta_description if ---summary--- marker is present in combined content
+    combined_content, meta_description = _extract_meta_description(combined_content)
+    word_count = _count_words(combined_content)
+    now = datetime.now().isoformat()
+
+    cursor.execute("""
+        UPDATE docs SET content = ?, meta_description = COALESCE(?, meta_description),
+            word_count = ?, updated_at = ?, last_action = ?
+        WHERE id = ?
+    """, (combined_content, meta_description, word_count, now, 'content_update', doc_id))
+
+    conn.commit()
+    conn.close()
+
     result = {
         "status": "success",
-        "message": f"Appended to doc '{doc.get('title')}'"
+        "message": f"Appended to doc '{doc['title']}'"
     }
     if lint_changes:
         result["lint_changes"] = lint_changes
@@ -734,15 +879,25 @@ def delete_doc(doc_id: str) -> dict:
     Returns:
         {"status": "success/error", "message": "..."}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT id, title FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    title = data["docs"][doc_id].get("title", "Untitled")
-    del data["docs"][doc_id]
+    title = row['title']
 
-    save_docs(data)
+    # Delete links first (foreign key constraint)
+    cursor.execute("DELETE FROM links WHERE source_id = ? OR target_id = ?", (doc_id, doc_id))
+    cursor.execute("DELETE FROM docs WHERE id = ?", (doc_id,))
+
+    conn.commit()
+    conn.close()
+
     return {
         "status": "success",
         "message": f"Deleted doc '{title}'"
@@ -759,32 +914,40 @@ def delete_collection(collection: str) -> dict:
     Returns:
         {"status": "success/error", "deleted_count": N, "collection": "..."}
     """
-    data = load_docs()
-
     # Resolve the collection name
     resolved_collection = resolve_collection(collection)
 
-    # Find all docs in this collection
-    docs_to_delete = [
-        doc_id for doc_id, doc in data.get("docs", {}).items()
-        if doc.get("collection") == resolved_collection
-    ]
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if not docs_to_delete:
+    # Count docs in this collection
+    cursor.execute("SELECT COUNT(*) FROM docs WHERE collection = ?", (resolved_collection,))
+    count = cursor.fetchone()[0]
+
+    if count == 0:
+        conn.close()
         return {
             "status": "error",
             "message": f"No documents found in collection '{resolved_collection}'"
         }
 
-    # Delete all docs in the collection
-    for doc_id in docs_to_delete:
-        del data["docs"][doc_id]
+    # Get doc IDs for link cleanup
+    cursor.execute("SELECT id FROM docs WHERE collection = ?", (resolved_collection,))
+    doc_ids = [row['id'] for row in cursor.fetchall()]
 
-    save_docs(data)
+    # Delete links for these docs
+    for doc_id in doc_ids:
+        cursor.execute("DELETE FROM links WHERE source_id = ? OR target_id = ?", (doc_id, doc_id))
+
+    # Delete all docs in the collection
+    cursor.execute("DELETE FROM docs WHERE collection = ?", (resolved_collection,))
+
+    conn.commit()
+    conn.close()
 
     return {
         "status": "success",
-        "deleted_count": len(docs_to_delete),
+        "deleted_count": count,
         "collection": resolved_collection
     }
 
@@ -799,14 +962,123 @@ def read_doc(doc_id: str) -> dict:
     Returns:
         {"status": "success/error", "doc": {...}}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT * FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
         return {"status": "error", "message": f"Doc {doc_id} not found"}
+
+    doc = _row_to_dict(row)
+
+    # Parse stitched_from if it's a JSON string
+    if doc.get('stitched_from') and isinstance(doc['stitched_from'], str):
+        try:
+            doc['stitched_from'] = json.loads(doc['stitched_from'])
+        except json.JSONDecodeError:
+            pass
 
     return {
         "status": "success",
-        "doc": data["docs"][doc_id]
+        "doc": doc
+    }
+
+
+
+def read_section(doc_id: str, section_header: str = None, section: int = None) -> dict:
+    """
+    Read a section from a document by h2 header text or section number.
+
+    Finds the matching <h2> tag in the doc content and returns everything
+    from that <h2> until the next <h2> (or end of document).
+
+    Args:
+        doc_id: The document ID
+        section_header: The header text to find (without h2 tags) - optional
+        section: 1-indexed section number (1 = first h2, 2 = second h2, etc.) - optional
+
+    Either section_header or section must be provided. If both provided, section takes priority.
+
+    Returns:
+        {"status": "success", "section_html": "...", "section_text": "...", "header": "...", "section_number": N}
+        or {"status": "error", "message": "..."}
+    """
+    # Validate params
+    if section is None and section_header is None:
+        return {"status": "error", "message": "Either section or section_header must be provided"}
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, title, content FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return {"status": "error", "message": f"Doc {doc_id} not found"}
+
+    doc = _row_to_dict(row)
+    content = doc.get("content", "")
+
+    # Pattern to find h2 headers
+    header_pattern = re.compile(r'<h2>([^<]*)</h2>', re.IGNORECASE)
+
+    # Find all h2 headers with their positions
+    matches = list(header_pattern.finditer(content))
+
+    if not matches:
+        return {"status": "error", "message": "No h2 sections found in document"}
+
+    # Find the target section
+    target_match = None
+    section_number = None
+
+    if section is not None:
+        # Section number provided (1-indexed)
+        if not isinstance(section, int) or section < 1:
+            return {"status": "error", "message": f"section must be a positive integer, got {section}"}
+        if section > len(matches):
+            return {"status": "error", "message": f"Section {section} not found. Document has {len(matches)} h2 sections."}
+        target_match = matches[section - 1]  # Convert to 0-indexed
+        section_number = section
+    else:
+        # Fall back to section_header string match
+        for idx, match in enumerate(matches):
+            header_text = match.group(1).strip()
+            if header_text.lower() == section_header.lower():
+                target_match = match
+                section_number = idx + 1  # Convert to 1-indexed
+                break
+
+        if target_match is None:
+            return {"status": "error", "message": f"Section not found: No h2 header matching '{section_header}'"}
+
+    # Find where this section ends (next h2 or end of document)
+    section_start = target_match.start()
+    section_end = len(content)  # Default to end of document
+
+    for match in matches:
+        if match.start() > target_match.start():
+            section_end = match.start()
+            break
+
+    # Extract the section HTML (including the header)
+    section_html = content[section_start:section_end].strip()
+
+    # Convert to plain text by stripping HTML tags
+    section_text = re.sub(r'<[^>]+>', ' ', section_html)
+    section_text = re.sub(r'\s+', ' ', section_text).strip()
+
+    return {
+        "status": "success",
+        "header": target_match.group(1).strip(),
+        "section_html": section_html,
+        "section_text": section_text,
+        "section_number": section_number,
+        "total_sections": len(matches)
     }
 
 
@@ -826,8 +1098,8 @@ def batch_read(doc_ids: list) -> dict:
     if not doc_ids:
         return {"status": "error", "message": "No doc_ids provided"}
 
-    data = load_docs()
-    all_docs = data.get("docs", {})
+    conn = get_db()
+    cursor = conn.cursor()
 
     docs = {}
     not_found = []
@@ -837,10 +1109,22 @@ def batch_read(doc_ids: list) -> dict:
             not_found.append(str(doc_id))
             continue
 
-        if doc_id in all_docs:
-            docs[doc_id] = all_docs[doc_id]
+        cursor.execute("SELECT * FROM docs WHERE id = ?", (doc_id,))
+        row = cursor.fetchone()
+
+        if row:
+            doc = _row_to_dict(row)
+            # Parse stitched_from if it's a JSON string
+            if doc.get('stitched_from') and isinstance(doc['stitched_from'], str):
+                try:
+                    doc['stitched_from'] = json.loads(doc['stitched_from'])
+                except json.JSONDecodeError:
+                    pass
+            docs[doc_id] = doc
         else:
             not_found.append(doc_id)
+
+    conn.close()
 
     return {
         "status": "success",
@@ -853,9 +1137,6 @@ def batch_read(doc_ids: list) -> dict:
 def batch_create_docs(docs: list, collection: str = "Notes", convert_markdown: bool = True) -> dict:
     """
     Create multiple documents in a single transaction.
-
-    Loads docs.json once, creates all doc objects, saves once, triggers vector index update once.
-    Much more efficient than calling create_doc in a loop.
 
     Args:
         docs: Array of dicts with title and content keys (optional: uuid for mapping)
@@ -871,8 +1152,6 @@ def batch_create_docs(docs: list, collection: str = "Notes", convert_markdown: b
     if not docs:
         return {"status": "error", "message": "No docs provided"}
 
-    # Load docs.json once
-    data = load_docs()
     now = datetime.now().isoformat()
 
     # Resolve collection to match existing collection names
@@ -881,6 +1160,9 @@ def batch_create_docs(docs: list, collection: str = "Notes", convert_markdown: b
     created_count = 0
     doc_ids = []
     errors = []
+
+    conn = get_db()
+    cursor = conn.cursor()
 
     for i, doc_input in enumerate(docs):
         if not isinstance(doc_input, dict):
@@ -905,22 +1187,22 @@ def batch_create_docs(docs: list, collection: str = "Notes", convert_markdown: b
         lint_result = lint(html_content)
         html_content = lint_result.get("fixed_text", html_content)
 
-        # Create doc object
-        data["docs"][doc_id] = {
-            "id": doc_id,
-            "title": title,
-            "content": html_content,
-            "collection": resolved_collection,
-            "created_at": now,
-            "updated_at": now,
-            "last_action": "content_update"
-        }
+        # Calculate word count
+        word_count = _count_words(html_content)
 
-        created_count += 1
-        doc_ids.append({"uuid": input_uuid, "doc_id": doc_id} if input_uuid else {"doc_id": doc_id})
+        try:
+            cursor.execute("""
+                INSERT INTO docs (id, title, content, collection, word_count, created_at, updated_at, last_action)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (doc_id, title, html_content, resolved_collection, word_count, now, now, 'content_update'))
 
-    # Save docs.json once
-    save_docs(data)
+            created_count += 1
+            doc_ids.append({"uuid": input_uuid, "doc_id": doc_id} if input_uuid else {"doc_id": doc_id})
+        except sqlite3.Error as e:
+            errors.append({"index": i, "error": str(e)})
+
+    conn.commit()
+    conn.close()
 
     # Trigger vector index update once (background)
     try:
@@ -969,8 +1251,8 @@ def stitch_docs(doc_ids: list, new_title: str) -> dict:
     if not new_title or not isinstance(new_title, str):
         return {"status": "error", "message": "new_title is required and must be a string"}
 
-    data = load_docs()
-    all_docs = data.get("docs", {})
+    conn = get_db()
+    cursor = conn.cursor()
 
     # Collect content from each doc in order
     stitched_content = []
@@ -982,8 +1264,11 @@ def stitch_docs(doc_ids: list, new_title: str) -> dict:
             not_found.append(str(doc_id))
             continue
 
-        if doc_id in all_docs:
-            doc = all_docs[doc_id]
+        cursor.execute("SELECT id, title, content FROM docs WHERE id = ?", (doc_id,))
+        row = cursor.fetchone()
+
+        if row:
+            doc = _row_to_dict(row)
             source_docs.append({"id": doc_id, "title": doc.get("title", "Untitled")})
             # Add section header with doc title and HR divider
             stitched_content.append(f"<h2>{doc.get('title', 'Untitled')}</h2>")
@@ -993,6 +1278,7 @@ def stitch_docs(doc_ids: list, new_title: str) -> dict:
             not_found.append(doc_id)
 
     if not source_docs:
+        conn.close()
         return {"status": "error", "message": f"No valid docs found. Not found: {not_found}"}
 
     # Remove trailing HR
@@ -1002,21 +1288,19 @@ def stitch_docs(doc_ids: list, new_title: str) -> dict:
     # Join all content
     final_content = "\n\n".join(stitched_content)
 
-    # Create the new doc in Inbox (skip markdown conversion since content is already HTML)
+    # Create the new doc in Inbox
     new_doc_id = f"doc_{uuid.uuid4().hex[:8]}"
     now = datetime.now().isoformat()
+    word_count = _count_words(final_content)
+    stitched_from_json = json.dumps([d["id"] for d in source_docs])
 
-    data["docs"][new_doc_id] = {
-        "id": new_doc_id,
-        "title": new_title,
-        "content": final_content,
-        "collection": "Inbox",
-        "created_at": now,
-        "updated_at": now,
-        "stitched_from": [d["id"] for d in source_docs]
-    }
+    cursor.execute("""
+        INSERT INTO docs (id, title, content, collection, word_count, created_at, updated_at, stitched_from)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (new_doc_id, new_title, final_content, "Inbox", word_count, now, now, stitched_from_json))
 
-    save_docs(data)
+    conn.commit()
+    conn.close()
 
     result = {
         "status": "success",
@@ -1042,12 +1326,17 @@ def search_within_doc(doc_id: str, query: str) -> dict:
     Returns:
         {"status": "success", "doc_id": "...", "query": "...", "matches": [...], "match_count": N}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT id, title, content FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    doc = data["docs"][doc_id]
+    doc = _row_to_dict(row)
     content = doc.get("content", "")
 
     # Strip HTML tags for clean text matching
@@ -1119,36 +1408,43 @@ def list_docs(collection: str = None, min_words: int = None, max_words: int = No
     Returns:
         {"status": "success", "docs": [...]}
     """
-    data = load_docs()
-    docs_list = []
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Build query
+    query = "SELECT id, title, collection, updated_at, word_count, last_action FROM docs WHERE 1=1"
+    params = []
 
     # Resolve collection name if provided
-    resolved_collection = resolve_collection(collection) if collection else None
+    if collection:
+        resolved_collection = resolve_collection(collection)
+        query += " AND collection = ?"
+        params.append(resolved_collection)
 
-    for doc_id, doc in data.get("docs", {}).items():
-        if resolved_collection and doc.get("collection") != resolved_collection:
-            continue
+    if min_words is not None:
+        query += " AND word_count >= ?"
+        params.append(min_words)
 
-        # Calculate word count
-        word_count = _count_words(doc.get("content", ""))
+    if max_words is not None:
+        query += " AND word_count <= ?"
+        params.append(max_words)
 
-        # Apply word count filters
-        if min_words is not None and word_count < min_words:
-            continue
-        if max_words is not None and word_count > max_words:
-            continue
+    query += " ORDER BY LOWER(title)"
 
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+
+    docs_list = []
+    for row in rows:
         docs_list.append({
-            "id": doc_id,
-            "title": doc.get("title", "Untitled"),
-            "collection": doc.get("collection", "Notes"),
-            "updated_at": doc.get("updated_at", ""),
-            "word_count": word_count,
-            "last_action": doc.get("last_action", "content_update")  # For exec_briefing filtering
+            "id": row['id'],
+            "title": row['title'],
+            "collection": row['collection'],
+            "updated_at": row['updated_at'],
+            "word_count": row['word_count'],
+            "last_action": row['last_action'] or 'content_update'
         })
-
-    # Sort by title ascending (alphabetical)
-    docs_list.sort(key=lambda x: x.get("title", "").lower())
 
     return {
         "status": "success",
@@ -1171,19 +1467,17 @@ def _get_whoosh_schema():
     )
 
 
-def _get_docs_mtime():
-    """Get modification time of docs.json."""
+def _get_db_mtime():
+    """Get modification time of docs.db."""
     try:
-        return os.path.getmtime(DOCS_JSON_PATH)
+        return os.path.getmtime(DB_PATH)
     except OSError:
         return 0
 
 
 def _needs_reindex():
-    """Check if index needs rebuilding based on docs.json modification time."""
-    global _last_index_mtime
-    current_mtime = _get_docs_mtime()
-
+    """Check if index needs rebuilding based on docs.db modification time.
+    Uses file-based mtime marker because subprocess resets in-memory state."""
     # No index exists
     if not os.path.exists(WHOOSH_INDEX_DIR):
         return True
@@ -1192,16 +1486,23 @@ def _needs_reindex():
     if not index.exists_in(WHOOSH_INDEX_DIR):
         return True
 
-    # Check modification time
-    if current_mtime > _last_index_mtime:
-        return True
+    # Compare docs.db mtime against last build marker
+    current_mtime = _get_db_mtime()
+    if os.path.exists(INDEX_MTIME_MARKER):
+        try:
+            with open(INDEX_MTIME_MARKER, 'r') as f:
+                last_build_mtime = float(f.read().strip())
+            if current_mtime <= last_build_mtime:
+                return False  # Index is current
+        except (ValueError, OSError):
+            pass
 
-    return False
+    return True
 
 
 def build_whoosh_index(force: bool = False) -> dict:
     """
-    Build or rebuild the Whoosh search index from docs.json.
+    Build or rebuild the Whoosh search index from docs.db.
 
     Args:
         force: If True, rebuild even if index appears current
@@ -1215,8 +1516,11 @@ def build_whoosh_index(force: bool = False) -> dict:
         return {"status": "success", "message": "Index is current", "indexed": 0}
 
     try:
-        data = load_docs()
-        docs = data.get("docs", {})
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, title, meta_description, content, collection, updated_at FROM docs")
+        rows = cursor.fetchall()
+        conn.close()
 
         # Create index directory if needed
         if not os.path.exists(WHOOSH_INDEX_DIR):
@@ -1229,7 +1533,18 @@ def build_whoosh_index(force: bool = False) -> dict:
         writer = ix.writer()
         indexed_count = 0
 
-        for doc_id, doc in docs.items():
+        # Get link counts from links table
+        conn = get_db()
+        cursor = conn.cursor()
+        link_counts = {}
+        cursor.execute("SELECT target_id, COUNT(*) as cnt FROM links GROUP BY target_id")
+        for row in cursor.fetchall():
+            link_counts[row['target_id']] = row['cnt']
+        conn.close()
+
+        for row in rows:
+            doc = _row_to_dict(row)
+            doc_id = doc['id']
             title = doc.get("title", "")
             meta_desc = doc.get("meta_description", "")
 
@@ -1237,9 +1552,8 @@ def build_whoosh_index(force: bool = False) -> dict:
             raw_content = doc.get("content", "")
             content = re.sub(r'<[^>]+>', ' ', raw_content)
 
-            # Count backlinks as link_count
-            backlinks = doc.get("backlinks", [])
-            link_count = len(backlinks) if isinstance(backlinks, list) else 0
+            # Get link count for this doc
+            link_count = link_counts.get(doc_id, 0)
 
             writer.add_document(
                 doc_id=doc_id,
@@ -1253,7 +1567,11 @@ def build_whoosh_index(force: bool = False) -> dict:
             indexed_count += 1
 
         writer.commit()
-        _last_index_mtime = _get_docs_mtime()
+
+        # Write file-based mtime marker so subprocesses know index is current
+        build_mtime = _get_db_mtime()
+        with open(INDEX_MTIME_MARKER, 'w') as f:
+            f.write(str(build_mtime))
 
         return {
             "status": "success",
@@ -1321,36 +1639,44 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
 
     # Filter-only mode: no query but has filters
     if not query.strip() and has_filters:
-        data = load_docs()
-        all_docs = data.get("docs", {})
+        conn = get_db()
+        cursor = conn.cursor()
+
+        # Build dynamic query based on filters
+        sql = "SELECT id, title, collection, updated_at, word_count, status, published_url, description, campaign_id FROM docs WHERE 1=1"
+        params = []
+
+        if status:
+            sql += " AND status = ?"
+            params.append(status)
+        if collection:
+            sql += " AND collection = ?"
+            params.append(collection)
+        if min_words is not None:
+            sql += " AND word_count >= ?"
+            params.append(min_words)
+        if max_words is not None:
+            sql += " AND word_count <= ?"
+            params.append(max_words)
+        if has_field:
+            sql += f" AND {has_field} IS NOT NULL AND {has_field} != ''"
+
+        sql += " ORDER BY updated_at DESC LIMIT ?"
+        params.append(max_results)
+
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        conn.close()
 
         matches = []
-        for doc_id, doc in all_docs.items():
-            # Apply status filter
-            if status and doc.get("status") != status:
-                continue
-            # Apply has_field filter
-            if has_field and not doc.get(has_field):
-                continue
-            # Apply collection filter
-            if collection and doc.get("collection") != collection:
-                continue
-
-            # Calculate word count
-            word_count = _count_words(doc.get("content", ""))
-
-            # Apply word count filters
-            if min_words is not None and word_count < min_words:
-                continue
-            if max_words is not None and word_count > max_words:
-                continue
-
+        for row in rows:
+            doc = _row_to_dict(row)
             result = {
-                "id": doc_id,
-                "title": doc.get("title", "Untitled"),
-                "collection": doc.get("collection", ""),
-                "updated_at": doc.get("updated_at", ""),
-                "word_count": word_count,
+                "id": doc['id'],
+                "title": doc['title'],
+                "collection": doc['collection'],
+                "updated_at": doc['updated_at'],
+                "word_count": doc['word_count'],
                 "score": 0  # No scoring in filter-only mode
             }
 
@@ -1365,12 +1691,6 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
                 result["campaign_id"] = doc["campaign_id"]
 
             matches.append(result)
-
-        # Sort by updated_at descending
-        matches.sort(key=lambda x: x.get("updated_at", ""), reverse=True)
-
-        # Apply max_results limit
-        matches = matches[:max_results]
 
         return {
             "status": "success",
@@ -1399,32 +1719,42 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
                 "error": f"Index build failed: {build_result.get('error')}"
             }
 
-    # Load docs for metadata lookup and filtering
-    data = load_docs()
-    all_docs = data.get("docs", {})
+    # Load metadata from SQLite for filtering
+    conn = get_db()
+    cursor = conn.cursor()
 
     # Pre-filter doc IDs based on status, has_field, collection, and word count
+    sql = "SELECT id, title, collection, updated_at, word_count, status, published_url, description, campaign_id FROM docs WHERE 1=1"
+    params = []
+
+    if status:
+        sql += " AND status = ?"
+        params.append(status)
+    if collection:
+        sql += " AND collection = ?"
+        params.append(collection)
+    if min_words is not None:
+        sql += " AND word_count >= ?"
+        params.append(min_words)
+    if max_words is not None:
+        sql += " AND word_count <= ?"
+        params.append(max_words)
+    if has_field:
+        sql += f" AND {has_field} IS NOT NULL AND {has_field} != ''"
+
+    cursor.execute(sql, params)
+    rows = cursor.fetchall()
+    conn.close()
+
     filtered_doc_ids = set()
-    doc_word_counts = {}  # Cache word counts for results
-    for doc_id, doc in all_docs.items():
-        # Apply status filter
-        if status and doc.get("status") != status:
-            continue
-        # Apply has_field filter
-        if has_field and not doc.get(has_field):
-            continue
-        # Apply collection filter
-        if collection and doc.get("collection") != collection:
-            continue
-        # Calculate and cache word count
-        word_count = _count_words(doc.get("content", ""))
-        # Apply word count filters
-        if min_words is not None and word_count < min_words:
-            continue
-        if max_words is not None and word_count > max_words:
-            continue
-        filtered_doc_ids.add(doc_id)
-        doc_word_counts[doc_id] = word_count
+    all_docs = {}
+    doc_word_counts = {}
+
+    for row in rows:
+        doc = _row_to_dict(row)
+        filtered_doc_ids.add(doc['id'])
+        all_docs[doc['id']] = doc
+        doc_word_counts[doc['id']] = doc['word_count']
 
     try:
         ix = index.open_dir(WHOOSH_INDEX_DIR)
@@ -1438,57 +1768,11 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
 
         parsed_query = parser.parse(query)
 
-        matches = []
+        semantic_matches = []
+        whoosh_matches = []
+        existing_ids = set()
 
-        with ix.searcher(weighting=scoring.BM25F()) as searcher:
-            results = searcher.search(parsed_query, limit=max_results * 3)  # Over-fetch to account for filtering
-
-            for hit in results:
-                doc_id = hit["doc_id"]
-
-                # Skip if doc was filtered out
-                if filtered_doc_ids and doc_id not in filtered_doc_ids:
-                    continue
-
-                # Stop if we have enough results
-                if len(matches) >= max_results:
-                    break
-
-                # Boost title-only matches
-                title_boost = 0
-                title_lower = hit["title"].lower()
-                query_tokens = query.lower().split()
-                if all(token in title_lower for token in query_tokens):
-                    title_boost = 10.0
-
-                # Get metadata from original doc
-                doc = all_docs.get(doc_id, {})
-                result = {
-                    "id": doc_id,
-                    "title": hit["title"],
-                    "collection": hit["collection"],
-                    "updated_at": hit["updated_at"],
-                    "word_count": doc_word_counts.get(doc_id, _count_words(doc.get("content", ""))),
-                    "score": round(hit.score + title_boost, 2)
-                }
-
-                # Add metadata fields if they exist
-                if doc.get("status"):
-                    result["status"] = doc["status"]
-                if doc.get("published_url"):
-                    result["published_url"] = doc["published_url"]
-                if doc.get("description"):
-                    result["description"] = doc["description"]
-                if doc.get("campaign_id"):
-                    result["campaign_id"] = doc["campaign_id"]
-
-                matches.append(result)
-
-        # Re-sort after adding title boost
-        matches.sort(key=lambda x: x["score"], reverse=True)
-
-        # Semantic search: ALWAYS run for non-empty queries
-        # 470 docs is small enough that semantic adds negligible latency
+        # STEP 1: Semantic search FIRST (primary ranking)
         if query.strip():
             try:
                 semantic_fn = _get_semantic_search()
@@ -1498,15 +1782,20 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
                     collection=collection  # Pass through collection filter
                 )
                 if sem_result.get("status") == "success":
-                    existing_ids = {m["id"] for m in matches}
                     for sr in sem_result.get("results", []):
-                        if sr["doc_id"] in existing_ids:
-                            continue  # Whoosh results take priority
-
                         # Post-filter semantic results through same filters as Whoosh
                         doc = all_docs.get(sr["doc_id"], {})
                         if not doc:
-                            continue  # Doc deleted but still in vector index
+                            # Need to fetch from DB
+                            conn = get_db()
+                            cursor = conn.cursor()
+                            cursor.execute("SELECT * FROM docs WHERE id = ?", (sr["doc_id"],))
+                            row = cursor.fetchone()
+                            conn.close()
+                            if row:
+                                doc = _row_to_dict(row)
+                            else:
+                                continue
 
                         # Apply status filter
                         if status and doc.get("status") != status:
@@ -1515,7 +1804,7 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
                         if has_field and not doc.get(has_field):
                             continue
                         # Calculate word count and apply filters
-                        word_count = _count_words(doc.get("content", ""))
+                        word_count = doc.get("word_count", 0)
                         if min_words is not None and word_count < min_words:
                             continue
                         if max_words is not None and word_count > max_words:
@@ -1543,14 +1832,68 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
                         if doc.get("campaign_id"):
                             result["campaign_id"] = doc["campaign_id"]
 
-                        matches.append(result)
+                        semantic_matches.append(result)
                         existing_ids.add(sr["doc_id"])
 
-                        if len(matches) >= max_results:
-                            break
-            except Exception:
-                # Fail gracefully — return Whoosh results only
-                pass
+            except Exception as e:
+                logging.warning(f"Semantic search failed silently: {e}")
+
+        # STEP 2: Whoosh BM25 search SECOND (fills gaps)
+        with ix.searcher(weighting=scoring.BM25F()) as searcher:
+            results = searcher.search(parsed_query, limit=max_results * 3)  # Over-fetch to account for filtering
+
+            for hit in results:
+                doc_id = hit["doc_id"]
+
+                # Skip if already in semantic results (semantic takes priority)
+                if doc_id in existing_ids:
+                    continue
+
+                # Skip if doc was filtered out
+                if filtered_doc_ids and doc_id not in filtered_doc_ids:
+                    continue
+
+                # Boost title-only matches
+                title_boost = 0
+                title_lower = hit["title"].lower()
+                query_tokens = query.lower().split()
+                if all(token in title_lower for token in query_tokens):
+                    title_boost = 10.0
+
+                # Get metadata from original doc
+                doc = all_docs.get(doc_id, {})
+                result = {
+                    "id": doc_id,
+                    "title": hit["title"],
+                    "collection": hit["collection"],
+                    "updated_at": hit["updated_at"],
+                    "word_count": doc_word_counts.get(doc_id, doc.get("word_count", 0)),
+                    "score": round(hit.score + title_boost, 2),
+                    "source": "whoosh"
+                }
+
+                # Add metadata fields if they exist
+                if doc.get("status"):
+                    result["status"] = doc["status"]
+                if doc.get("published_url"):
+                    result["published_url"] = doc["published_url"]
+                if doc.get("description"):
+                    result["description"] = doc["description"]
+                if doc.get("campaign_id"):
+                    result["campaign_id"] = doc["campaign_id"]
+
+                whoosh_matches.append(result)
+                existing_ids.add(doc_id)
+
+        # Sort whoosh matches by BM25 score
+        whoosh_matches.sort(key=lambda x: x["score"], reverse=True)
+
+        # STEP 3: Merge - semantic results first (ranked by similarity), then whoosh results
+        # Semantic matches already ordered by similarity from the vector search
+        matches = semantic_matches + whoosh_matches
+
+        # Truncate to max_results
+        matches = matches[:max_results]
 
         return {
             "status": "success",
@@ -1567,16 +1910,15 @@ def search_docs(query = "", max_results: int = 15, status: str = None, has_field
         }
 
 
-
 def batch_search(query, collection: str = None, limit: int = 5) -> dict:
     """
     Search documents with single or multiple queries. Unified interface.
-    
+
     Args:
         query: Search query - either a string (single search) or list of strings (batch)
         collection: Optional filter - only search docs in this collection
         limit: Maximum results per query (default 5)
-    
+
     Returns:
         {"status": "success", "results": {"query1": [...docs], ...}, "queries_processed": N}
     """
@@ -1590,7 +1932,7 @@ def batch_search(query, collection: str = None, limit: int = 5) -> dict:
             "status": "error",
             "message": f"query must be string or list, got {type(query).__name__}"
         }
-    
+
     # Validate queries
     queries = [q for q in queries if q and isinstance(q, str) and q.strip()]
     if not queries:
@@ -1611,33 +1953,31 @@ def batch_search(query, collection: str = None, limit: int = 5) -> dict:
                 "status": "error",
                 "message": f"Index build failed: {build_result.get('error')}"
             }
-    
-    # Load docs once for metadata lookup
-    data = load_docs()
-    all_docs = data.get("docs", {})
-    
-    # Pre-filter doc IDs by collection if specified
-    filtered_doc_ids = None
+
+    # Load metadata from SQLite
+    conn = get_db()
+    cursor = conn.cursor()
+
     if collection:
-        filtered_doc_ids = set()
-        for doc_id, doc in all_docs.items():
-            if doc.get("collection") == collection:
-                filtered_doc_ids.add(doc_id)
-        
-        if not filtered_doc_ids:
-            # No docs match collection filter - return empty for all queries
-            return {
-                "status": "success",
-                "results": {q: [] for q in queries},
-                "queries_processed": len(queries),
-                "collection_filter": collection
-            }
-    
+        cursor.execute("SELECT id, title, collection, updated_at, status, published_url, description FROM docs WHERE collection = ?", (collection,))
+    else:
+        cursor.execute("SELECT id, title, collection, updated_at, status, published_url, description FROM docs")
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    all_docs = {}
+    filtered_doc_ids = set()
+    for row in rows:
+        doc = _row_to_dict(row)
+        all_docs[doc['id']] = doc
+        filtered_doc_ids.add(doc['id'])
+
     results = {}
-    
+
     try:
         ix = index.open_dir(WHOOSH_INDEX_DIR)
-        
+
         with ix.searcher(weighting=scoring.BM25F()) as searcher:
             for query_str in queries:
                 # Parse query with AND logic
@@ -1646,29 +1986,29 @@ def batch_search(query, collection: str = None, limit: int = 5) -> dict:
                     schema=ix.schema,
                     group=AndGroup
                 )
-                
+
                 parsed_query = parser.parse(query_str)
                 search_results = searcher.search(parsed_query, limit=limit * 3)
-                
+
                 query_matches = []
                 for hit in search_results:
                     doc_id = hit["doc_id"]
-                    
+
                     # Skip if doc was filtered out by collection
-                    if filtered_doc_ids is not None and doc_id not in filtered_doc_ids:
+                    if filtered_doc_ids and doc_id not in filtered_doc_ids:
                         continue
-                    
+
                     # Stop if we have enough results for this query
                     if len(query_matches) >= limit:
                         break
-                    
+
                     # Boost title-only matches
                     title_boost = 0
                     title_lower = hit["title"].lower()
                     query_tokens = query_str.lower().split()
                     if all(token in title_lower for token in query_tokens):
                         title_boost = 10.0
-                    
+
                     # Get metadata from original doc
                     doc = all_docs.get(doc_id, {})
                     result = {
@@ -1678,7 +2018,7 @@ def batch_search(query, collection: str = None, limit: int = 5) -> dict:
                         "updated_at": hit["updated_at"],
                         "score": round(hit.score + title_boost, 2)
                     }
-                    
+
                     # Add metadata fields if they exist
                     if doc.get("status"):
                         result["status"] = doc["status"]
@@ -1686,23 +2026,24 @@ def batch_search(query, collection: str = None, limit: int = 5) -> dict:
                         result["published_url"] = doc["published_url"]
                     if doc.get("description"):
                         result["description"] = doc["description"]
-                    
+
                     query_matches.append(result)
-                
+
                 # Sort by score descending
                 query_matches.sort(key=lambda x: x["score"], reverse=True)
                 results[query_str] = query_matches
-        
+
         response = {
             "status": "success",
             "results": results,
             "queries_processed": len(queries)
         }
+
         if collection:
             response["collection_filter"] = collection
-        
+
         return response
-    
+
     except Exception as e:
         return {
             "status": "error",
@@ -1726,7 +2067,6 @@ def import_docs(directory: str, default_collection: str = "Imported") -> dict:
     """
     from pathlib import Path
 
-    data = load_docs()
     now = datetime.now().isoformat()
 
     results = {
@@ -1742,6 +2082,9 @@ def import_docs(directory: str, default_collection: str = "Imported") -> dict:
 
     # Find all markdown files recursively
     md_files = list(base_path.rglob("*.md"))
+
+    conn = get_db()
+    cursor = conn.cursor()
 
     for md_file in md_files:
         try:
@@ -1766,17 +2109,13 @@ def import_docs(directory: str, default_collection: str = "Imported") -> dict:
 
             # Convert markdown to HTML
             html_content = markdown_to_html(content)
+            word_count = _count_words(html_content)
 
             # Store doc
-            data["docs"][doc_id] = {
-                "id": doc_id,
-                "title": title,
-                "content": html_content,
-                "collection": collection,
-                "created_at": now,
-                "updated_at": now,
-                "source_file": str(rel_path)
-            }
+            cursor.execute("""
+                INSERT INTO docs (id, title, content, collection, word_count, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (doc_id, title, html_content, collection, word_count, now, now))
 
             results["imported"] += 1
             results["details"].append({
@@ -1792,15 +2131,14 @@ def import_docs(directory: str, default_collection: str = "Imported") -> dict:
                 "error": str(e)
             })
 
-    # Save all at once
-    save_docs(data)
+    conn.commit()
+    conn.close()
 
     return {
         "status": "success",
         "message": f"Imported {results['imported']} docs, {results['failed']} failed",
         **results
     }
-
 
 
 def update_metadata(doc_id: str, status: str = None, description: str = None,
@@ -1818,38 +2156,56 @@ def update_metadata(doc_id: str, status: str = None, description: str = None,
     Returns:
         {"status": "success/error", "message": "...", "updated_fields": [...]}
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    if doc_id not in data.get("docs", {}):
+    cursor.execute("SELECT id, title, collection FROM docs WHERE id = ?", (doc_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
         return {"status": "error", "message": f"Doc {doc_id} not found"}
 
-    doc = data["docs"][doc_id]
+    doc = _row_to_dict(row)
     updated_fields = []
+    updates = []
+    params = []
 
     # Only update fields that were explicitly provided (non-None)
     if status is not None:
-        doc["status"] = status
+        updates.append("status = ?")
+        params.append(status)
         updated_fields.append("status")
 
     if description is not None:
-        doc["description"] = description
+        updates.append("description = ?")
+        params.append(description)
         updated_fields.append("description")
 
     if campaign_id is not None:
-        doc["campaign_id"] = campaign_id
+        updates.append("campaign_id = ?")
+        params.append(campaign_id)
         updated_fields.append("campaign_id")
 
     if published_url is not None:
-        doc["published_url"] = published_url
+        updates.append("published_url = ?")
+        params.append(published_url)
         updated_fields.append("published_url")
 
     if not updated_fields:
+        conn.close()
         return {"status": "error", "message": "No fields provided to update"}
 
-    doc["updated_at"] = datetime.now().isoformat()
-    doc["last_action"] = "update_metadata"  # Track action type for exec_briefing filtering
+    updates.append("updated_at = ?")
+    params.append(datetime.now().isoformat())
+    updates.append("last_action = ?")
+    params.append("update_metadata")
 
-    save_docs(data)
+    params.append(doc_id)
+
+    cursor.execute(f"UPDATE docs SET {', '.join(updates)} WHERE id = ?", params)
+    conn.commit()
+    conn.close()
 
     # Auto-sync content calendar for content collections
     collection = doc.get("collection", "").lower()
@@ -1858,7 +2214,7 @@ def update_metadata(doc_id: str, status: str = None, description: str = None,
 
     return {
         "status": "success",
-        "message": f"Updated metadata for doc '{doc.get('title')}': {', '.join(updated_fields)}",
+        "message": f"Updated metadata for doc '{doc['title']}': {', '.join(updated_fields)}",
         "updated_fields": updated_fields
     }
 
@@ -1881,13 +2237,14 @@ def batch_update_metadata(updates: list) -> dict:
     if not updates:
         return {"status": "error", "message": "No updates provided"}
 
-    data = load_docs()
-    all_docs = data.get("docs", {})
+    conn = get_db()
+    cursor = conn.cursor()
 
     success_count = 0
     failed = []
     results = []
     collections_to_sync = set()
+    now = datetime.now().isoformat()
 
     for update in updates:
         if not isinstance(update, dict):
@@ -1899,30 +2256,42 @@ def batch_update_metadata(updates: list) -> dict:
             failed.append({"error": "Missing doc_id", "update": update})
             continue
 
-        if doc_id not in all_docs:
+        cursor.execute("SELECT id, title, collection FROM docs WHERE id = ?", (doc_id,))
+        row = cursor.fetchone()
+
+        if not row:
             failed.append({"doc_id": doc_id, "error": "Document not found"})
             continue
+
+        doc = _row_to_dict(row)
 
         metadata = update.get("metadata", {})
         if not isinstance(metadata, dict) or not metadata:
             failed.append({"doc_id": doc_id, "error": "Missing or invalid metadata"})
             continue
 
-        doc = all_docs[doc_id]
         updated_fields = []
+        update_parts = []
+        params = []
 
         # Update each provided metadata field
         for field, value in metadata.items():
             if value is not None:
-                doc[field] = value
+                update_parts.append(f"{field} = ?")
+                params.append(value)
                 updated_fields.append(field)
 
         if updated_fields:
-            doc["updated_at"] = datetime.now().isoformat()
+            update_parts.append("updated_at = ?")
+            params.append(now)
+            params.append(doc_id)
+
+            cursor.execute(f"UPDATE docs SET {', '.join(update_parts)} WHERE id = ?", params)
+
             success_count += 1
             results.append({
                 "doc_id": doc_id,
-                "title": doc.get("title", "Untitled"),
+                "title": doc['title'],
                 "updated_fields": updated_fields
             })
 
@@ -1933,13 +2302,12 @@ def batch_update_metadata(updates: list) -> dict:
         else:
             failed.append({"doc_id": doc_id, "error": "No valid fields to update"})
 
-    # Save all changes at once
-    if success_count > 0:
-        save_docs(data)
+    conn.commit()
+    conn.close()
 
-        # Sync content calendar if any content collections were updated
-        if collections_to_sync:
-            sync_content_calendar()
+    # Sync content calendar if any content collections were updated
+    if collections_to_sync:
+        sync_content_calendar()
 
     return {
         "status": "success",
@@ -1966,7 +2334,7 @@ def migrate_from_outline(exclude_collections: list = None) -> dict:
     exclude = exclude_collections or []
 
     try:
-        conn = psycopg2.connect(
+        pg_conn = psycopg2.connect(
             host='localhost',
             port=5432,
             database='outline',
@@ -1977,10 +2345,10 @@ def migrate_from_outline(exclude_collections: list = None) -> dict:
         return {"status": "error", "message": f"DB connection failed: {e}"}
 
     try:
-        cur = conn.cursor()
+        pg_cur = pg_conn.cursor()
 
         # Get all docs with their collection names in one query
-        cur.execute("""
+        pg_cur.execute("""
             SELECT
                 d.id,
                 d.title,
@@ -1995,16 +2363,17 @@ def migrate_from_outline(exclude_collections: list = None) -> dict:
             ORDER BY c.name, d.title
         """)
 
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
+        rows = pg_cur.fetchall()
+        pg_cur.close()
+        pg_conn.close()
 
     except Exception as e:
-        conn.close()
+        pg_conn.close()
         return {"status": "error", "message": f"Query failed: {e}"}
 
-    # Load existing docs
-    data = load_docs()
+    # Open SQLite connection
+    conn = get_db()
+    cursor = conn.cursor()
     now = datetime.now().isoformat()
 
     results = {
@@ -2026,23 +2395,24 @@ def migrate_from_outline(exclude_collections: list = None) -> dict:
 
         # Convert markdown to HTML
         html_content = markdown_to_html(content or "")
+        word_count = _count_words(html_content)
 
         # Store doc
-        data["docs"][doc_id] = {
-            "id": doc_id,
-            "title": title,
-            "content": html_content,
-            "collection": collection,
-            "created_at": created_at.isoformat() if created_at else now,
-            "updated_at": updated_at.isoformat() if updated_at else now,
-            "outline_id": str(outline_id)
-        }
+        cursor.execute("""
+            INSERT INTO docs (id, title, content, collection, word_count, created_at, updated_at, outline_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            doc_id, title, html_content, collection, word_count,
+            created_at.isoformat() if created_at else now,
+            updated_at.isoformat() if updated_at else now,
+            str(outline_id)
+        ))
 
         results["imported"] += 1
         results["collections"][collection] = results["collections"].get(collection, 0) + 1
 
-    # Save all at once
-    save_docs(data)
+    conn.commit()
+    conn.close()
 
     return {
         "status": "success",
@@ -2093,9 +2463,10 @@ def retrieve_doc(title: str, collection: str = None) -> dict:
 def sync_content_calendar() -> dict:
     """
     Sync docs from Blogs, Video, Newsletters collections to content_calendar.json.
-    Mirrors outline_editor.get_content_calendar but reads from local docs.json.
+    Mirrors outline_editor.get_content_calendar but reads from SQLite docs.db.
     """
-    data = load_docs()
+    conn = get_db()
+    cursor = conn.cursor()
 
     # Map collection names to content types (case-insensitive matching)
     collection_map = {
@@ -2104,24 +2475,33 @@ def sync_content_calendar() -> dict:
         'newsletters': 'newsletter'
     }
 
-    entries = []
+    entries = {}
     counts = {'blog': 0, 'video': 0, 'newsletter': 0}
 
-    for doc_id, doc in data.get("docs", {}).items():
+    cursor.execute("""
+        SELECT id, title, description, status, published_url, campaign_id, collection
+        FROM docs
+        WHERE LOWER(collection) IN ('blogs', 'video', 'newsletters')
+    """)
+
+    for row in cursor.fetchall():
+        doc = _row_to_dict(row)
         collection = doc.get("collection", "").lower()
 
         if collection in collection_map:
             content_type = collection_map[collection]
-            entries.append({
-                'doc_id': doc_id,
+            entries[doc['id']] = {
+                'doc_id': doc['id'],
                 'title': doc.get('title', ''),
                 'description': doc.get('description', ''),
                 'status': doc.get('status'),
                 'url': doc.get('published_url'),
                 'campaign_id': doc.get('campaign_id'),
                 'type': content_type
-            })
+            }
             counts[content_type] += 1
+
+    conn.close()
 
     result = {
         'last_synced': datetime.now().isoformat(),
@@ -2138,6 +2518,116 @@ def sync_content_calendar() -> dict:
         'message': f'Synced content calendar: {counts["blog"]} blogs, {counts["video"]} videos, {counts["newsletter"]} newsletters',
         'output_path': output_path,
         'counts': counts
+    }
+
+
+def list_revisions(doc_id: str) -> dict:
+    """List all revisions for a document.
+
+    Args:
+        doc_id: The document ID
+
+    Returns:
+        {"status": "success", "revisions": [...]} or {"status": "error", "message": "..."}
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM docs WHERE id = ?", (doc_id,))
+    if not cursor.fetchone():
+        conn.close()
+        return {"status": "error", "message": f"Doc {doc_id} not found"}
+
+    cursor.execute(
+        "SELECT revision_number, created_at FROM revisions WHERE doc_id = ? ORDER BY revision_number DESC",
+        (doc_id,)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    revisions = [{"revision": row[0], "created_at": row[1]} for row in rows]
+    return {"status": "success", "doc_id": doc_id, "count": len(revisions), "revisions": revisions}
+
+
+def get_revision(doc_id: str, revision: int) -> dict:
+    """Get the content of a specific revision.
+
+    Args:
+        doc_id: The document ID
+        revision: The revision number to retrieve
+
+    Returns:
+        {"status": "success", "content": "..."} or {"status": "error", "message": "..."}
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT content, created_at FROM revisions WHERE doc_id = ? AND revision_number = ?",
+        (doc_id, revision)
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return {"status": "error", "message": f"Revision {revision} not found for doc {doc_id}"}
+
+    return {"status": "success", "doc_id": doc_id, "revision": revision, "content": row[0], "created_at": row[1]}
+
+
+def restore_revision(doc_id: str, revision: int) -> dict:
+    """Restore a document to a specific revision.
+
+    Snapshots the current content first, then restores the specified revision.
+
+    Args:
+        doc_id: The document ID
+        revision: The revision number to restore
+
+    Returns:
+        {"status": "success", "message": "..."} or {"status": "error", "message": "..."}
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Get current content
+    cursor.execute("SELECT id, title, content FROM docs WHERE id = ?", (doc_id,))
+    doc_row = cursor.fetchone()
+    if not doc_row:
+        conn.close()
+        return {"status": "error", "message": f"Doc {doc_id} not found"}
+
+    current_content = doc_row[2]
+    doc_title = doc_row[1]
+
+    # Get the revision to restore
+    cursor.execute(
+        "SELECT content FROM revisions WHERE doc_id = ? AND revision_number = ?",
+        (doc_id, revision)
+    )
+    rev_row = cursor.fetchone()
+    if not rev_row:
+        conn.close()
+        return {"status": "error", "message": f"Revision {revision} not found for doc {doc_id}"}
+
+    restored_content = rev_row[0]
+
+    # Snapshot current content before restoring
+    new_rev = _snapshot_revision(conn, doc_id, current_content)
+
+    # Update doc with restored content
+    now = datetime.now().isoformat()
+    word_count = _count_words(restored_content)
+    cursor.execute(
+        "UPDATE docs SET content = ?, word_count = ?, updated_at = ?, last_action = ? WHERE id = ?",
+        (restored_content, word_count, now, 'revision_restore', doc_id)
+    )
+    conn.commit()
+    conn.close()
+
+    return {
+        "status": "success",
+        "message": f"Restored '{doc_title}' to revision {revision}. Current content saved as revision {new_rev}."
     }
 
 
@@ -2163,6 +2653,9 @@ if __name__ == "__main__":
     if "params" in params and isinstance(params["params"], dict):
         params = params["params"]
 
+    # Import verify_backfill from separate module
+    from verify_backfill import verify_backfill
+
     actions = {
         "create_doc": create_doc,
         "batch_create_docs": batch_create_docs,
@@ -2174,6 +2667,7 @@ if __name__ == "__main__":
         "delete_doc": delete_doc,
         "delete_collection": delete_collection,
         "read_doc": read_doc,
+        "read_section": read_section,
         "batch_read": batch_read,
         "search_within_doc": search_within_doc,
         "list_docs": list_docs,
@@ -2187,7 +2681,11 @@ if __name__ == "__main__":
         "read_backlinks": read_backlinks,
         "read_links": read_links,
         "retrieve_doc": retrieve_doc,
-        "stitch_docs": stitch_docs
+        "stitch_docs": stitch_docs,
+        "verify_backfill": verify_backfill,
+        "list_revisions": list_revisions,
+        "get_revision": get_revision,
+        "restore_revision": restore_revision
     }
 
     if action in actions:

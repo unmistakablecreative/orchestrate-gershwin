@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
-test_repo.py - Runs the Gershwin test suite against localhost:9000
+test_repo.py - Runs a test suite against a repo's server
 Executes tests IN ORDER, capturing values from responses and injecting them into subsequent tests.
+
+Usage: python3 test_repo.py <repo_name>
+Example: python3 test_repo.py 8th-harmony
 """
 
 import subprocess
@@ -9,18 +12,30 @@ import time
 import requests
 import json
 import sys
+import os
 
-GERSHWIN_DIR = "/Users/srinivas/Orchestrate Github/orchestrate-gershwin"
-PORT = 9000
-BASE_URL = f"http://localhost:{PORT}"
-TEST_FILE = f"{GERSHWIN_DIR}/gershwin_test_suite.json"
+REPO_INDEX_PATH = "/Users/srinivas/Orchestrate Github/orchestrate-jarvis/data/repo_index.json"
 
 
-def start_jarvis():
+def load_repo_config(repo_name: str) -> dict:
+    """Load repo configuration from repo_index.json."""
+    with open(REPO_INDEX_PATH) as f:
+        index = json.load(f)
+
+    if repo_name not in index:
+        print(f"❌ Unknown repo: '{repo_name}'")
+        print(f"Available repos: {', '.join(index.keys())}")
+        sys.exit(1)
+
+    return index[repo_name]
+
+
+def start_jarvis(repo_dir: str, port: int):
     """Start jarvis server and wait for it to be ready."""
+    base_url = f"http://localhost:{port}"
     proc = subprocess.Popen(
-        ["/Users/srinivas/venv/bin/uvicorn", "jarvis:app", "--host", "0.0.0.0", "--port", str(PORT)],
-        cwd=GERSHWIN_DIR,
+        ["/Users/srinivas/venv/bin/uvicorn", "jarvis:app", "--host", "0.0.0.0", "--port", str(port)],
+        cwd=repo_dir,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -28,16 +43,16 @@ def start_jarvis():
     # Wait for server to be ready
     for _ in range(30):
         try:
-            r = requests.get(f"{BASE_URL}/", timeout=1)
+            r = requests.get(f"{base_url}/", timeout=1)
             if r.status_code == 200:
-                print(f"✅ Jarvis started on port {PORT}")
+                print(f"✅ Jarvis started on port {port}")
                 return proc
         except Exception:
             pass
         time.sleep(0.5)
 
     proc.kill()
-    raise RuntimeError("Failed to start jarvis on port 9000")
+    raise RuntimeError(f"Failed to start jarvis on port {port}")
 
 
 def extract_value(data: dict, key: str):
@@ -104,7 +119,7 @@ def validate_response(data, expect_error=False):
     return True, "OK"
 
 
-def run_test(test: dict, captured: dict, index: int, group_name: str) -> dict:
+def run_test(test: dict, captured: dict, index: int, group_name: str, base_url: str) -> dict:
     """Run a single test and return result."""
     tool = test["tool_name"]
     action = test["action"]
@@ -126,7 +141,7 @@ def run_test(test: dict, captured: dict, index: int, group_name: str) -> dict:
 
     try:
         resp = requests.post(
-            f"{BASE_URL}/execute_task",
+            f"{base_url}/execute_task",
             json={"tool_name": tool, "action": action, "params": params},
             timeout=15
         )
@@ -175,7 +190,7 @@ def run_test(test: dict, captured: dict, index: int, group_name: str) -> dict:
     return result
 
 
-def run_group(group: dict, captured: dict, start_index: int) -> tuple:
+def run_group(group: dict, captured: dict, start_index: int, base_url: str) -> tuple:
     """Run all tests in a group, respecting order for stateful groups."""
     group_name = group["group_name"]
     tests = group["tests"]
@@ -190,7 +205,7 @@ def run_group(group: dict, captured: dict, start_index: int) -> tuple:
     index = start_index
 
     for test in tests:
-        result = run_test(test, captured, index, group_name)
+        result = run_test(test, captured, index, group_name, base_url)
         results.append(result)
         index += 1
 
@@ -202,9 +217,9 @@ def run_group(group: dict, captured: dict, start_index: int) -> tuple:
     return results, index
 
 
-def run_tests():
+def run_tests(test_file: str, base_url: str):
     """Execute all test groups from the test suite."""
-    with open(TEST_FILE) as f:
+    with open(test_file) as f:
         suite = json.load(f)
 
     print(f"\n🧪 Running {suite['test_count']} tests in {suite['group_count']} groups...\n")
@@ -214,19 +229,19 @@ def run_tests():
     index = 1
 
     for group in suite["groups"]:
-        group_results, index = run_group(group, captured, index)
+        group_results, index = run_group(group, captured, index, base_url)
         all_results.extend(group_results)
 
     return all_results
 
 
-def print_summary(results):
+def print_summary(results, repo_dir: str):
     """Print test summary and save results."""
     passed = sum(1 for r in results if r["passed"])
     total = len(results)
 
     print(f"\n{'='*60}")
-    print(f"GERSHWIN TEST SUITE: {passed}/{total} passed")
+    print(f"TEST SUITE: {passed}/{total} passed")
     print(f"{'='*60}")
 
     # Group results by group name
@@ -259,7 +274,7 @@ def print_summary(results):
             print(f"  {r['tool']}.{r['action']}")
 
     # Save results to file
-    results_path = f"{GERSHWIN_DIR}/test_results.json"
+    results_path = os.path.join(repo_dir, "test_results.json")
     with open(results_path, "w") as f:
         json.dump({
             "passed": passed,
@@ -278,12 +293,42 @@ def print_summary(results):
         sys.exit(1)
 
 
+def print_usage():
+    """Print usage information."""
+    print("Usage: python3 test_repo.py <repo_name>")
+    print()
+    print("Runs the test suite for the specified repo.")
+    print()
+    print("Example:")
+    print("  python3 test_repo.py 8th-harmony")
+    print("  python3 test_repo.py gershwin")
+    print()
+    print("The repo must be defined in repo_index.json with dir, port, and test_suite.")
+
+
 if __name__ == "__main__":
-    proc = start_jarvis()
+    if len(sys.argv) != 2:
+        print_usage()
+        sys.exit(1)
+
+    repo_name = sys.argv[1]
+    config = load_repo_config(repo_name)
+
+    repo_dir = config["dir"]
+    port = config["port"]
+    test_file = os.path.join(repo_dir, config["test_suite"])
+    base_url = f"http://localhost:{port}"
+
+    print(f"🎯 Testing repo: {repo_name}")
+    print(f"   Dir: {repo_dir}")
+    print(f"   Port: {port}")
+    print(f"   Test suite: {test_file}")
+
+    proc = start_jarvis(repo_dir, port)
     try:
-        results = run_tests()
-        print_summary(results)
+        results = run_tests(test_file, base_url)
+        print_summary(results, repo_dir)
     finally:
         proc.terminate()
         proc.wait()
-        print("\n🛑 Jarvis stopped")
+        print("\n🛑 Server stopped")
