@@ -54,6 +54,34 @@ def get_db():
         updated_at TEXT NOT NULL,
         last_action TEXT DEFAULT ''
     )""")
+    # Seed a welcome doc if table is empty (fresh install)
+    count = conn.execute("SELECT COUNT(*) FROM docs").fetchone()[0]
+    if count == 0:
+        import uuid
+        now = datetime.now().isoformat()
+        doc_id = f"doc_{uuid.uuid4().hex[:8]}"
+        welcome_content = """<h2>Welcome to the OrchestrateOS Doc Editor</h2>
+<p>This is your document editor — a single place for all your notes, SOPs, reports, and deliverables.</p>
+<h3>What you can do here</h3>
+<ul>
+<li><strong>Create docs</strong> — click the + button or press Cmd+N</li>
+<li><strong>Organize by collection</strong> — type #collection-name in the editor to auto-sort (e.g. #projects, #notes, #logs)</li>
+<li><strong>Link docs together</strong> — type @ to mention and link to other documents</li>
+<li><strong>Search everything</strong> — press Cmd+K for instant search across all your docs</li>
+<li><strong>Format with markdown</strong> — type # for headings, - for lists, > for quotes, ``` for code blocks</li>
+</ul>
+<h3>Using it with Claude</h3>
+<p>Ask Claude to create, search, or update docs for you. For example:</p>
+<ul>
+<li>"Create a doc called Weekly Report in the Projects collection"</li>
+<li>"Search my docs for anything about onboarding"</li>
+<li>"Add a section to my SOP doc about client reporting"</li>
+</ul>
+<p>Everything saves automatically as you type. Press Escape to return to the document list.</p>"""
+        conn.execute(
+            "INSERT INTO docs (id, title, content, collection, word_count, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (doc_id, "How the OrchestrateOS Doc Editor Works", welcome_content, "Getting Started", 150, now, now)
+        )
     conn.commit()
     return conn
 
