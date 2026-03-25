@@ -162,6 +162,106 @@ def get_supported_actions():
         logging.error(f"🚨 Failed to load registry or update messages: {e}")
         raise HTTPException(status_code=500, detail="Could not load registry or update messages.")
 
+# === Tool Catalog Endpoint ===
+@app.get("/get_tool_catalog")
+def get_tool_catalog():
+    """
+    Unified tool catalog merging system_settings.ndjson + orchestrate_app_store.json.
+    Returns single list with unlock status, metadata, and costs.
+    """
+    try:
+        # Load system_settings.ndjson (user's installed tools)
+        installed_tools = {}
+        if os.path.exists(SYSTEM_REGISTRY):
+            with open(SYSTEM_REGISTRY, "r") as f:
+                for line in f:
+                    if line.strip():
+                        entry = json.loads(line.strip())
+                        if entry.get("action") == "__tool__":
+                            installed_tools[entry.get("tool")] = entry
+
+        # Load orchestrate_app_store.json (marketplace) - try GitHub first for latest tools
+        GITHUB_APP_STORE_URL = "https://raw.githubusercontent.com/unmistakablecreative/orchestrate-gershwin/main/data/orchestrate_app_store.json"
+        app_store_path = os.path.join(BASE_DIR, "data", "orchestrate_app_store.json")
+        app_store = {}
+
+        # Try GitHub first (gets latest marketplace tools)
+        try:
+            import requests
+            resp = requests.get(GITHUB_APP_STORE_URL, timeout=3)
+            if resp.status_code == 200:
+                data = resp.json()
+                app_store = data.get("entries", {})
+        except:
+            pass  # Fall through to local file
+
+        # Fallback to local file if GitHub failed
+        if not app_store and os.path.exists(app_store_path):
+            with open(app_store_path, "r") as f:
+                data = json.load(f)
+                app_store = data.get("entries", {})
+
+        # Load unlock_status.json
+        unlocked_tools = set()
+        if os.path.exists(UNLOCK_STATUS_PATH):
+            with open(UNLOCK_STATUS_PATH, "r") as f:
+                unlock_data = json.load(f)
+                unlocked_tools = set(unlock_data.get("tools_unlocked", []))
+
+        # Merge: app_store has metadata, system_settings has install status
+        catalog = []
+
+        # All tools from app_store (marketplace view)
+        for tool_name, meta in app_store.items():
+            is_installed = tool_name in installed_tools
+            is_unlocked = tool_name in unlocked_tools or (is_installed and not installed_tools.get(tool_name, {}).get("locked", True))
+
+            catalog.append({
+                "name": tool_name,
+                "label": meta.get("label", tool_name),
+                "description": meta.get("description", ""),
+                "priority": meta.get("priority", 99),
+                "cost": meta.get("referral_unlock_cost", 0),
+                "unlocked": is_unlocked,
+                "installed": is_installed,
+                "requires_credentials": meta.get("requires_credentials", False),
+                "credential_fields": meta.get("credential_fields", []),
+                "unlock_message": meta.get("unlock_message", ""),
+                "post_unlock_nudge": meta.get("post_unlock_nudge", "")
+            })
+
+        # Add any installed tools not in app_store (core tools)
+        for tool_name, entry in installed_tools.items():
+            if tool_name not in app_store:
+                is_unlocked = tool_name in unlocked_tools or not entry.get("locked", True)
+                catalog.append({
+                    "name": tool_name,
+                    "label": tool_name.replace("_", " ").title(),
+                    "description": entry.get("description", ""),
+                    "priority": 999,
+                    "cost": entry.get("referral_unlock_cost", 0),
+                    "unlocked": is_unlocked,
+                    "installed": True,
+                    "requires_credentials": False,
+                    "credential_fields": [],
+                    "unlock_message": "",
+                    "post_unlock_nudge": ""
+                })
+
+        # Sort by priority, then unlocked first
+        catalog.sort(key=lambda x: (not x["unlocked"], x["priority"], x["name"]))
+
+        return {
+            "status": "success",
+            "tools": catalog,
+            "total": len(catalog),
+            "unlocked_count": sum(1 for t in catalog if t["unlocked"])
+        }
+
+    except Exception as e:
+        logging.error(f"Failed to build tool catalog: {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.get("/")
 def root():
     return {"status": "Jarvis core is online."}
@@ -232,7 +332,7 @@ async def get_doc(doc_id: str):
 
 @app.post("/docs/save")
 async def save_doc(request: Request):
-    """Save/update doc via SQLite"""
+    """Save/update doc via SQLite - uses direct SQL for title/collection/content updates"""
     try:
         body = await request.json()
         doc_id = body.get("id")
@@ -246,20 +346,18 @@ async def save_doc(request: Request):
                 content = body.get("content", existing_doc.get("content", ""))
                 collection = body.get("collection", existing_doc.get("collection"))
 
-                if title != existing_doc.get("title") or collection != existing_doc.get("collection"):
-                    de.update_doc(doc_id, find="", replace="", title=title, collection=collection)
+                # Direct SQL update for title, collection, and content
+                db = de.get_db()
+                word_count = de._count_words(content)
+                # IMPORTANT: _extract_meta_description returns a tuple (cleaned_content, meta_desc)
+                cleaned_content, meta_desc = de._extract_meta_description(content)
+                db.execute(
+                    "UPDATE docs SET title=?, collection=?, content=?, word_count=?, meta_description=?, updated_at=? WHERE id=?",
+                    (title, collection, cleaned_content, word_count, meta_desc or "", datetime.now().isoformat(), doc_id)
+                )
+                db.commit()
 
-                if "content" in body:
-                    db = de.get_db()
-                    word_count = de._count_words(content)
-                    # IMPORTANT: _extract_meta_description returns a tuple (cleaned_content, meta_desc)
-                    content, meta_desc = de._extract_meta_description(content)
-                    db.execute(
-                        "UPDATE docs SET content=?, word_count=?, meta_description=?, updated_at=? WHERE id=?",
-                        (content, word_count, meta_desc or "", datetime.now().isoformat(), doc_id)
-                    )
-                    db.commit()
-
+                # Handle metadata fields separately
                 meta_fields = {}
                 for field in ["status", "description", "campaign_id", "published_url"]:
                     if field in body:
