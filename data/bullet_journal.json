@@ -1,1 +1,12 @@
-{"entries": {}}
+{
+    "entries": {
+        "bj_20260325_110101": {
+            "type": "task",
+            "content": "test entry",
+            "summary": "test entry",
+            "collection": "IDEAS",
+            "status": "raw",
+            "timestamp": "2026-03-25T11:01:01.535102"
+        }
+    }
+}
