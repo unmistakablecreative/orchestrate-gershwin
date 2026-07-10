@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Manager | OrchestrateOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .home-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .home-link:hover {
+            color: #fff;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 1400px;
+        }
+
+        .panel {
+            background: #12121a;
+            border: 1px solid #1e1e2e;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed #2a2a3a;
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #0f0f15;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .drop-zone-text {
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .drop-zone-hint {
+            color: #555;
+            font-size: 12px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Selected File */
+        .selected-file {
+            display: none;
+            background: #1a1a25;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .selected-file.visible {
+            display: block;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: #2a2a3a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px;
+        }
+
+        .file-remove:hover {
+            color: #ff4757;
+        }
+
+        /* Conversion Options */
+        .conversion-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #1a1a25;
+            border: 1px solid #2a2a3a;
+            color: #888;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            border-color: #3a3a4a;
+            color: #aaa;
+        }
+
+        .tab-btn.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #fff;
+        }
+
+        .options-panel {
+            display: none;
+        }
+
+        .options-panel.active {
+            display: block;
+        }
+
+        .option-group {
+            margin-bottom: 16px;
+        }
+
+        .option-label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .option-select,
+        .option-input {
+            width: 100%;
+            background: #0f0f15;
+            border: 1px solid #2a2a3a;
+            color: #e0e0e0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .option-select:focus,
+        .option-input:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        .size-inputs {
+            display: flex;
+            gap: 12px;
+        }
+
+        .size-inputs .option-input {
+            flex: 1;
+        }
+
+        .convert-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4a9eff 0%, #3a7ecc 100%);
+            border: none;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(74, 158, 255, 0.3);
+        }
+
+        .convert-btn:disabled {
+            background: #2a2a3a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* YouTube Panel */
+        .youtube-input-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .youtube-input {
+            flex: 1;
+            background: #0f0f15;
+            border: 1px solid #2a2a3a;
+            color: #e0e0e0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .youtube-input:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+
+        .youtube-btn {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            border: none;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .youtube-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .youtube-btn:disabled {
+            background: #2a2a3a;
+            cursor: not-allowed;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-container.visible {
+            display: block;
+        }
+
+        .progress-bar-bg {
+            background: #1a1a25;
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4a9eff, #7b68ee);
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 8px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Results */
+        .results-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            background: #1a1a25;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .result-icon.success {
+            background: rgba(46, 213, 115, 0.15);
+            color: #2ed573;
+        }
+
+        .result-icon.error {
+            background: rgba(255, 71, 87, 0.15);
+            color: #ff4757;
+        }
+
+        .result-icon.pending {
+            background: rgba(74, 158, 255, 0.15);
+            color: #4a9eff;
+        }
+
+        .result-details {
+            flex: 1;
+        }
+
+        .result-action {
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .result-message {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .result-time {
+            font-size: 11px;
+            color: #555;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #555;
+        }
+
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #4a9eff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1a1a25;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: #2ed573;
+        }
+
+        .toast.error {
+            border-color: #ff4757;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Media Manager</h1>
+            <div class="subtitle">Convert videos, resize images, extract audio, and more</div>
+        </div>
+        <a href="orchestrate_home.html" class="home-link">← Back to Home</a>
+    </div>
+
+    <div class="main-grid">
+        <!-- Left Panel: Upload & Convert -->
+        <div class="panel">
+            <div class="panel-title">
+                <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Upload & Convert
+            </div>
+
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-icon">📁</div>
+                <div class="drop-zone-text">Drag and drop files here</div>
+                <div class="drop-zone-hint">or click to browse • Videos, images, audio, documents</div>
+                <input type="file" class="file-input" id="fileInput" accept="video/*,image/*,audio/*,.pdf,.docx,.csv,.json,.txt,.md">
+            </div>
+
+            <div class="selected-file" id="selectedFile">
+                <div class="file-info">
+                    <div class="file-icon" id="fileIcon">🎬</div>
+                    <div class="file-details">
+                        <div class="file-name" id="fileName">video.mp4</div>
+                        <div class="file-size" id="fileSize">12.5 MB</div>
+                    </div>
+                    <button class="file-remove" id="fileRemove">✕</button>
+                </div>
+            </div>
+
+            <div class="conversion-tabs">
+                <button class="tab-btn active" data-tab="video">🎬 Video</button>
+                <button class="tab-btn" data-tab="image">🖼️ Image</button>
+                <button class="tab-btn" data-tab="document">📄 Document</button>
+            </div>
+
+            <!-- Video Options -->
+            <div class="options-panel active" id="videoOptions">
+                <div class="option-group">
+                    <label class="option-label">Output Format</label>
+                    <select class="option-select" id="videoFormat">
+                        <option value="mp4">MP4 (H.264)</option>
+                        <option value="webm">WebM</option>
+                        <option value="mov">MOV</option>
+                        <option value="avi">AVI</option>
+                        <option value="mp3">MP3 (Audio Only)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Image Options -->
+            <div class="options-panel" id="imageOptions">
+                <div class="option-group">
+                    <label class="option-label">Operation</label>
+                    <select class="option-select" id="imageOperation">
+                        <option value="resize">Resize</option>
+                        <option value="compress">Compress</option>
+                        <option value="rembg">Remove Background</option>
+                    </select>
+                </div>
+                <div class="option-group" id="resizeGroup">
+                    <label class="option-label">Dimensions (px)</label>
+                    <div class="size-inputs">
+                        <input type="number" class="option-input" id="imageWidth" placeholder="Width" value="1920">
+                        <input type="number" class="option-input" id="imageHeight" placeholder="Height" value="1080">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Options -->
+            <div class="options-panel" id="documentOptions">
+                <div class="option-group">
+                    <label class="option-label">Convert To</label>
+                    <select class="option-select" id="documentFormat">
+                        <option value="txt">Plain Text (.txt)</option>
+                        <option value="md">Markdown (.md)</option>
+                        <option value="json">JSON</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="convert-btn" id="convertBtn" disabled>Convert File</button>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progressStatus">Processing...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: YouTube & Results -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- YouTube Download -->
+            <div class="panel">
+                <div class="panel-title">
+                    <svg class="panel-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    YouTube Download
+                </div>
+                <div class="youtube-input-group">
+                    <input type="text" class="youtube-input" id="youtubeUrl" placeholder="Paste YouTube URL...">
+                    <button class="youtube-btn" id="youtubeBtn">Download</button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="panel" style="flex: 1;">
+                <div class="panel-title">
+                    <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    Recent Activity
+                </div>
+                <div class="results-list" id="resultsList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div>No recent conversions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileIcon = document.getElementById('fileIcon');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileRemove = document.getElementById('fileRemove');
+        const convertBtn = document.getElementById('convertBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressStatus = document.getElementById('progressStatus');
+        const progressPercent = document.getElementById('progressPercent');
+        const resultsList = document.getElementById('resultsList');
+        const youtubeUrl = document.getElementById('youtubeUrl');
+        const youtubeBtn = document.getElementById('youtubeBtn');
+        const imageOperation = document.getElementById('imageOperation');
+        const resizeGroup = document.getElementById('resizeGroup');
+
+        let currentFile = null;
+        let currentTab = 'video';
+        let results = [];
+
+        // File type detection
+        function getFileType(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const videoExts = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv'];
+            const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'];
+            const audioExts = ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'];
+            const docExts = ['pdf', 'docx', 'txt', 'md', 'csv', 'json'];
+
+            if (videoExts.includes(ext)) return 'video';
+            if (imageExts.includes(ext)) return 'image';
+            if (audioExts.includes(ext)) return 'audio';
+            if (docExts.includes(ext)) return 'document';
+            return 'unknown';
+        }
+
+        function getFileIcon(type) {
+            const icons = { video: '🎬', image: '🖼️', audio: '🎵', document: '📄', unknown: '📁' };
+            return icons[type] || '📁';
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // Drop zone events
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) handleFile(files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            currentFile = file;
+            const type = getFileType(file);
+
+            fileIcon.textContent = getFileIcon(type);
+            fileName.textContent = file.name;
+            fileSize.textContent = formatSize(file.size);
+            selectedFile.classList.add('visible');
+            convertBtn.disabled = false;
+
+            // Auto-select appropriate tab
+            if (type === 'video' || type === 'audio') selectTab('video');
+            else if (type === 'image') selectTab('image');
+            else if (type === 'document') selectTab('document');
+        }
+
+        fileRemove.addEventListener('click', () => {
+            currentFile = null;
+            selectedFile.classList.remove('visible');
+            convertBtn.disabled = true;
+            fileInput.value = '';
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => selectTab(btn.dataset.tab));
+        });
+
+        function selectTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.querySelectorAll('.options-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`${tab}Options`).classList.add('active');
+        }
+
+        // Image operation toggle
+        imageOperation.addEventListener('change', () => {
+            resizeGroup.style.display = imageOperation.value === 'resize' ? 'block' : 'none';
+        });
+
+        // Convert button
+        convertBtn.addEventListener('click', async () => {
+            if (!currentFile) return;
+
+            convertBtn.disabled = true;
+            progressContainer.classList.add('visible');
+            progressBar.style.width = '0%';
+            progressStatus.textContent = 'Uploading...';
+            progressPercent.textContent = '0%';
+
+            // Simulate progress (actual conversion is server-side)
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                progressBar.style.width = progress + '%';
+                progressPercent.textContent = Math.round(progress) + '%';
+                if (progress > 30) progressStatus.textContent = 'Processing...';
+                if (progress > 60) progressStatus.textContent = 'Converting...';
+            }, 500);
+
+            try {
+                const action = getConversionAction();
+                const params = getConversionParams();
+
+                const response = await fetch('/execute_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tool_name: 'media_manager',
+                        action: action,
+                        params: params
+                    })
+                });
+
+                const result = await response.json();
+
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+                progressPercent.textContent = '100%';
+                progressStatus.textContent = 'Complete!';
+
+                addResult(action, result.status === 'success', result.message || 'Conversion complete');
+                showToast(result.status === 'success', result.message || 'Conversion complete');
+
+            } catch (err) {
+                clearInterval(progressInterval);
+                progressStatus.textContent = 'Error';
+                addResult('convert', false, err.message);
+                showToast(false, 'Conversion failed: ' + err.message);
+            }
+
+            setTimeout(() => {
+                progressContainer.classList.remove('visible');
+                convertBtn.disabled = false;
+            }, 2000);
+        });
+
+        function getConversionAction() {
+            if (currentTab === 'video') return 'convert_media';
+            if (currentTab === 'image') {
+                const op = imageOperation.value;
+                if (op === 'resize') return 'resize_image';
+                if (op === 'compress') return 'compress_image';
+                if (op === 'rembg') return 'remove_background';
+            }
+            if (currentTab === 'document') return 'convert_file';
+            return 'convert_media';
+        }
+
+        function getConversionParams() {
+            const params = { filename: currentFile.name };
+
+            if (currentTab === 'video') {
+                params.format = document.getElementById('videoFormat').value;
+            } else if (currentTab === 'image') {
+                if (imageOperation.value === 'resize') {
+                    params.width = document.getElementById('imageWidth').value;
+                    params.height = document.getElementById('imageHeight').value;
+                }
+            } else if (currentTab === 'document') {
+                const ext = currentFile.name.split('.').pop().toLowerCase();
+                params.from_format = ext;
+                params.to_format = document.getElementById('documentFormat').value;
+            }
+
+            return params;
+        }
+
+        // YouTube download
+        youtubeBtn.addEventListener('click', async () => {
+            const url = youtubeUrl.value.trim();
+            if (!url) return;
+
+            youtubeBtn.disabled = true;
+            youtubeBtn.innerHTML = '<span class="spinner"></span>';
+
+            try {
+                const response = await fetch('/execute_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tool_name: 'media_manager',
+                        action: 'download_youtube',
+                        params: { url: url }
+                    })
+                });
+
+                const result = await response.json();
+                addResult('download_youtube', result.status === 'success', result.message);
+                showToast(result.status === 'success', result.message);
+
+            } catch (err) {
+                addResult('download_youtube', false, err.message);
+                showToast(false, 'Download failed');
+            }
+
+            youtubeBtn.disabled = false;
+            youtubeBtn.textContent = 'Download';
+            youtubeUrl.value = '';
+        });
+
+        // Results
+        function addResult(action, success, message) {
+            const actionNames = {
+                'convert_media': 'Video Convert',
+                'resize_image': 'Image Resize',
+                'compress_image': 'Image Compress',
+                'remove_background': 'Background Remove',
+                'convert_file': 'Document Convert',
+                'download_youtube': 'YouTube Download'
+            };
+
+            const result = {
+                action: actionNames[action] || action,
+                success: success,
+                message: message,
+                time: new Date().toLocaleTimeString()
+            };
+
+            results.unshift(result);
+            if (results.length > 10) results.pop();
+
+            renderResults();
+        }
+
+        function renderResults() {
+            if (results.length === 0) {
+                resultsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div>No recent conversions</div>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsList.innerHTML = results.map(r => `
+                <div class="result-item">
+                    <div class="result-icon ${r.success ? 'success' : 'error'}">
+                        ${r.success ? '✓' : '✕'}
+                    </div>
+                    <div class="result-details">
+                        <div class="result-action">${r.action}</div>
+                        <div class="result-message">${r.message}</div>
+                    </div>
+                    <div class="result-time">${r.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // Toast
+        function showToast(success, message) {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toast.className = 'toast visible ' + (success ? 'success' : 'error');
+            toastIcon.textContent = success ? '✓' : '✕';
+            toastMessage.textContent = message;
+
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

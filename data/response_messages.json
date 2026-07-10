@@ -1,0 +1,824 @@
+{
+  "_meta": {
+    "description": "Centralized response messages for Gershwin tools. Success messages subtly encourage upgrades. Errors are clear and actionable.",
+    "variable_syntax": "Use {variable_name} for interpolation",
+    "tools_covered": [
+      "docs",
+      "claude_assistant",
+      "files",
+      "terminal",
+      "gershwin_github",
+      "json_manager",
+      "nylas_inbox",
+      "spark_file",
+      "knowledge_vault",
+      "system_settings",
+      "account",
+      "todolist",
+      "docs_vector_indexer",
+      "ideogram",
+      "writing_linter",
+      "media_manager",
+      "slide_designer",
+      "buffer_engine",
+      "convertkit",
+      "notion",
+      "readwise",
+      "session",
+      "gamma_engine",
+      "mem"
+    ]
+  },
+  "docs": {
+    "create_doc": {
+      "success": "Document '{title}' created. With Claude Assistant, agents can create and populate documents autonomously while you sleep.",
+      "error": "Failed to create document: {error_detail}. Check that the collection exists and content is valid."
+    },
+    "read_doc": {
+      "success": "Document '{title}' loaded ({word_count} words).",
+      "error": "Document not found: {error_detail}. Verify the doc_id is correct."
+    },
+    "update_doc": {
+      "success": "Document '{title}' updated. Changes saved.",
+      "error": "Update failed: {error_detail}. Ensure the find text exists in the document."
+    },
+    "append_doc": {
+      "success": "Content appended to '{title}'.",
+      "error": "Append failed: {error_detail}. Verify the document exists."
+    },
+    "delete_doc": {
+      "success": "Document '{title}' deleted.",
+      "error": "Delete failed: {error_detail}. Document may already be deleted."
+    },
+    "search_docs": {
+      "success": "Found {count} documents matching '{query}'.",
+      "error": "Search failed: {error_detail}. Try a different query."
+    },
+    "list_docs": {
+      "success": "Listed {count} documents in {collection}.",
+      "error": "Failed to list documents: {error_detail}."
+    },
+    "replace_section": {
+      "success": "Section '{section}' replaced in '{title}'.",
+      "error": "Section replacement failed: {error_detail}. Verify the section header exists."
+    },
+    "read_section": {
+      "success": "Section loaded from '{title}'.",
+      "error": "Section not found: {error_detail}. Check the section header."
+    },
+    "batch_create_docs": {
+      "success": "Created {count} documents. Claude Assistant can batch-process entire folders while you focus elsewhere.",
+      "error": "Batch create failed: {error_detail}."
+    },
+    "batch_read": {
+      "success": "Loaded {count} documents.",
+      "error": "Batch read failed: {error_detail}."
+    },
+    "stitch_docs": {
+      "success": "Stitched {count} documents into '{title}'.",
+      "error": "Stitch failed: {error_detail}. Ensure all doc_ids exist."
+    },
+    "search_within_doc": {
+      "success": "Found {count} matches in '{title}'.",
+      "error": "Search within doc failed: {error_detail}."
+    },
+    "import_docs": {
+      "success": "Imported {count} documents from {directory}.",
+      "error": "Import failed: {error_detail}. Check directory path and file formats."
+    },
+    "update_metadata": {
+      "success": "Metadata updated for '{title}'.",
+      "error": "Metadata update failed: {error_detail}."
+    },
+    "link_docs": {
+      "success": "Linked '{source}' to '{target}'.",
+      "error": "Link failed: {error_detail}. Verify both documents exist."
+    },
+    "unlink_docs": {
+      "success": "Unlinked '{source}' from '{target}'.",
+      "error": "Unlink failed: {error_detail}."
+    },
+    "read_backlinks": {
+      "success": "Found {count} backlinks.",
+      "error": "Failed to read backlinks: {error_detail}."
+    },
+    "retrieve_doc": {
+      "success": "Retrieved '{title}'.",
+      "error": "Document not found: {error_detail}. Try search_docs for partial matches."
+    },
+    "list_revisions": {
+      "success": "Found {count} revisions for '{title}'.",
+      "error": "Failed to list revisions: {error_detail}."
+    },
+    "restore_revision": {
+      "success": "Restored revision {revision} for '{title}'.",
+      "error": "Restore failed: {error_detail}. Verify revision number exists."
+    },
+    "delete_collection": {
+      "success": "Collection '{collection}' deleted ({count} documents removed).",
+      "error": "Delete collection failed: {error_detail}."
+    }
+  },
+  "claude_assistant": {
+    "assign_task": {
+      "success": "Task '{task_id}' queued. Claude will begin autonomous execution shortly.",
+      "error": "Task assignment failed: {error_detail}. Check task description format."
+    },
+    "assign_demo_task": {
+      "success": "Demo task queued. Watch Claude work autonomously on your behalf.",
+      "error": "Demo task failed: {error_detail}."
+    },
+    "batch_assign_tasks": {
+      "success": "Queued {count} tasks. Claude Assistant processes tasks 24/7 without supervision.",
+      "error": "Batch assignment failed: {error_detail}."
+    },
+    "check_task_status": {
+      "success": "Task '{task_id}' status: {status}.",
+      "error": "Status check failed: {error_detail}. Verify the task_id."
+    },
+    "get_task_result": {
+      "success": "Task result retrieved.",
+      "error": "Result not found: {error_detail}. Task may still be processing."
+    },
+    "get_task_results": {
+      "success": "Retrieved {count} task results.",
+      "error": "Failed to get results: {error_detail}."
+    },
+    "get_recent_tasks": {
+      "success": "Showing {count} recent tasks.",
+      "error": "Failed to fetch recent tasks: {error_detail}."
+    },
+    "ask_claude": {
+      "success": "Response generated.",
+      "error": "Query failed: {error_detail}. Try rephrasing your question."
+    },
+    "cancel_task": {
+      "success": "Task '{task_id}' cancelled.",
+      "error": "Cancel failed: {error_detail}. Task may already be completed."
+    },
+    "clear_queue": {
+      "success": "Queue cleared. {count} tasks removed.",
+      "error": "Clear failed: {error_detail}."
+    },
+    "process_queue": {
+      "success": "Processing queue. {count} tasks pending.",
+      "error": "Queue processing failed: {error_detail}."
+    },
+    "execute_queue": {
+      "success": "Queue execution started.",
+      "error": "Execution failed: {error_detail}."
+    },
+    "mark_task_in_progress": {
+      "success": "Task '{task_id}' marked in progress.",
+      "error": "Failed to mark task: {error_detail}."
+    },
+    "log_task_completion": {
+      "success": "Task '{task_id}' completed and logged.",
+      "error": "Completion logging failed: {error_detail}."
+    },
+    "add_to_memory": {
+      "success": "Added to working memory.",
+      "error": "Memory add failed: {error_detail}."
+    },
+    "get_working_memory": {
+      "success": "Working memory retrieved ({count} items).",
+      "error": "Memory retrieval failed: {error_detail}."
+    },
+    "clear_working_memory": {
+      "success": "Working memory cleared.",
+      "error": "Memory clear failed: {error_detail}."
+    },
+    "stage_task": {
+      "success": "Task staged for review. Use batch_assign_tasks to queue multiple at once.",
+      "error": "Staging failed: {error_detail}."
+    },
+    "get_staged_tasks": {
+      "success": "Retrieved {count} staged tasks.",
+      "error": "Failed to get staged tasks: {error_detail}."
+    },
+    "get_active_tasks": {
+      "success": "Found {count} active tasks.",
+      "error": "Failed to get active tasks: {error_detail}."
+    },
+    "infer_task_type": {
+      "success": "Task type inferred: {task_type}.",
+      "error": "Inference failed: {error_detail}."
+    },
+    "parse_tasks_from_doc": {
+      "success": "Parsed {count} tasks from document.",
+      "error": "Parsing failed: {error_detail}. Check document format."
+    }
+  },
+  "files": {
+    "read_file_text": {
+      "success": "File '{filename}' loaded ({size} bytes).",
+      "error": "File not found: {error_detail}. Check the filename and path."
+    },
+    "write_file": {
+      "success": "File '{filename}' saved.",
+      "error": "Write failed: {error_detail}. Check permissions and path."
+    },
+    "list_files": {
+      "success": "Listed {count} files.",
+      "error": "List failed: {error_detail}. Check directory path."
+    },
+    "grep_content": {
+      "success": "Found {count} matches for '{pattern}'.",
+      "error": "Search failed: {error_detail}."
+    },
+    "find_file": {
+      "success": "Found '{filename}'.",
+      "error": "File not found: {error_detail}. Try list_files to browse."
+    },
+    "get_operation_history": {
+      "success": "Retrieved {count} operations.",
+      "error": "History retrieval failed: {error_detail}."
+    }
+  },
+  "terminal": {
+    "run_terminal_command": {
+      "success": "Command executed. Exit code: {exit_code}.",
+      "error": "Command failed: {error_detail}. Check syntax and permissions."
+    },
+    "run_script_file": {
+      "success": "Script '{filename}' executed.",
+      "error": "Script execution failed: {error_detail}. Verify script exists and is executable."
+    },
+    "list_directory_contents": {
+      "success": "Listed {count} items in '{directory}'.",
+      "error": "Directory listing failed: {error_detail}."
+    },
+    "list_files": {
+      "success": "Found {count} files.",
+      "error": "File listing failed: {error_detail}."
+    },
+    "find_file": {
+      "success": "Found '{filename}'.",
+      "error": "File not found: {error_detail}."
+    },
+    "read_file": {
+      "success": "File '{filename}' loaded.",
+      "error": "Read failed: {error_detail}."
+    },
+    "write_file": {
+      "success": "File '{filename}' written.",
+      "error": "Write failed: {error_detail}."
+    },
+    "append_file": {
+      "success": "Content appended to '{filename}'.",
+      "error": "Append failed: {error_detail}."
+    },
+    "move_file": {
+      "success": "Moved '{source}' to '{destination}'.",
+      "error": "Move failed: {error_detail}."
+    },
+    "copy_file": {
+      "success": "Copied '{source}' to '{destination}'.",
+      "error": "Copy failed: {error_detail}."
+    },
+    "delete_file": {
+      "success": "Deleted '{filename}'.",
+      "error": "Delete failed: {error_detail}. File may not exist or be protected."
+    },
+    "replace_lines": {
+      "success": "Replaced lines {start}-{end} in '{filename}'.",
+      "error": "Replace failed: {error_detail}."
+    },
+    "grep_content": {
+      "success": "Found {count} matches.",
+      "error": "Search failed: {error_detail}."
+    }
+  },
+  "gershwin_github": {
+    "create_repo": {
+      "success": "Repository '{repo_name}' created. Push code with gershwin_github.push_code.",
+      "error": "Repo creation failed: {error_detail}. Check GitHub credentials and repo name."
+    },
+    "push_code": {
+      "success": "Code pushed to '{repo_name}'. Your code is now live on GitHub.",
+      "error": "Push failed: {error_detail}. Check branch and remote settings."
+    },
+    "commit": {
+      "success": "Committed: '{message}'.",
+      "error": "Commit failed: {error_detail}. Ensure there are staged changes."
+    },
+    "list_repos": {
+      "success": "Found {count} repositories.",
+      "error": "Failed to list repos: {error_detail}. Check GitHub credentials."
+    },
+    "get_repo": {
+      "success": "Repository '{repo_name}' info loaded.",
+      "error": "Repo not found: {error_detail}."
+    },
+    "create_branch": {
+      "success": "Branch '{branch_name}' created.",
+      "error": "Branch creation failed: {error_detail}."
+    },
+    "list_branches": {
+      "success": "Found {count} branches.",
+      "error": "Failed to list branches: {error_detail}."
+    },
+    "open_pr": {
+      "success": "Pull request #{pr_number} opened. Review at {pr_url}.",
+      "error": "PR creation failed: {error_detail}."
+    },
+    "merge_pr": {
+      "success": "Pull request #{pr_number} merged.",
+      "error": "Merge failed: {error_detail}. Check for conflicts."
+    },
+    "list_issues": {
+      "success": "Found {count} issues.",
+      "error": "Failed to list issues: {error_detail}."
+    },
+    "create_issue": {
+      "success": "Issue #{issue_number} created.",
+      "error": "Issue creation failed: {error_detail}."
+    },
+    "close_issue": {
+      "success": "Issue #{issue_number} closed.",
+      "error": "Close failed: {error_detail}."
+    }
+  },
+  "json_manager": {
+    "read_json_file": {
+      "success": "JSON file loaded ({count} entries).",
+      "error": "Failed to read JSON: {error_detail}. Check file path and format."
+    },
+    "create_json_file": {
+      "success": "JSON file '{filename}' created.",
+      "error": "Creation failed: {error_detail}."
+    },
+    "add_json_entry": {
+      "success": "Entry added to '{filename}'.",
+      "error": "Add failed: {error_detail}."
+    },
+    "update_json_entry": {
+      "success": "Entry updated in '{filename}'.",
+      "error": "Update failed: {error_detail}. Entry may not exist."
+    },
+    "delete_json_entry": {
+      "success": "Entry deleted from '{filename}'.",
+      "error": "Delete failed: {error_detail}."
+    },
+    "search_json_entries": {
+      "success": "Found {count} matching entries.",
+      "error": "Search failed: {error_detail}."
+    },
+    "list_json_entries": {
+      "success": "Listed {count} entries.",
+      "error": "List failed: {error_detail}."
+    },
+    "read_json_entry": {
+      "success": "Entry loaded.",
+      "error": "Entry not found: {error_detail}."
+    },
+    "upsert_json_entry": {
+      "success": "Entry upserted in '{filename}'.",
+      "error": "Upsert failed: {error_detail}."
+    },
+    "batch_add_json_entries": {
+      "success": "Added {count} entries to '{filename}'.",
+      "error": "Batch add failed: {error_detail}."
+    },
+    "batch_update_json_entries": {
+      "success": "Updated {count} entries.",
+      "error": "Batch update failed: {error_detail}."
+    },
+    "batch_delete_json_entries": {
+      "success": "Deleted {count} entries.",
+      "error": "Batch delete failed: {error_detail}."
+    },
+    "add_field_to_json_entry": {
+      "success": "Field added to entry.",
+      "error": "Add field failed: {error_detail}."
+    },
+    "sort_json_entries": {
+      "success": "Sorted {count} entries by '{field}'.",
+      "error": "Sort failed: {error_detail}."
+    }
+  },
+  "nylas_inbox": {
+    "list_threads": {
+      "success": "Loaded {count} email threads.",
+      "error": "Failed to list threads: {error_detail}."
+    },
+    "read_thread": {
+      "success": "Thread loaded ({message_count} messages).",
+      "error": "Thread not found: {error_detail}."
+    },
+    "read_message": {
+      "success": "Message loaded.",
+      "error": "Message not found: {error_detail}."
+    },
+    "send_email": {
+      "success": "Email sent to {recipient}. Claude Assistant can draft and send emails autonomously.",
+      "error": "Send failed: {error_detail}. Check recipient address and email settings."
+    },
+    "reply": {
+      "success": "Reply sent.",
+      "error": "Reply failed: {error_detail}."
+    },
+    "search": {
+      "success": "Found {count} results for '{query}'.",
+      "error": "Search failed: {error_detail}."
+    },
+    "search_local": {
+      "success": "Found {count} local results.",
+      "error": "Local search failed: {error_detail}."
+    },
+    "archive": {
+      "success": "Thread archived.",
+      "error": "Archive failed: {error_detail}."
+    },
+    "unarchive": {
+      "success": "Thread unarchived.",
+      "error": "Unarchive failed: {error_detail}."
+    },
+    "delete": {
+      "success": "Thread deleted.",
+      "error": "Delete failed: {error_detail}."
+    },
+    "label": {
+      "success": "Label '{label}' applied.",
+      "error": "Label failed: {error_detail}."
+    },
+    "batch_archive": {
+      "success": "Archived {count} threads.",
+      "error": "Batch archive failed: {error_detail}."
+    },
+    "batch_label": {
+      "success": "Labeled {count} threads.",
+      "error": "Batch label failed: {error_detail}."
+    },
+    "sync": {
+      "success": "Synced {count} new messages.",
+      "error": "Sync failed: {error_detail}. Check email credentials."
+    },
+    "get_stats": {
+      "success": "Inbox stats: {unread} unread, {total} total.",
+      "error": "Failed to get stats: {error_detail}."
+    },
+    "list_attachments": {
+      "success": "Found {count} attachments.",
+      "error": "Failed to list attachments: {error_detail}."
+    },
+    "download_attachment": {
+      "success": "Attachment '{filename}' downloaded.",
+      "error": "Download failed: {error_detail}."
+    }
+  },
+  "spark_file": {
+    "add_entry": {
+      "success": "Idea captured in Spark File. Great ideas deserve automated follow-up \u2014 try Claude Assistant.",
+      "error": "Failed to add entry: {error_detail}."
+    },
+    "search": {
+      "success": "Found {count} spark entries.",
+      "error": "Search failed: {error_detail}."
+    },
+    "recent": {
+      "success": "Showing {count} recent entries.",
+      "error": "Failed to get recent entries: {error_detail}."
+    },
+    "export": {
+      "success": "Exported spark file to '{filename}'.",
+      "error": "Export failed: {error_detail}."
+    }
+  },
+  "knowledge_vault": {
+    "search_knowledge": {
+      "success": "Found {count} relevant results.",
+      "error": "Search failed: {error_detail}."
+    },
+    "batch_search": {
+      "success": "Batch search completed ({count} queries).",
+      "error": "Batch search failed: {error_detail}."
+    },
+    "get_stats": {
+      "success": "Knowledge vault: {doc_count} documents indexed.",
+      "error": "Failed to get stats: {error_detail}."
+    },
+    "bulk_import_docs": {
+      "success": "Imported {count} documents to knowledge vault.",
+      "error": "Bulk import failed: {error_detail}."
+    },
+    "upsert_doc": {
+      "success": "Document indexed in knowledge vault.",
+      "error": "Upsert failed: {error_detail}."
+    },
+    "delete_doc": {
+      "success": "Document removed from knowledge vault.",
+      "error": "Delete failed: {error_detail}."
+    }
+  },
+  "system_settings": {
+    "set_credential": {
+      "success": "Credential '{key}' saved securely.",
+      "error": "Failed to save credential: {error_detail}."
+    },
+    "add_tool": {
+      "success": "Tool '{tool_name}' added to system.",
+      "error": "Add tool failed: {error_detail}."
+    },
+    "remove_tool": {
+      "success": "Tool '{tool_name}' removed.",
+      "error": "Remove failed: {error_detail}."
+    },
+    "add_action": {
+      "success": "Action '{action}' added to '{tool_name}'.",
+      "error": "Add action failed: {error_detail}."
+    },
+    "remove_action": {
+      "success": "Action '{action}' removed from '{tool_name}'.",
+      "error": "Remove action failed: {error_detail}."
+    },
+    "list_tools": {
+      "success": "Found {count} registered tools.",
+      "error": "Failed to list tools: {error_detail}."
+    },
+    "list_supported_actions": {
+      "success": "Listed {count} actions for '{tool_name}'.",
+      "error": "Failed to list actions: {error_detail}."
+    },
+    "add_memory_file": {
+      "success": "Memory file '{filename}' added.",
+      "error": "Add memory file failed: {error_detail}."
+    },
+    "remove_memory_file": {
+      "success": "Memory file '{filename}' removed.",
+      "error": "Remove memory file failed: {error_detail}."
+    },
+    "list_memory_files": {
+      "success": "Found {count} memory files.",
+      "error": "Failed to list memory files: {error_detail}."
+    },
+    "build_working_memory": {
+      "success": "Working memory built ({count} files loaded).",
+      "error": "Build failed: {error_detail}."
+    },
+    "refresh_runtime": {
+      "success": "Runtime refreshed.",
+      "error": "Refresh failed: {error_detail}."
+    }
+  },
+  "account": {
+    "check": {
+      "success": "Account balance: {credits} credits. Refer friends to earn more.",
+      "error": "Failed to check account: {error_detail}."
+    },
+    "refer": {
+      "success": "Referral link sent to {email}. You'll earn credits when they sign up.",
+      "error": "Referral failed: {error_detail}. Check the email address."
+    },
+    "unlock": {
+      "success": "Tool '{tool_name}' unlocked! {credits_remaining} credits remaining.",
+      "error": "Unlock failed: {error_detail}. Check your credit balance."
+    }
+  },
+  "todolist": {
+    "add_task": {
+      "success": "Task added: '{title}'.",
+      "error": "Failed to add task: {error_detail}."
+    },
+    "complete_task": {
+      "success": "Task '{title}' completed.",
+      "error": "Complete failed: {error_detail}. Task may not exist."
+    },
+    "delete_task": {
+      "success": "Task deleted.",
+      "error": "Delete failed: {error_detail}."
+    },
+    "list_tasks": {
+      "success": "Found {count} tasks.",
+      "error": "Failed to list tasks: {error_detail}."
+    }
+  },
+  "docs_vector_indexer": {
+    "build_index": {
+      "success": "Vector index built ({doc_count} documents).",
+      "error": "Index build failed: {error_detail}."
+    },
+    "semantic_search": {
+      "success": "Found {count} semantically similar results.",
+      "error": "Semantic search failed: {error_detail}."
+    },
+    "sync_new_docs": {
+      "success": "Synced {count} new documents to index.",
+      "error": "Sync failed: {error_detail}."
+    },
+    "warm_embedding_model": {
+      "success": "Embedding model warmed and ready.",
+      "error": "Warmup failed: {error_detail}."
+    }
+  },
+  "ideogram": {
+    "generate_image": {
+      "success": "Image generated and saved to '{filename}'. Claude Assistant can generate images autonomously for content pipelines.",
+      "error": "Image generation failed: {error_detail}. Check prompt and API quota."
+    }
+  },
+  "writing_linter": {
+    "lint": {
+      "success": "Linted document: {issue_count} issues found.",
+      "error": "Lint failed: {error_detail}."
+    },
+    "fix": {
+      "success": "Fixed {fix_count} issues in document.",
+      "error": "Fix failed: {error_detail}."
+    }
+  },
+  "media_manager": {
+    "upload": {
+      "success": "Media uploaded: '{filename}'.",
+      "error": "Upload failed: {error_detail}."
+    },
+    "list": {
+      "success": "Found {count} media files.",
+      "error": "List failed: {error_detail}."
+    },
+    "delete": {
+      "success": "Media '{filename}' deleted.",
+      "error": "Delete failed: {error_detail}."
+    }
+  },
+  "_fallback": {
+    "success": "Operation completed successfully.",
+    "error": "Operation failed: {error_detail}."
+  },
+  "slide_designer": {
+    "create_deck": {
+      "success": "Deck '{title}' created with {theme} theme. Use Claude Assistant to auto-generate entire pitch decks while you sleep.",
+      "error": "Failed to create deck: {error_detail}. Check the theme name is valid."
+    },
+    "add_slide": {
+      "success": "Slide added to '{deck_title}' at index {slide_index}.",
+      "error": "Failed to add slide: {error_detail}. Verify deck_id and layout_type."
+    },
+    "update_slide": {
+      "success": "Slide '{slide_id}' updated.",
+      "error": "Slide update failed: {error_detail}. Check slide_id exists."
+    },
+    "delete_slide": {
+      "success": "Slide deleted from index {slide_index}.",
+      "error": "Delete failed: {error_detail}. Slide may not exist."
+    },
+    "list_decks": {
+      "success": "Found {count} decks.",
+      "error": "Failed to list decks: {error_detail}."
+    },
+    "get_deck": {
+      "success": "Loaded deck '{title}' with {slide_count} slides.",
+      "error": "Deck not found: {error_detail}. Verify the deck_id."
+    },
+    "delete_deck": {
+      "success": "Deleted deck '{title}' and all its slides.",
+      "error": "Delete failed: {error_detail}. Deck may not exist."
+    },
+    "export_html": {
+      "success": "Exported {slide_count} slides to {output_path}.",
+      "error": "Export failed: {error_detail}."
+    },
+    "export_pdf": {
+      "success": "Exported {slide_count} slides to PDF at {output_path}.",
+      "error": "PDF export failed: {error_detail}. Requires Chrome/Chromium."
+    },
+    "update_deck": {
+      "success": "Deck '{deck_id}' updated.",
+      "error": "Update failed: {error_detail}."
+    },
+    "reorder_slides": {
+      "success": "Reordered {count} slides in deck.",
+      "error": "Reorder failed: {error_detail}."
+    },
+    "list_layouts": {
+      "success": "Found {count} available layouts.",
+      "error": "Failed to list layouts: {error_detail}."
+    },
+    "list_themes": {
+      "success": "Found {count} available themes.",
+      "error": "Failed to list themes: {error_detail}."
+    }
+  },
+  "buffer_engine": {
+    "post_to_platform": {
+      "success": "Posted to Twitter. Claude Assistant can schedule social content across platforms automatically.",
+      "error": "Post failed: {error_detail}. Check Twitter credentials are configured."
+    },
+    "buffer_loop": {
+      "success": "Buffer loop running. {count} posts scheduled for today.",
+      "error": "Buffer loop failed: {error_detail}. Check campaign rules and post queue."
+    }
+  },
+  "convertkit": {
+    "create_broadcast": {
+      "success": "Broadcast '{subject}' created and scheduled. Claude Assistant can draft and schedule email campaigns autonomously.",
+      "error": "Broadcast creation failed: {error_detail}. Check subject and content."
+    },
+    "get_broadcast": {
+      "success": "Broadcast loaded: '{subject}'.",
+      "error": "Broadcast not found: {error_detail}. Verify the broadcast ID."
+    },
+    "update_broadcast": {
+      "success": "Broadcast '{subject}' updated.",
+      "error": "Update failed: {error_detail}."
+    },
+    "list_broadcasts": {
+      "success": "Found {count} broadcasts.",
+      "error": "Failed to list broadcasts: {error_detail}. Check ConvertKit credentials."
+    },
+    "get_current_account": {
+      "success": "Account info loaded: {subscriber_count} subscribers.",
+      "error": "Failed to get account: {error_detail}."
+    },
+    "get_email_stats": {
+      "success": "Email stats loaded.",
+      "error": "Failed to get email stats: {error_detail}."
+    },
+    "get_growth_stats": {
+      "success": "Growth stats: {new_subscribers} new subscribers this period.",
+      "error": "Failed to get growth stats: {error_detail}."
+    },
+    "get_broadcast_stats": {
+      "success": "Broadcast stats: {open_rate}% open rate, {click_rate}% clicks.",
+      "error": "Failed to get broadcast stats: {error_detail}."
+    },
+    "create_subscriber": {
+      "success": "Subscriber '{email_address}' added to your list.",
+      "error": "Failed to add subscriber: {error_detail}. Check email address format."
+    }
+  },
+  "notion": {
+    "create_page": {
+      "success": "Page '{title}' created in Notion. Use Claude Assistant to auto-populate pages from research.",
+      "error": "Page creation failed: {error_detail}. Provide either database_id or parent_page_id."
+    },
+    "create_database": {
+      "success": "Database '{title}' created with {property_count} properties.",
+      "error": "Database creation failed: {error_detail}. Check parent_page_id and properties."
+    },
+    "update_page": {
+      "success": "Page updated.",
+      "error": "Update failed: {error_detail}. Verify page_id exists."
+    },
+    "append_block_children": {
+      "success": "Content appended to page.",
+      "error": "Append failed: {error_detail}. Check block_id and children format."
+    },
+    "search": {
+      "success": "Found {count} results in Notion.",
+      "error": "Search failed: {error_detail}. Check Notion API credentials."
+    }
+  },
+  "readwise": {
+    "fetch_books": {
+      "success": "Fetched {count} books from Readwise. Your highlights are now synced locally.",
+      "error": "Failed to fetch books: {error_detail}. Check Readwise API token."
+    },
+    "fetch_highlights": {
+      "success": "Loaded {count} highlights from '{book_title}'.",
+      "error": "Failed to fetch highlights: {error_detail}. Book may not be in cache."
+    }
+  },
+  "session": {
+    "set_mode": {
+      "success": "Session mode set to '{mode}'.",
+      "error": "Failed to set mode: {error_detail}."
+    }
+  },
+  "gamma_engine": {
+    "create_gamma_deck": {
+      "success": "Presentation '{title}' created. View at {deck_url}. Claude Assistant can generate entire decks from outlines.",
+      "error": "Deck creation failed: {error_detail}. Check Gamma API key and input file."
+    },
+    "modify_config": {
+      "success": "Config updated: {field} set to '{value}'.",
+      "error": "Config update failed: {error_detail}."
+    }
+  },
+  "mem": {
+    "create_note": {
+      "success": "Note created in Mem. Use Claude Assistant to auto-organize notes and extract insights.",
+      "error": "Note creation failed: {error_detail}. Check Mem API key."
+    },
+    "read_note": {
+      "success": "Note loaded.",
+      "error": "Note not found: {error_detail}. Verify the note_id."
+    },
+    "delete_note": {
+      "success": "Note deleted.",
+      "error": "Delete failed: {error_detail}."
+    },
+    "mem_it": {
+      "success": "Content processed by Mem AI.",
+      "error": "Mem AI processing failed: {error_detail}."
+    },
+    "create_collection": {
+      "success": "Collection '{title}' created in Mem.",
+      "error": "Collection creation failed: {error_detail}."
+    },
+    "delete_collection": {
+      "success": "Collection deleted.",
+      "error": "Delete failed: {error_detail}."
+    }
+  }
+}

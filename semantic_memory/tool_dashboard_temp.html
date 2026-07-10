@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   OrchestrateOS App Store
+  </title>
+  <link href="tool_dashboard.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './tool_dashboard_config.json';
+  </script>
+ </head>
+ <body>
+  <div class="container">
+   <div class="header">
+    <div class="header-left">
+     <h1>
+      OrchestrateOS App Store
+     </h1>
+     <p>
+      Unlock powerful tools with referral credits
+     </p>
+    </div>
+    <div class="credits-badge">
+     <div class="credits-label">
+      Available Credits
+     </div>
+     <div class="credits-value" id="creditsValue">
+      -
+     </div>
+    </div>
+   </div>
+   <div class="stats-row">
+    <div class="stat-pill">
+     <span class="stat-icon">
+      📦
+     </span>
+     <div class="stat-info">
+      <span class="stat-value" id="totalTools">
+       -
+      </span>
+      <span class="stat-label">
+       Total Apps
+      </span>
+     </div>
+    </div>
+    <div class="stat-pill">
+     <span class="stat-icon">
+      🔓
+     </span>
+     <div class="stat-info">
+      <span class="stat-value" id="unlockedTools">
+       -
+      </span>
+      <span class="stat-label">
+       Unlocked
+      </span>
+     </div>
+    </div>
+    <div class="stat-pill">
+     <span class="stat-icon">
+      🔒
+     </span>
+     <div class="stat-info">
+      <span class="stat-value" id="lockedTools">
+       -
+      </span>
+      <span class="stat-label">
+       Locked
+      </span>
+     </div>
+    </div>
+   </div>
+   <div class="search-bar">
+    <span class="search-icon">
+     🔍
+    </span>
+    <input id="searchInput" oninput="filterTools()" placeholder="Search apps..." type="text"/>
+   </div>
+   <div class="categories">
+    <button class="category-btn active" onclick="filterCategory('all')">
+     All Apps
+    </button>
+    <button class="category-btn" onclick="filterCategory('productivity')">
+     Productivity
+    </button>
+    <button class="category-btn" onclick="filterCategory('ai')">
+     AI &amp; Automation
+    </button>
+    <button class="category-btn" onclick="filterCategory('integration')">
+     Integrations
+    </button>
+    <button class="category-btn" onclick="filterCategory('content')">
+     Content
+    </button>
+   </div>
+   <div class="tools-grid" id="toolsGrid">
+    <div class="loading">
+     <div class="loading-spinner">
+     </div>
+     <p>
+      Loading apps...
+     </p>
+    </div>
+   </div>
+  </div>
+  <button class="refresh-btn" onclick="loadData()">
+   ↻ Refresh
+  </button>
+  <!-- Unlock Modal -->
+  <div class="modal-overlay" id="unlockModal">
+   <div class="modal">
+    <h3>
+     Unlock
+     <span id="unlockToolName">
+     </span>
+    </h3>
+    <p>
+     This will cost
+     <span id="unlockCost" style="color:var(--orange);font-weight:700;">
+     </span>
+     credits from your balance.
+    </p>
+    <div class="modal-actions">
+     <button class="modal-btn cancel" onclick="closeModal('unlockModal')">
+      Cancel
+     </button>
+     <button class="modal-btn primary" onclick="confirmUnlock()">
+      Unlock App
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Credentials Modal -->
+  <div class="modal-overlay" id="credentialsModal">
+   <div class="modal">
+    <h3>
+     Configure
+     <span id="credToolName">
+     </span>
+    </h3>
+    <p>
+     Enter your API credentials to activate this app
+    </p>
+    <div id="credentialFields">
+    </div>
+    <div class="modal-actions">
+     <button class="modal-btn cancel" onclick="closeModal('credentialsModal')">
+      Cancel
+     </button>
+     <button class="modal-btn primary" onclick="saveCredentials()">
+      Save Credentials
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Referral Modal -->
+  <div class="modal-overlay" id="referralModal">
+   <div class="modal">
+    <h3>
+     Refer a Friend
+    </h3>
+    <p>
+     Earn 3 credits for each successful referral. Share the power of OrchestrateOS!
+    </p>
+    <input id="referralName" placeholder="Friend's name" type="text"/>
+    <input id="referralEmail" placeholder="Friend's email" type="email"/>
+    <div class="modal-actions">
+     <button class="modal-btn cancel" onclick="closeModal('referralModal')">
+      Cancel
+     </button>
+     <button class="modal-btn primary" onclick="submitReferral()">
+      Send Invite
+     </button>
+    </div>
+   </div>
+  </div>
+  <div class="toast" id="toast">
+  </div>
+  <script src="./tool_dashboard.js">
+  </script>
+ </body>
+</html>

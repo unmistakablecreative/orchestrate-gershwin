@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "source_file": "task_board.html",
+    "converted_at": "2026-07-08T08:08:18.645653",
+    "version": "1.0"
+  },
+  "colors": {
+    "color_0": "#00B4D8",
+    "color_1": "#10005",
+    "color_2": "#7C5CFC",
+    "color_3": "#10003",
+    "color_4": "#666",
+    "color_5": "#444",
+    "color_6": "#10B981",
+    "color_7": "#E44332",
+    "color_8": "#999",
+    "color_9": "#128203",
+    "color_10": "#F5A623",
+    "rgb_0": "rgba(16,185,129,0.15)",
+    "rgb_1": "rgba(228,67,50,0.12)",
+    "rgb_2": "rgba(245,166,35,0.12)",
+    "rgb_3": "rgba(228,67,50,0.2)",
+    "rgb_4": "rgba(136,136,153,0.06)",
+    "rgb_5": "rgba(228,67,50,0.3)"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "status_mappings": {
+    "status_map_0": "{\n                                const resultStatus = resultsData.results[taskId].status;\n                                if (resultStatus === \"done\" || resultStatus === \"error\") continue;\n                            }",
+    "status_map_1": "{\n                            \"id\": prevId,\n                            \"status\": \"completing\",\n                            \"card_title\": result.card_title || generateCardTitle(result.description || prevId),\n                            \"card_stat\": result.card_stat || \"done\",\n                            \"execution_time\": result.execution_time_seconds\n                        }",
+    "status_map_2": "{\n                            completingTasks = completingTasks.filter(t => t.id !== prevId);\n                            renderActive();\n                            pollRecentTasks();  // Refresh recent to show the completed task\n                        }",
+    "status_map_3": "{\n                if (a.status === \"in_progress\" && b.status !== \"in_progress\") return -1;\n                if (b.status === \"in_progress\" && a.status !== \"in_progress\") return 1;\n                return (a.created_at || \"\") > (b.created_at || \"\") ? 1 : -1;\n            }",
+    "status_map_4": "{\n                    \"id\": taskId,\n                    \"status\": r.status,\n                    \"description\": r.description || \"\",\n                    \"card_title\": r.card_title || generateCardTitle(r.description || taskId),\n                    \"card_stat\": r.card_stat || (r.status === \"done\" ? \"completed\" : \"error\"),\n                    \"completed_at\": r.completed_at,\n                    \"execution_time\": r.execution_time_seconds,\n                    \"actions_taken\": r.actions_taken,\n                    \"output_summary\": r.output_summary,\n                    \"errors\": r.errors\n                }"
+  },
+  "api_endpoints": [
+    "/execute_task"
+  ],
+  "ui_strings": {
+    "button_0": "&#10005;",
+    "button_1": "Save",
+    "button_3": "Cancel Task",
+    "button_4": "Cancel",
+    "button_8": "+"
+  },
+  "functions": [
+    "applyTemplate",
+    "clearInput",
+    "stopRecording",
+    "addToStaging",
+    "updatePlaceholder",
+    "escapeHtml",
+    "formatDuration",
+    "executeNow",
+    "init",
+    "getInput",
+    "generateCardTitle",
+    "closeModal",
+    "fetchJson",
+    "cancelStagedEdit",
+    "cancelTask",
+    "toggleAllResults",
+    "getElapsed",
+    "toggleMic",
+    "pollRecentTasks",
+    "pollStagedTasks",
+    "renderStaging",
+    "saveStagedEdit",
+    "showToast",
+    "startRecording",
+    "slideRow",
+    "formatTime"
+  ]
+}

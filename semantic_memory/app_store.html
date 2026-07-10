@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gershwin App Store</title>
+<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --bg-card: #1e1a2e;
+            --bg-card-locked: #1a1a1c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.6);
+            --text-muted: #86868b;
+            --accent: #0a84ff;
+            --accent-hover: #409cff;
+            --green: #30d158;
+            --orange: #ff9f0a;
+            --purple: #bf5af2;
+            --red: #ff453a;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .header-left h1 {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 17px;
+        }
+
+        .credits-badge {
+            background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px 24px;
+            text-align: right;
+        }
+
+        .credits-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .credits-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab:hover {
+            background: #2c2c2e;
+        }
+
+        .filter-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        /* Tool Card */
+        .tool-card {
+            background: linear-gradient(145deg, #1e1a2e 0%, #151318 100%);
+            border-radius: var(--card-radius);
+            padding: 24px;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+
+        .tool-card.locked {
+            background: linear-gradient(145deg, #1a1a1c 0%, #121214 100%);
+            opacity: 0.85;
+        }
+
+        .tool-card.locked:hover {
+            opacity: 1;
+        }
+
+        .tool-card.pre-installed {
+            background: linear-gradient(145deg, #1a2a1e 0%, #121815 100%);
+            border: 1px solid rgba(48, 209, 88, 0.2);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .tool-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .tool-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tool-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge.unlocked {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--green);
+        }
+
+        .status-badge.locked {
+            background: rgba(255, 159, 10, 0.15);
+            color: var(--orange);
+        }
+
+        .status-badge.pre-installed {
+            background: rgba(48, 209, 88, 0.25);
+            color: var(--green);
+        }
+
+        /* Unlock Info */
+        .unlock-info {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .unlock-cost {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--orange);
+        }
+
+        .unlock-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .unlock-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .unlock-btn:disabled {
+            background: #3a3a3c;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Referral Section */
+        .referral-section {
+            background: linear-gradient(145deg, #1e1a2e 0%, #151318 100%);
+            border-radius: var(--card-radius);
+            padding: 32px;
+            margin-top: 48px;
+            border: 1px solid rgba(191, 90, 242, 0.2);
+        }
+
+        .referral-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .referral-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .referral-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .referral-stats {
+            text-align: right;
+        }
+
+        .referral-stat {
+            margin-bottom: 8px;
+        }
+
+        .referral-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .referral-stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--purple);
+        }
+
+        .referral-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .referral-input {
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .referral-input:focus {
+            border-color: var(--purple);
+        }
+
+        .referral-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .referral-btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: none;
+            background: var(--purple);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .referral-btn:hover {
+            background: #d070ff;
+            transform: translateY(-2px);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bg-secondary);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--green);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--red);
+        }
+
+        /* Icon Backgrounds */
+        .icon-blue { background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); }
+        .icon-green { background: linear-gradient(135deg, #30d158 0%, #28a745 100%); }
+        .icon-purple { background: linear-gradient(135deg, #bf5af2 0%, #9b4dca 100%); }
+        .icon-orange { background: linear-gradient(135deg, #ff9f0a 0%, #e68a00 100%); }
+        .icon-red { background: linear-gradient(135deg, #ff453a 0%, #cc352d 100%); }
+        .icon-teal { background: linear-gradient(135deg, #5ac8fa 0%, #4ab3e5 100%); }
+        .icon-pink { background: linear-gradient(135deg, #ff375f 0%, #cc2c4c 100%); }
+        .icon-gray { background: linear-gradient(135deg, #636366 0%, #48484a 100%); }
+    </style>
+</head>
+<body>
+<div class="container">
+<header class="header">
+<div class="header-left">
+<h1>App Store</h1>
+<p>Unlock powerful tools to supercharge your workflow</p>
+</div>
+<div class="credits-badge">
+<div class="credits-label">Available Credits</div>
+<div class="credits-value" id="credits-balance">--</div>
+</div>
+</header>
+<div class="filter-tabs">
+<button class="filter-tab active" data-filter="all">All Tools</button>
+<button class="filter-tab" data-filter="unlocked">Unlocked</button>
+<button class="filter-tab" data-filter="locked">Locked</button>
+</div>
+<div class="tools-grid" id="tools-grid">
+<div class="loading">
+<div class="loading-spinner"></div>
+<p>Loading tools...</p>
+</div>
+</div>
+<section class="referral-section">
+<div class="referral-header">
+<div>
+<h2 class="referral-title">Earn Credits with Referrals</h2>
+<p class="referral-subtitle">Invite friends to Gershwin and earn credits to unlock premium tools</p>
+</div>
+</div>
+<div class="referral-form">
+<input class="referral-input" id="referral-email" placeholder="Enter friend's email address" type="email"/>
+<button class="referral-btn" id="send-referral">Send Invite</button>
+</div>
+</section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="app_store.js"></script>
+</body>
+</html>

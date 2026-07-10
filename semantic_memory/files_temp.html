@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Files - OrchestrateOS
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+  <link href="files.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './files_config.json';
+  </script>
+ </head>
+ <body>
+  <aside class="sidebar">
+   <div class="sidebar-header">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+     </path>
+    </svg>
+    Directories
+   </div>
+   <div class="directory-tree" id="directoryTree">
+    <div class="loading">
+     <div class="loading-spinner">
+     </div>
+     Loading...
+    </div>
+   </div>
+  </aside>
+  <main class="main-panel">
+   <header class="header">
+    <div class="search-box">
+     <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+      <circle cx="11" cy="11" r="8">
+      </circle>
+      <path d="m21 21-4.35-4.35">
+      </path>
+     </svg>
+     <input id="searchInput" placeholder="Search files..." type="text"/>
+    </div>
+    <span class="current-path" id="currentPath">
+     All Files
+    </span>
+    <span class="file-count" id="fileCount">
+    </span>
+   </header>
+   <div class="table-container">
+    <table>
+     <thead>
+      <tr>
+       <th>
+        Filename
+       </th>
+       <th>
+        Extension
+       </th>
+       <th>
+        Size
+       </th>
+       <th>
+        Modified
+       </th>
+       <th>
+        Purpose
+       </th>
+       <th>
+        Rank
+       </th>
+      </tr>
+     </thead>
+     <tbody id="filesBody">
+      <tr>
+       <td colspan="6">
+        <div class="loading">
+         <div class="loading-spinner">
+         </div>
+         Loading files...
+        </div>
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+  </main>
+  <script src="./files.js">
+  </script>
+ </body>
+</html>

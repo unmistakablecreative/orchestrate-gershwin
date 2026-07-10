@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "source_file": "sheets.html",
+    "converted_at": "2026-07-08T08:08:18.630567",
+    "version": "1.0"
+  },
+  "colors": {
+    "color_0": "#666",
+    "color_1": "#eee",
+    "color_2": "#e8f0fe",
+    "color_3": "#8594",
+    "color_4": "#8592",
+    "color_5": "#fafafa"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "api_endpoints": [
+    "/execute_task"
+  ],
+  "ui_strings": {
+    "button_1": "Next &#8594;",
+    "button_3": "&#8592; Prev",
+    "button_4": "Create your first table",
+    "button_6": "&times;",
+    "placeholder_0": "https://...",
+    "placeholder_1": "email@example.com",
+    "placeholder_2": "Column name",
+    "placeholder_3": "Options (comma-sep)"
+  },
+  "functions": [
+    "renderEmptyState",
+    "switchView",
+    "showContextMenu",
+    "addColumnToTable",
+    "deleteRow",
+    "getTypeIcon",
+    "editEmailCell",
+    "showCreateTableModal",
+    "toggleAddColOptionsInput",
+    "hideAddColumnModal",
+    "toggleFilterPanel",
+    "saveColumnName",
+    "hideCreateTableModal",
+    "saveCell",
+    "toggleSortPanel",
+    "editUrlCell",
+    "escapeHtml",
+    "hideDeleteModal",
+    "calendarNav",
+    "toggleCheckbox",
+    "renderTableList",
+    "parseMultiSelectValue",
+    "autoResizeTextarea",
+    "toggleMultiSelectOption",
+    "expandRow",
+    "selectOption",
+    "showAddColumnModal",
+    "clearSort",
+    "applyFilter",
+    "hideSelectDropdown",
+    "selectTable",
+    "addColumn",
+    "clearFilter",
+    "showToast",
+    "loadRows",
+    "applySortPanel",
+    "removeColumn",
+    "hideMultiSelectDropdown",
+    "handleSearch"
+  ]
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Todo List - OrchestrateOS
+  </title>
+  <link href="todolist.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './todolist_config.json';
+  </script>
+ </head>
+ <body>
+  <div class="container">
+   <header>
+    <h1>
+     Todo List
+    </h1>
+    <p>
+     Simple task management
+    </p>
+   </header>
+   <form class="add-form" onsubmit="addTask(event)">
+    <input autocomplete="off" id="taskInput" placeholder="What needs to be done?" type="text"/>
+    <button type="submit">
+     Add
+    </button>
+   </form>
+   <div class="stats">
+    <div class="stat pending">
+     <div class="label">
+      Pending
+     </div>
+     <div class="value" id="pendingCount">
+      0
+     </div>
+    </div>
+    <div class="stat done">
+     <div class="label">
+      Completed
+     </div>
+     <div class="value" id="doneCount">
+      0
+     </div>
+    </div>
+   </div>
+   <div class="filter">
+    <button class="active" data-filter="pending" onclick="setFilter('pending')">
+     Pending
+    </button>
+    <button data-filter="all" onclick="setFilter('all')">
+     All
+    </button>
+   </div>
+   <div class="task-list" id="taskList">
+    <div class="empty-state">
+     <div class="icon">
+      📋
+     </div>
+     <div>
+      Loading tasks...
+     </div>
+    </div>
+   </div>
+  </div>
+  <button class="refresh-btn" onclick="loadTasks()">
+   ↻ Refresh
+  </button>
+  <div class="toast" id="toast">
+  </div>
+  <script src="./todolist.js">
+  </script>
+ </body>
+</html>

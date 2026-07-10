@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark File - OrchestrateOS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p { color: #666; margin-top: 0.5rem; font-size: 0.9rem; }
+
+        /* Capture Section */
+        .capture-section {
+            background: rgba(20,20,30,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .capture-input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            font-size: 1rem;
+            resize: none;
+            min-height: 80px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .capture-input:focus {
+            outline: none;
+            border-color: rgba(245,158,11,0.5);
+        }
+        .capture-input::placeholder { color: #555; }
+        .capture-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        .char-count { font-size: 0.8rem; color: #555; }
+        .btn-capture {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-capture:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+        }
+        .btn-capture:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: rgba(20,20,30,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .search-row {
+            display: flex;
+            gap: 1rem;
+        }
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(0,217,255,0.5);
+        }
+        .search-input::placeholder { color: #555; }
+        .btn-search {
+            background: rgba(0,217,255,0.15);
+            border: 1px solid rgba(0,217,255,0.3);
+            color: #00d9ff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-search:hover { background: rgba(0,217,255,0.25); }
+        .btn-clear {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #888;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-clear:hover { background: rgba(255,255,255,0.1); }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tab {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #888;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .tab:hover { border-color: rgba(255,255,255,0.2); color: #aaa; }
+        .tab.active {
+            background: rgba(168,85,247,0.15);
+            border-color: rgba(168,85,247,0.3);
+            color: #a855f7;
+        }
+
+        /* Entries List */
+        .entries-section {
+            background: rgba(20,20,30,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        .entries-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .entries-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #a855f7;
+        }
+        .entries-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .entries-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .entry-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            transition: border-color 0.15s;
+        }
+        .entry-card:hover {
+            border-color: rgba(255,255,255,0.1);
+        }
+        .entry-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .entry-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .entry-time {
+            font-size: 0.75rem;
+            color: #555;
+        }
+        .entry-similarity {
+            font-size: 0.75rem;
+            color: #10b981;
+            background: rgba(16,185,129,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+        .entry-id {
+            font-size: 0.7rem;
+            color: #444;
+            font-family: monospace;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #555;
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 2000;
+            font-size: 0.9rem;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-color: #10b981; }
+        .toast.error { border-color: #ef4444; }
+
+        /* Refresh */
+        .refresh-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(168,85,247,0.1);
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #a855f7;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .refresh-btn:hover { background: rgba(168,85,247,0.2); }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #333;
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Spark File</h1>
+            <p>Zero-friction idea capture. One input. No folders. No tags.</p>
+        </header>
+
+        <!-- Capture Section -->
+        <div class="capture-section">
+            <textarea
+                class="capture-input"
+                id="captureInput"
+                placeholder="Capture a spark... (idea, thought, snippet, anything)"
+                maxlength="5000"
+            ></textarea>
+            <div class="capture-footer">
+                <span class="char-count"><span id="charCount">0</span> / 5000</span>
+                <button class="btn-capture" id="captureBtn" onclick="captureEntry()" disabled>
+                    Capture Spark
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-row">
+                <input
+                    type="text"
+                    class="search-input"
+                    id="searchInput"
+                    placeholder="Search sparks semantically..."
+                >
+                <button class="btn-search" onclick="searchEntries()">Search</button>
+                <button class="btn-clear" onclick="clearSearch()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Entries Section -->
+        <div class="entries-section">
+            <div class="entries-header">
+                <div class="tabs">
+                    <button class="tab active" id="tabRecent" onclick="showTab('recent')">Recent</button>
+                    <button class="tab" id="tabResults" onclick="showTab('results')" style="display:none;">Search Results</button>
+                </div>
+                <span class="entries-count" id="entriesCount"></span>
+            </div>
+            <div class="entries-list" id="entriesList">
+                <div class="loading">Loading sparks</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" onclick="loadRecent()">&#8635; Refresh</button>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API = window.location.origin;
+        let currentTab = 'recent';
+        let searchResults = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecent();
+            setupInputHandlers();
+        });
+
+        function setupInputHandlers() {
+            const input = document.getElementById('captureInput');
+            const charCount = document.getElementById('charCount');
+            const captureBtn = document.getElementById('captureBtn');
+
+            input.addEventListener('input', () => {
+                charCount.textContent = input.value.length;
+                captureBtn.disabled = input.value.trim().length === 0;
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.metaKey) {
+                    e.preventDefault();
+                    if (!captureBtn.disabled) captureEntry();
+                }
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchEntries();
+                }
+            });
+        }
+
+        async function captureEntry() {
+            const input = document.getElementById('captureInput');
+            const content = input.value.trim();
+            if (!content) return;
+
+            const btn = document.getElementById('captureBtn');
+            btn.disabled = true;
+            btn.textContent = 'Capturing...';
+
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tool_name: 'spark_file',
+                        action: 'add_entry',
+                        params: { content }
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showToast('Spark captured!', 'success');
+                    input.value = '';
+                    document.getElementById('charCount').textContent = '0';
+                    loadRecent();
+                } else {
+                    showToast(data.message || 'Failed to capture', 'error');
+                }
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Capture Spark';
+        }
+
+        async function loadRecent() {
+            const list = document.getElementById('entriesList');
+            list.innerHTML = '<div class="loading">Loading sparks</div>';
+
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tool_name: 'spark_file',
+                        action: 'recent',
+                        params: { limit: 50 }
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    renderEntries(data.entries || [], false);
+                    document.getElementById('entriesCount').textContent =
+                        (data.entries?.length || 0) + ' sparks';
+                } else {
+                    list.innerHTML = `<div class="empty-state"><div class="icon">⚡</div><p>${data.message || 'Failed to load'}</p></div>`;
+                }
+            } catch (e) {
+                list.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Error: ${e.message}</p></div>`;
+            }
+        }
+
+        async function searchEntries() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showToast('Enter a search query', 'error');
+                return;
+            }
+
+            const list = document.getElementById('entriesList');
+            list.innerHTML = '<div class="loading">Searching</div>';
+
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tool_name: 'spark_file',
+                        action: 'search',
+                        params: { query, limit: 20 }
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    searchResults = data.results || [];
+                    document.getElementById('tabResults').style.display = 'inline-block';
+                    showTab('results');
+                    renderEntries(searchResults, true);
+                    document.getElementById('entriesCount').textContent =
+                        searchResults.length + ' matches';
+                } else {
+                    list.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>${data.message || 'Search failed'}</p></div>`;
+                }
+            } catch (e) {
+                list.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Error: ${e.message}</p></div>`;
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('tabResults').style.display = 'none';
+            searchResults = [];
+            showTab('recent');
+            loadRecent();
+        }
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.getElementById('tabRecent').classList.toggle('active', tab === 'recent');
+            document.getElementById('tabResults').classList.toggle('active', tab === 'results');
+
+            if (tab === 'recent') {
+                loadRecent();
+            } else {
+                renderEntries(searchResults, true);
+                document.getElementById('entriesCount').textContent =
+                    searchResults.length + ' matches';
+            }
+        }
+
+        function renderEntries(entries, showSimilarity) {
+            const list = document.getElementById('entriesList');
+
+            if (!entries || entries.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚡</div>
+                        <p>No sparks yet. Capture your first idea above!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = entries.map(entry => {
+                const date = new Date(entry.created_at);
+                const timeStr = date.toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric',
+                    hour: 'numeric', minute: '2-digit'
+                });
+
+                return `
+                    <div class="entry-card">
+                        <div class="entry-content">${escapeHtml(entry.content)}</div>
+                        <div class="entry-meta">
+                            <span class="entry-time">${timeStr}</span>
+                            ${showSimilarity && entry.similarity !== undefined ?
+                                `<span class="entry-similarity">${Math.round(entry.similarity * 100)}% match</span>` :
+                                `<span class="entry-id">#${entry.id}</span>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

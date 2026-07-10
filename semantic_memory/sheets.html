@@ -1,0 +1,2405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheets | OrchestrateOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --airtable-blue: #166ee1;
+            --airtable-blue-light: #e5f0ff;
+            --sidebar-bg: #f8f8f8;
+            --toolbar-bg: #ffffff;
+            --border-color: #e5e5e5;
+            --text-primary: #1d1f25;
+            --text-secondary: #666;
+            --text-muted: #999;
+            --row-hover: #f5f5f5;
+            --cell-selected: #e5f0ff;
+            --green-tag: #d1f7c4;
+            --yellow-tag: #ffeab6;
+            --red-tag: #ffdce5;
+            --blue-tag: #d0f0fd;
+            --purple-tag: #ede2fe;
+            --pink-tag: #ffdaf6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Top navigation bar */
+        .top-nav {
+            height: 48px;
+            background: var(--airtable-blue);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-logo svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .nav-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            height: calc(100vh - 48px);
+        }
+
+        /* Left sidebar */
+        .sidebar {
+            width: 200px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .table-list {
+            flex: 1;
+        }
+
+        .table-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .table-item:hover {
+            background: rgba(0,0,0,0.04);
+        }
+
+        .table-item.active {
+            background: var(--airtable-blue-light);
+            color: var(--airtable-blue);
+            font-weight: 500;
+        }
+
+        .table-item svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.6;
+        }
+
+        .table-item.active svg {
+            opacity: 1;
+        }
+
+        .new-table-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .new-table-item:hover {
+            background: rgba(0,0,0,0.04);
+            color: var(--text-primary);
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* View toolbar */
+        .view-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--toolbar-bg);
+        }
+
+        .view-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .view-tab {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            font-family: inherit;
+        }
+
+        .view-tab:hover {
+            background: var(--row-hover);
+        }
+
+        .view-tab.active {
+            background: var(--airtable-blue-light);
+            color: var(--airtable-blue);
+            font-weight: 500;
+        }
+
+        .view-tab svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-btn {
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid transparent;
+            font-family: inherit;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--row-hover);
+            border-color: var(--border-color);
+        }
+
+        .toolbar-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .search-box {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            width: 180px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--airtable-blue);
+        }
+
+        .export-btn {
+            background: var(--airtable-blue);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .export-btn:hover {
+            background: #1259b8;
+        }
+
+        /* Grid container */
+        .grid-container {
+            flex: 1;
+            overflow: auto;
+            background: white;
+        }
+
+        /* CSS Grid */
+        .data-grid {
+            display: grid;
+            min-width: max-content;
+        }
+
+        /* Header row */
+        .grid-header {
+            display: contents;
+        }
+
+        .header-cell {
+            position: sticky;
+            top: 0;
+            background: #fafafa;
+            border-bottom: 2px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 0 12px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            font-size: 12px;
+            color: var(--text-secondary);
+            z-index: 10;
+            user-select: none;
+        }
+
+        .header-cell:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background: #fafafa;
+        }
+
+        .header-cell svg {
+            width: 12px;
+            height: 12px;
+            opacity: 0.6;
+        }
+
+        .resize-handle {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            cursor: col-resize;
+            background: transparent;
+        }
+
+        .resize-handle:hover {
+            background: var(--airtable-blue);
+        }
+
+        /* Add column button in header */
+        .header-cell-add {
+            position: sticky;
+            top: 0;
+            background: #fafafa;
+            border-bottom: 2px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 0 12px;
+            height: 36px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .header-cell-add:hover {
+            background: var(--row-hover);
+            color: var(--airtable-blue);
+        }
+
+        .header-cell-add svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Data rows */
+        .grid-row {
+            display: contents;
+        }
+
+        .grid-row:hover .grid-cell {
+            background: var(--row-hover);
+        }
+
+        .grid-cell {
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 0 12px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            background: white;
+            font-size: 13px;
+        }
+
+        .grid-cell:first-child {
+            position: sticky;
+            left: 0;
+            background: #fafafa;
+            z-index: 5;
+            color: var(--text-muted);
+            font-size: 12px;
+            gap: 8px;
+        }
+
+        .grid-row:hover .grid-cell:first-child {
+            background: var(--row-hover);
+        }
+
+        .row-number {
+            min-width: 24px;
+        }
+
+        .row-expand {
+            opacity: 0;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .grid-row:hover .row-expand {
+            opacity: 1;
+        }
+
+        .row-expand:hover {
+            color: var(--airtable-blue);
+        }
+
+        /* Cell content */
+        .cell-text {
+            flex: 1;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-primary);
+            padding: 4px 0;
+        }
+
+        .cell-text:focus {
+            background: var(--cell-selected);
+            border-radius: 2px;
+        }
+
+        .cell-number {
+            flex: 1;
+            text-align: right;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-primary);
+            padding: 4px 0;
+        }
+
+        .cell-number:focus {
+            background: var(--cell-selected);
+            border-radius: 2px;
+            text-align: right;
+        }
+
+        .cell-date {
+            flex: 1;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .cell-date:focus {
+            background: var(--cell-selected);
+            border-radius: 2px;
+        }
+
+        /* Boolean checkbox */
+        .cell-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .cell-checkbox.checked {
+            background: var(--airtable-blue);
+            border-color: var(--airtable-blue);
+        }
+
+        .cell-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Select pill tags */
+        .select-pill {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .select-pill.green { background: var(--green-tag); color: #1a5a1a; }
+        .select-pill.yellow { background: var(--yellow-tag); color: #7a5f00; }
+        .select-pill.red { background: var(--red-tag); color: #8a2a3a; }
+        .select-pill.blue { background: var(--blue-tag); color: #0a5a7a; }
+        .select-pill.purple { background: var(--purple-tag); color: #5a3a8a; }
+        .select-pill.pink { background: var(--pink-tag); color: #8a3a7a; }
+
+        /* URL cell - clickable link */
+        .cell-url {
+            flex: 1;
+            color: var(--airtable-blue);
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .cell-url:hover {
+            text-decoration: underline;
+        }
+
+        .cell-url-input {
+            flex: 1;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--airtable-blue);
+            padding: 4px 0;
+        }
+
+        .cell-url-input:focus {
+            background: var(--cell-selected);
+            border-radius: 2px;
+        }
+
+        /* Email cell - mailto link */
+        .cell-email {
+            flex: 1;
+            color: var(--airtable-blue);
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .cell-email:hover {
+            text-decoration: underline;
+        }
+
+        .cell-email-input {
+            flex: 1;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-primary);
+            padding: 4px 0;
+        }
+
+        .cell-email-input:focus {
+            background: var(--cell-selected);
+            border-radius: 2px;
+        }
+
+        /* Long text cell - expanding textarea */
+        .cell-longtext-container {
+            flex: 1;
+            position: relative;
+            min-height: 20px;
+        }
+
+        .cell-longtext {
+            width: 100%;
+            min-height: 20px;
+            max-height: 200px;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-primary);
+            padding: 4px 0;
+            resize: none;
+            overflow: hidden;
+        }
+
+        .cell-longtext:focus {
+            background: var(--cell-selected);
+            border-radius: 2px;
+            overflow: auto;
+            max-height: 200px;
+        }
+
+        /* Multi-select pills container */
+        .multi-select-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            flex: 1;
+            cursor: pointer;
+            min-height: 24px;
+            align-items: center;
+        }
+
+        .multi-select-pill {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .multi-select-pill.green { background: var(--green-tag); color: #1a5a1a; }
+        .multi-select-pill.yellow { background: var(--yellow-tag); color: #7a5f00; }
+        .multi-select-pill.red { background: var(--red-tag); color: #8a2a3a; }
+        .multi-select-pill.blue { background: var(--blue-tag); color: #0a5a7a; }
+        .multi-select-pill.purple { background: var(--purple-tag); color: #5a3a8a; }
+        .multi-select-pill.pink { background: var(--pink-tag); color: #8a3a7a; }
+
+        .multi-select-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 200px;
+            padding: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .multi-select-option {
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .multi-select-option:hover {
+            background: var(--row-hover);
+        }
+
+        .multi-select-option input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .select-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 160px;
+            padding: 4px;
+        }
+
+        .select-option {
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .select-option:hover {
+            background: var(--row-hover);
+        }
+
+        /* Add row */
+        .add-row-cell {
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 0 12px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            background: white;
+            grid-column: 1 / -1;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 13px;
+            gap: 6px;
+        }
+
+        .add-row-cell:hover {
+            background: var(--row-hover);
+            color: var(--text-primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            width: 480px;
+            max-height: 80vh;
+            overflow: auto;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--airtable-blue);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--airtable-blue);
+        }
+
+        .column-list {
+            margin-top: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .column-item:last-child {
+            border-bottom: none;
+        }
+
+        .column-item input {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .column-item select {
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .column-item .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .column-item .remove-btn:hover {
+            color: var(--red-tag);
+        }
+
+        .add-column-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background: var(--sidebar-bg);
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-family: inherit;
+        }
+
+        .add-column-btn:hover {
+            background: var(--row-hover);
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-cancel {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-cancel:hover {
+            background: var(--row-hover);
+        }
+
+        .btn-primary {
+            padding: 8px 16px;
+            background: var(--airtable-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-primary:hover {
+            background: #1259b8;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--text-primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Delete confirm modal */
+        .confirm-modal {
+            text-align: center;
+        }
+
+        .confirm-modal p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .btn-danger {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Options input for select/multi_select */
+        .options-input-group {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .options-input-group.show {
+            display: block;
+        }
+
+        .options-input-group label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .options-input-group input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .options-input-group input:focus {
+            outline: none;
+            border-color: var(--airtable-blue);
+        }
+
+        .options-input-group small {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* Context menu for row actions */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 140px;
+            padding: 4px;
+            display: none;
+        }
+
+        .context-menu.show {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .context-menu-item:hover {
+            background: var(--row-hover);
+        }
+
+        .context-menu-item.danger {
+            color: #e74c3c;
+        }
+
+        .context-menu-item.danger:hover {
+            background: #ffeaea;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="nav-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18M9 21V9"/>
+                </svg>
+                Sheets
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="nav-btn">Share</button>
+            <div class="nav-avatar">S</div>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">Tables</div>
+            <div class="table-list" id="tableList">
+                <!-- Tables loaded dynamically -->
+            </div>
+            <div class="new-table-item" onclick="showCreateTableModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                New Table
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- View Toolbar -->
+            <div class="view-toolbar">
+                <div class="view-tabs">
+                    <button class="view-tab active" id="gridViewTab" onclick="switchView('grid')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M3 9h18M9 21V9"/>
+                        </svg>
+                        Grid view
+                    </button>
+                    <button class="view-tab" id="calendarViewTab" onclick="switchView('calendar')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Calendar
+                    </button>
+                    <button class="view-tab" id="listViewTab" onclick="switchView('list')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        List
+                    </button>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="toolbar-btn" onclick="toggleFilterPanel()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                        </svg>
+                        Filter
+                    </button>
+                    <button class="toolbar-btn" onclick="toggleSortPanel()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        Group
+                    </button>
+                    <button class="toolbar-btn" onclick="toggleSortPanel()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="6" x2="16" y2="6"/>
+                            <line x1="4" y1="12" x2="13" y2="12"/>
+                            <line x1="4" y1="18" x2="10" y2="18"/>
+                            <polyline points="15 15 18 18 21 15"/>
+                            <line x1="18" y1="18" x2="18" y2="9"/>
+                        </svg>
+                        Sort
+                    </button>
+                    <input type="text" class="search-box" placeholder="Search..." id="searchInput" oninput="handleSearch(this.value)" />
+                    <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+                </div>
+            </div>
+
+            <!-- Filter Panel -->
+            <div id="filterPanel" style="display:none; padding:8px 16px; background:#f8f8f8; border-bottom:1px solid #e5e5e5; display:none; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span style="font-size:12px;font-weight:600;color:#666;">Filter:</span>
+                <select id="filterColumn" onchange="applyFilter()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+                    <option value="">All columns</option>
+                </select>
+                <select id="filterCondition" onchange="applyFilter()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+                    <option value="contains">contains</option>
+                    <option value="equals">equals</option>
+                    <option value="is_empty">is empty</option>
+                    <option value="not_empty">is not empty</option>
+                </select>
+                <input type="text" id="filterValue" oninput="applyFilter()" placeholder="value..." style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;width:150px;">
+                <button onclick="clearFilter()" style="font-size:11px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;background:white;cursor:pointer;">Clear</button>
+            </div>
+
+            <!-- Sort Panel -->
+            <div id="sortPanel" style="display:none; padding:8px 16px; background:#f8f8f8; border-bottom:1px solid #e5e5e5; align-items:center; gap:8px;">
+                <span style="font-size:12px;font-weight:600;color:#666;">Sort by:</span>
+                <select id="sortColumn" onchange="applySortPanel()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+                    <option value="">None</option>
+                </select>
+                <select id="sortDirection" onchange="applySortPanel()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+                    <option value="asc">A → Z</option>
+                    <option value="desc">Z → A</option>
+                </select>
+                <button onclick="clearSort()" style="font-size:11px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;background:white;cursor:pointer;">Clear</button>
+            </div>
+
+            <!-- Grid Container -->
+            <div class="grid-container" id="gridContainer">
+                <div class="data-grid" id="dataGrid">
+                    <!-- Grid rendered dynamically -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Table Modal -->
+    <div class="modal-overlay hidden" id="createTableModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create New Table</h3>
+                <button class="modal-close" onclick="hideCreateTableModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Table Name</label>
+                    <input type="text" class="form-input" id="newTableName" placeholder="e.g., Projects, Contacts">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Columns</label>
+                    <div class="column-list" id="columnList">
+                        <div class="column-item">
+                            <input type="text" value="Name" placeholder="Column name">
+                            <select onchange="toggleOptionsInput(this)">
+                                <option value="text">Text</option>
+                                <option value="number">Number</option>
+                                <option value="date">Date</option>
+                                <option value="boolean">Checkbox</option>
+                                <option value="select">Select</option>
+                                <option value="url">URL</option>
+                                <option value="email">Email</option>
+                                <option value="long_text">Long Text</option>
+                                <option value="multi_select">Multi-Select</option>
+                            </select>
+                            <button class="remove-btn" onclick="removeColumn(this)">&times;</button>
+                        </div>
+                    </div>
+                    <button class="add-column-btn" onclick="addColumn()">+ Add Column</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="hideCreateTableModal()">Cancel</button>
+                <button class="btn-primary" onclick="createTable()">Create Table</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay hidden" id="deleteModal">
+        <div class="modal" style="width: 360px;">
+            <div class="modal-header">
+                <h3>Delete Row</h3>
+                <button class="modal-close" onclick="hideDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body confirm-modal">
+                <p>Are you sure you want to delete this row? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="hideDeleteModal()">Cancel</button>
+                <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Column Modal -->
+    <div class="modal-overlay hidden" id="addColumnModal">
+        <div class="modal" style="width: 400px;">
+            <div class="modal-header">
+                <h3>Add Column</h3>
+                <button class="modal-close" onclick="hideAddColumnModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Column Name</label>
+                    <input type="text" class="form-input" id="addColName" placeholder="e.g., Status, Priority">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Column Type</label>
+                    <select class="form-select" id="addColType" onchange="toggleAddColOptionsInput()">
+                        <option value="text">Text</option>
+                        <option value="number">Number</option>
+                        <option value="date">Date</option>
+                        <option value="boolean">Checkbox</option>
+                        <option value="select">Select</option>
+                        <option value="url">URL</option>
+                        <option value="email">Email</option>
+                        <option value="long_text">Long Text</option>
+                        <option value="multi_select">Multi-Select</option>
+                    </select>
+                </div>
+                <div class="options-input-group" id="addColOptionsGroup">
+                    <label>Options (comma-separated)</label>
+                    <input type="text" id="addColOptions" placeholder="Option 1, Option 2, Option 3">
+                    <small>Enter the available choices for this field</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="hideAddColumnModal()">Cancel</button>
+                <button class="btn-primary" onclick="addColumnToTable()">Add Column</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="expandRow()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 3 21 3 21 9"/>
+                <polyline points="9 21 3 21 3 15"/>
+                <line x1="21" y1="3" x2="14" y2="10"/>
+                <line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+            Expand row
+        </div>
+        <div class="context-menu-item danger" onclick="deleteRow()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+            </svg>
+            Delete row
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State
+        let tables = [];
+        let currentTable = null;
+        let currentColumns = [];
+        let currentRows = [];
+        let selectedRowId = null;
+        let searchQuery = '';
+        let searchDebounceTimer = null;
+        let sortState = { column: null, direction: null }; // 'asc', 'desc', or null
+        let currentView = 'grid'; // 'grid' or 'list'
+
+        const TAG_COLORS = ['green', 'yellow', 'red', 'blue', 'purple', 'pink'];
+
+        // API helper
+        async function api(action, params = {}) {
+            const response = await fetch('/execute_task', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tool_name: 'sheets_tool',
+                    action: action,
+                    params: params
+                })
+            });
+            return response.json();
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Load tables
+        async function loadTables() {
+            const result = await api('list_tables');
+            if (result.status === 'success') {
+                tables = result.tables || [];
+                renderTableList();
+                if (tables.length > 0 && !currentTable) {
+                    selectTable(tables[0].table_name);
+                } else if (tables.length === 0) {
+                    renderEmptyState();
+                }
+            }
+        }
+
+        // Render table list in sidebar
+        function renderTableList() {
+            const list = document.getElementById('tableList');
+            list.innerHTML = tables.map(t => `
+                <div class="table-item ${t.table_name === currentTable ? 'active' : ''}"
+                     onclick="selectTable('${t.table_name}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M3 9h18M9 21V9"/>
+                    </svg>
+                    ${t.display_name || t.table_name}
+                </div>
+            `).join('');
+        }
+
+        // Select table
+        async function selectTable(tableName) {
+            currentTable = tableName;
+            renderTableList();
+
+            const table = tables.find(t => t.table_name === tableName);
+            if (table) {
+                currentColumns = table.columns || [];
+                await loadRows();
+            }
+        }
+
+        // Load rows
+        async function loadRows() {
+            if (!currentTable) return;
+
+            const result = await api('query', { table: currentTable });
+            if (result.status === 'success') {
+                currentRows = result.rows || [];
+                renderGrid();
+            }
+        }
+
+        // Render empty state
+        function renderEmptyState() {
+            const grid = document.getElementById('dataGrid');
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M3 9h18M9 21V9"/>
+                    </svg>
+                    <p>No tables yet</p>
+                    <button class="btn-primary" onclick="showCreateTableModal()">Create your first table</button>
+                </div>
+            `;
+        }
+
+        // Render grid
+        function renderGrid() {
+            const grid = document.getElementById('dataGrid');
+
+            if (currentView === 'list') {
+                renderListView(grid);
+                return;
+            }
+
+            if (currentView === 'calendar') {
+                renderCalendarView(grid);
+                return;
+            }
+
+            const colCount = currentColumns.length + 2; // +1 for row number, +1 for add column button
+
+            // Set grid template - include add column button width
+            const colWidths = ['40px', ...currentColumns.map(c =>
+                c.type === 'text' || c.type === 'long_text' || c.type === 'url' ? '200px' : '140px'
+            ), '40px'];
+            grid.style.gridTemplateColumns = colWidths.join(' ');
+
+            // Header
+            let html = '<div class="grid-header">';
+            html += '<div class="header-cell">#</div>';
+            currentColumns.forEach(col => {
+                let sortIndicator = '';
+                if (sortState.column === col.name) {
+                    if (sortState.direction === 'asc') {
+                        sortIndicator = ' <span style="margin-left:auto;font-size:10px;">▲</span>';
+                    } else if (sortState.direction === 'desc') {
+                        sortIndicator = ' <span style="margin-left:auto;font-size:10px;">▼</span>';
+                    }
+                }
+                html += `<div class="header-cell" style="cursor:pointer;" onclick="toggleColumnSort('${col.name}')" ondblclick="editColumnName(event, '${col.name}')">
+                    ${getTypeIcon(col.type)}
+                    <span class="header-text">${col.display_name || col.name}</span>${sortIndicator}
+                    <div class="resize-handle"></div>
+                </div>`;
+            });
+            // Add column button at end of header
+            html += `<div class="header-cell-add" onclick="showAddColumnModal()" title="Add column">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </div>`;
+            html += '</div>';
+
+            // Rows - use filtered/sorted display rows
+            const displayRows = getDisplayRows();
+            displayRows.forEach((row, idx) => {
+                html += `<div class="grid-row" data-row-id="${row._id}">`;
+                html += `<div class="grid-cell">
+                    <span class="row-number">${idx + 1}</span>
+                    <span class="row-expand" onclick="showContextMenu(event, '${row._id}')">⤢</span>
+                </div>`;
+
+                currentColumns.forEach(col => {
+                    const value = row[col.name];
+                    html += `<div class="grid-cell">${renderCell(col, value, row._id)}</div>`;
+                });
+                // Empty cell for add column column
+                html += '<div class="grid-cell" style="background:#fafafa;"></div>';
+                html += '</div>';
+            });
+
+            // Add row - spans all columns including add column button
+            html += `<div class="add-row-cell" style="grid-column: 1 / ${colCount + 1};" onclick="addRow()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add row
+            </div>`;
+
+            grid.innerHTML = html;
+        }
+
+        // Switch between grid and list views
+        function switchView(view) {
+            currentView = view;
+            document.getElementById('gridViewTab').classList.toggle('active', view === 'grid');
+            document.getElementById('calendarViewTab').classList.toggle('active', view === 'calendar');
+            document.getElementById('listViewTab').classList.toggle('active', view === 'list');
+            renderGrid();
+        }
+
+        // Render list view as cards
+        function renderListView(grid) {
+            grid.style.gridTemplateColumns = '1fr'; // Reset grid columns for list view
+            const displayRows = getDisplayRows();
+
+            let html = '<div class="list-view-container" style="display:flex;flex-wrap:wrap;gap:16px;padding:16px;">';
+
+            displayRows.forEach((row, idx) => {
+                html += `<div class="list-card" data-row-id="${row._id}" style="
+                    flex: 0 0 calc(50% - 8px);
+                    background: var(--toolbar-bg);
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    padding: 16px;
+                    box-sizing: border-box;
+                ">`;
+                html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border-color);">
+                    <span style="font-weight:600;color:var(--text-secondary);">#${idx + 1}</span>
+                    <span class="row-expand" onclick="showContextMenu(event, '${row._id}')" style="cursor:pointer;">⤢</span>
+                </div>`;
+
+                currentColumns.forEach(col => {
+                    const value = row[col.name];
+                    const displayValue = value != null ? value : '';
+                    html += `<div style="margin-bottom:8px;">
+                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">${col.display_name || col.name}</div>
+                        <div style="color:var(--text-primary);">${renderCellValue(col, displayValue)}</div>
+                    </div>`;
+                });
+
+                html += '</div>';
+            });
+
+            html += '</div>';
+            grid.innerHTML = html;
+        }
+
+        // Render calendar view
+        function renderCalendarView(grid) {
+            grid.style.gridTemplateColumns = '1fr';
+
+            // Find date column
+            const dateCol = currentColumns.find(c => c.type === 'date');
+            const titleCol = currentColumns.find(c => c.type === 'text') || currentColumns[0];
+
+            if (!dateCol) {
+                grid.innerHTML = `<div style="padding:48px;text-align:center;color:var(--text-secondary);">
+                    <p style="font-size:16px;">No date column found.</p>
+                    <p style="font-size:13px;">Add a Date column to this table to use Calendar view.</p>
+                </div>`;
+                return;
+            }
+
+            // Get current month/year from calendarState or default to today
+            if (!window.calendarState) window.calendarState = { year: new Date().getFullYear(), month: new Date().getMonth() };
+            const { year, month } = window.calendarState;
+
+            const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+            // Build map of date string → rows
+            const rowsByDate = {};
+            const displayRows = getDisplayRows();
+            displayRows.forEach(row => {
+                const val = row[dateCol.name];
+                if (!val) return;
+                const d = new Date(val);
+                if (isNaN(d)) return;
+                const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                if (!rowsByDate[key]) rowsByDate[key] = [];
+                rowsByDate[key].push(row);
+            });
+
+            // First day of month and total days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+            let html = `<div style="padding:16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                    <button onclick="calendarNav(-1)" style="padding:6px 12px;border:1px solid var(--border-color);border-radius:4px;background:white;cursor:pointer;font-size:13px;">&#8592; Prev</button>
+                    <span style="font-size:16px;font-weight:600;color:var(--text-primary);">${monthNames[month]} ${year}</span>
+                    <button onclick="calendarNav(1)" style="padding:6px 12px;border:1px solid var(--border-color);border-radius:4px;background:white;cursor:pointer;font-size:13px;">Next &#8594;</button>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border-color);border:1px solid var(--border-color);border-radius:6px;overflow:hidden;">`;
+
+            // Day name headers
+            dayNames.forEach(d => {
+                html += `<div style="background:var(--sidebar-bg);padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary);">${d}</div>`;
+            });
+
+            // Empty cells before first day
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div style="background:white;min-height:80px;padding:4px;"></div>`;
+            }
+
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const isToday = dateKey === todayKey;
+                const rows = rowsByDate[dateKey] || [];
+
+                html += `<div style="background:white;min-height:80px;padding:4px;${isToday ? 'background:#e8f0fe;' : ''}">
+                    <div style="font-size:12px;font-weight:${isToday ? '700' : '400'};color:${isToday ? 'var(--airtable-blue)' : 'var(--text-primary)'};margin-bottom:4px;">${day}</div>`;
+
+                rows.forEach(row => {
+                    const title = titleCol ? (row[titleCol.name] || '—') : row._id;
+                    html += `<div style="background:var(--airtable-blue);color:white;font-size:11px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(String(title))}">${escapeHtml(String(title))}</div>`;
+                });
+
+                html += `</div>`;
+            }
+
+            html += `</div></div>`;
+            grid.innerHTML = html;
+        }
+
+        function calendarNav(direction) {
+            if (!window.calendarState) window.calendarState = { year: new Date().getFullYear(), month: new Date().getMonth() };
+            window.calendarState.month += direction;
+            if (window.calendarState.month > 11) { window.calendarState.month = 0; window.calendarState.year++; }
+            if (window.calendarState.month < 0) { window.calendarState.month = 11; window.calendarState.year--; }
+            renderGrid();
+        }
+        function renderCellValue(col, value) {
+            if (value == null || value === '') return '<span style="color:var(--text-muted);">-</span>';
+
+            if (col.type === 'boolean') {
+                return value ? '✓ Yes' : '✗ No';
+            }
+            if (col.type === 'select' && col.options) {
+                const opt = col.options.find(o => o.value === value);
+                if (opt) {
+                    const colorVar = `var(--${opt.color || 'blue'}-tag)`;
+                    return `<span style="background:${colorVar};padding:2px 8px;border-radius:4px;font-size:12px;">${opt.label || value}</span>`;
+                }
+            }
+            if (col.type === 'url' && value) {
+                return `<a href="${value}" target="_blank" style="color:var(--airtable-blue);text-decoration:none;">${value}</a>`;
+            }
+            if (col.type === 'date' && value) {
+                return new Date(value).toLocaleDateString();
+            }
+            return String(value);
+        }
+
+        // Get type icon
+        function getTypeIcon(type) {
+            const icons = {
+                text: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>',
+                number: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg>',
+                date: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+                boolean: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+                select: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>',
+                url: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',
+                email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94"/></svg>',
+                long_text: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>',
+                multi_select: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'
+            };
+            return icons[type] || icons.text;
+        }
+
+        // Render cell by type
+        function renderCell(col, value, rowId) {
+            switch (col.type) {
+                case 'number':
+                    return `<input type="number" class="cell-number" value="${value || ''}"
+                            onblur="saveCell('${rowId}', '${col.name}', this.value)">`;
+
+                case 'date':
+                    return `<input type="date" class="cell-date" value="${value || ''}"
+                            onchange="saveCell('${rowId}', '${col.name}', this.value)">`;
+
+                case 'boolean':
+                    return `<div class="cell-checkbox ${value ? 'checked' : ''}"
+                            onclick="toggleCheckbox(this, '${rowId}', '${col.name}')"></div>`;
+
+                case 'select':
+                    if (!value) return `<span class="select-pill" style="background:#eee;color:#666"
+                                        onclick="showSelectDropdown(event, '${rowId}', '${col.name}', '${JSON.stringify(col.options || []).replace(/'/g, "\\'")}')">—</span>`;
+                    const colorIdx = (col.options || []).indexOf(value) % TAG_COLORS.length;
+                    const color = TAG_COLORS[colorIdx >= 0 ? colorIdx : 0];
+                    return `<span class="select-pill ${color}"
+                            onclick="showSelectDropdown(event, '${rowId}', '${col.name}', '${JSON.stringify(col.options || []).replace(/'/g, "\\'")}')">
+                            ${value}</span>`;
+
+                case 'url':
+                    if (!value) {
+                        return `<input type="url" class="cell-url-input" value="" placeholder="https://..."
+                                onblur="saveCell('${rowId}', '${col.name}', this.value)">`;
+                    }
+                    return `<a href="${escapeHtml(value)}" target="_blank" class="cell-url"
+                            onclick="event.stopPropagation()"
+                            ondblclick="editUrlCell(event, '${rowId}', '${col.name}', '${escapeHtml(value)}')">${escapeHtml(value)}</a>`;
+
+                case 'email':
+                    if (!value) {
+                        return `<input type="email" class="cell-email-input" value="" placeholder="email@example.com"
+                                onblur="saveCell('${rowId}', '${col.name}', this.value)">`;
+                    }
+                    return `<a href="mailto:${escapeHtml(value)}" class="cell-email"
+                            onclick="event.stopPropagation()"
+                            ondblclick="editEmailCell(event, '${rowId}', '${col.name}', '${escapeHtml(value)}')">${escapeHtml(value)}</a>`;
+
+                case 'long_text':
+                    const escapedValue = escapeHtml(value || '');
+                    return `<div class="cell-longtext-container">
+                                <textarea class="cell-longtext"
+                                    onblur="saveCell('${rowId}', '${col.name}', this.value)"
+                                    oninput="autoResizeTextarea(this)">${escapedValue}</textarea>
+                            </div>`;
+
+                case 'multi_select':
+                    const selectedValues = parseMultiSelectValue(value);
+                    const options = col.options || [];
+                    const optionsJson = JSON.stringify(options).replace(/'/g, "\\'");
+
+                    if (selectedValues.length === 0) {
+                        return `<div class="multi-select-container"
+                                onclick="showMultiSelectDropdown(event, '${rowId}', '${col.name}', '${optionsJson}', [])">
+                                <span style="color:var(--text-muted)">Select...</span>
+                            </div>`;
+                    }
+
+                    let pills = '';
+                    selectedValues.forEach((val, idx) => {
+                        const optIdx = options.indexOf(val);
+                        const pillColor = TAG_COLORS[optIdx >= 0 ? optIdx % TAG_COLORS.length : idx % TAG_COLORS.length];
+                        pills += `<span class="multi-select-pill ${pillColor}">${escapeHtml(val)}</span>`;
+                    });
+
+                    const selectedJson = JSON.stringify(selectedValues).replace(/'/g, "\\'");
+                    return `<div class="multi-select-container"
+                            onclick="showMultiSelectDropdown(event, '${rowId}', '${col.name}', '${optionsJson}', '${selectedJson}')">
+                            ${pills}
+                        </div>`;
+
+                default: // text
+                    return `<input type="text" class="cell-text" value="${escapeHtml(value || '')}"
+                            onblur="saveCell('${rowId}', '${col.name}', this.value)">`;
+            }
+        }
+
+        // Helper to escape HTML in values
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // Parse multi-select value (can be JSON array or comma-separated string)
+        function parseMultiSelectValue(value) {
+            if (!value) return [];
+            if (Array.isArray(value)) return value;
+            try {
+                const parsed = JSON.parse(value);
+                if (Array.isArray(parsed)) return parsed;
+            } catch (e) {}
+            // Fallback: comma-separated
+            return String(value).split(',').map(s => s.trim()).filter(s => s);
+        }
+
+        // Auto-resize textarea for long_text
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+        }
+
+        // Edit URL cell (double-click to edit)
+        function editUrlCell(event, rowId, colName, currentValue) {
+            event.preventDefault();
+            event.stopPropagation();
+            const cell = event.target.parentElement;
+            cell.innerHTML = `<input type="url" class="cell-url-input" value="${currentValue}"
+                            onblur="saveCell('${rowId}', '${colName}', this.value);"
+                            onkeydown="if(event.key==='Enter'){this.blur();}">`;
+            cell.querySelector('input').focus();
+        }
+
+        // Edit email cell (double-click to edit)
+        function editEmailCell(event, rowId, colName, currentValue) {
+            event.preventDefault();
+            event.stopPropagation();
+            const cell = event.target.parentElement;
+            cell.innerHTML = `<input type="email" class="cell-email-input" value="${currentValue}"
+                            onblur="saveCell('${rowId}', '${colName}', this.value);"
+                            onkeydown="if(event.key==='Enter'){this.blur();}">`;
+            cell.querySelector('input').focus();
+        }
+
+        // Multi-select dropdown
+        let activeMultiSelectDropdown = null;
+
+        function showMultiSelectDropdown(event, rowId, colName, optionsJson, selectedJson) {
+            event.stopPropagation();
+            hideMultiSelectDropdown();
+
+            const options = JSON.parse(optionsJson);
+            const selected = typeof selectedJson === 'string' ? JSON.parse(selectedJson) : selectedJson;
+            const rect = event.currentTarget.getBoundingClientRect();
+
+            const dropdown = document.createElement('div');
+            dropdown.className = 'multi-select-dropdown';
+            dropdown.style.top = rect.bottom + 4 + 'px';
+            dropdown.style.left = rect.left + 'px';
+            dropdown.onclick = (e) => e.stopPropagation();
+
+            options.forEach((opt, idx) => {
+                const isSelected = selected.includes(opt);
+                const colorClass = TAG_COLORS[idx % TAG_COLORS.length];
+                dropdown.innerHTML += `
+                    <div class="multi-select-option">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''}
+                               onchange="toggleMultiSelectOption('${rowId}', '${colName}', '${optionsJson}', '${opt}')">
+                        <span class="multi-select-pill ${colorClass}">${opt}</span>
+                    </div>
+                `;
+            });
+
+            document.body.appendChild(dropdown);
+            activeMultiSelectDropdown = dropdown;
+        }
+
+        function hideMultiSelectDropdown() {
+            if (activeMultiSelectDropdown) {
+                activeMultiSelectDropdown.remove();
+                activeMultiSelectDropdown = null;
+            }
+        }
+
+        async function toggleMultiSelectOption(rowId, colName, optionsJson, toggledOption) {
+            const row = currentRows.find(r => r._id == rowId);
+            if (!row) return;
+
+            let currentSelected = parseMultiSelectValue(row[colName]);
+
+            if (currentSelected.includes(toggledOption)) {
+                currentSelected = currentSelected.filter(v => v !== toggledOption);
+            } else {
+                currentSelected.push(toggledOption);
+            }
+
+            await saveCell(rowId, colName, JSON.stringify(currentSelected));
+        }
+
+        document.addEventListener('click', hideMultiSelectDropdown);
+
+        // Save cell
+        async function saveCell(rowId, colName, value) {
+            const data = {};
+            data[colName] = value;
+            const result = await api('update_row', { table: currentTable, id: rowId, data: data });
+            if (result.status === 'success') {
+                // Update in-memory row so sort/filter state survives
+                const row = currentRows.find(r => r._id == rowId);
+                if (row) row[colName] = value;
+                renderGrid();
+            }
+        }
+
+        // Toggle checkbox
+        async function toggleCheckbox(el, rowId, colName) {
+            const isChecked = el.classList.toggle('checked');
+            await saveCell(rowId, colName, isChecked);
+        }
+
+        // Select dropdown
+        let activeDropdown = null;
+
+        function showSelectDropdown(event, rowId, colName, optionsJson) {
+            event.stopPropagation();
+            hideSelectDropdown();
+
+            const options = JSON.parse(optionsJson);
+            const rect = event.target.getBoundingClientRect();
+
+            const dropdown = document.createElement('div');
+            dropdown.className = 'select-dropdown';
+            dropdown.style.top = rect.bottom + 4 + 'px';
+            dropdown.style.left = rect.left + 'px';
+
+            options.forEach((opt, idx) => {
+                const colorClass = TAG_COLORS[idx % TAG_COLORS.length];
+                dropdown.innerHTML += `
+                    <div class="select-option" onclick="selectOption('${rowId}', '${colName}', '${opt}')">
+                        <span class="select-pill ${colorClass}">${opt}</span>
+                    </div>
+                `;
+            });
+
+            document.body.appendChild(dropdown);
+            activeDropdown = dropdown;
+        }
+
+        function hideSelectDropdown() {
+            if (activeDropdown) {
+                activeDropdown.remove();
+                activeDropdown = null;
+            }
+        }
+
+        async function selectOption(rowId, colName, value) {
+            hideSelectDropdown();
+            await saveCell(rowId, colName, value);
+            await loadRows();
+        }
+
+        document.addEventListener('click', hideSelectDropdown);
+
+        // Add row
+        async function addRow() {
+            // Build default data based on column types
+            const data = {};
+            currentColumns.forEach(col => {
+                if (col.type === 'number') {
+                    data[col.name] = 0;
+                } else if (col.type === 'boolean') {
+                    data[col.name] = 0;
+                } else if (col.type === 'select') {
+                    data[col.name] = (col.options && col.options.length > 0) ? col.options[0] : '';
+                } else {
+                    // text, date, or default
+                    data[col.name] = '';
+                }
+            });
+            const result = await api('add_row', { table: currentTable, data: data });
+            if (result.status === 'success') {
+                await loadRows();
+            }
+        }
+
+        // Context menu
+        function showContextMenu(event, rowId) {
+            event.stopPropagation();
+            selectedRowId = rowId;
+            const menu = document.getElementById('contextMenu');
+            menu.style.top = event.clientY + 'px';
+            menu.style.left = event.clientX + 'px';
+            menu.classList.add('show');
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').classList.remove('show');
+        });
+
+        function expandRow() {
+            showToast('Row detail view coming soon.');
+            document.getElementById('contextMenu').classList.remove('show');
+        }
+
+        function deleteRow() {
+            document.getElementById('contextMenu').classList.remove('show');
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            selectedRowId = null;
+        }
+
+        async function confirmDelete() {
+            if (selectedRowId) {
+                await api('delete_row', { table: currentTable, id: selectedRowId });
+                hideDeleteModal();
+                await loadRows();
+                showToast('Row deleted');
+            }
+        }
+
+        // Create table modal
+        function showCreateTableModal() {
+            document.getElementById('createTableModal').classList.remove('hidden');
+            document.getElementById('newTableName').value = '';
+            document.getElementById('columnList').innerHTML = `
+                <div class="column-item">
+                    <input type="text" value="Name" placeholder="Column name">
+                    <select onchange="toggleOptionsInput(this)">
+                        <option value="text">Text</option>
+                        <option value="number">Number</option>
+                        <option value="date">Date</option>
+                        <option value="boolean">Checkbox</option>
+                        <option value="select">Select</option>
+                        <option value="url">URL</option>
+                        <option value="email">Email</option>
+                        <option value="long_text">Long Text</option>
+                        <option value="multi_select">Multi-Select</option>
+                    </select>
+                    <button class="remove-btn" onclick="removeColumn(this)">&times;</button>
+                </div>
+            `;
+        }
+
+        function hideCreateTableModal() {
+            document.getElementById('createTableModal').classList.add('hidden');
+        }
+
+        function addColumn() {
+            const list = document.getElementById('columnList');
+            const item = document.createElement('div');
+            item.className = 'column-item';
+            item.innerHTML = `
+                <input type="text" placeholder="Column name">
+                <select onchange="toggleOptionsInput(this)">
+                    <option value="text">Text</option>
+                    <option value="number">Number</option>
+                    <option value="date">Date</option>
+                    <option value="boolean">Checkbox</option>
+                    <option value="select">Select</option>
+                    <option value="url">URL</option>
+                    <option value="email">Email</option>
+                    <option value="long_text">Long Text</option>
+                    <option value="multi_select">Multi-Select</option>
+                </select>
+                <button class="remove-btn" onclick="removeColumn(this)">&times;</button>
+            `;
+            list.appendChild(item);
+        }
+
+        function removeColumn(btn) {
+            const items = document.querySelectorAll('.column-item');
+            if (items.length > 1) {
+                btn.closest('.column-item').remove();
+            }
+        }
+
+        async function createTable() {
+            const name = document.getElementById('newTableName').value.trim();
+            if (!name) {
+                showToast('Please enter a table name');
+                return;
+            }
+
+            const columnItems = document.querySelectorAll('.column-item');
+            const columns = [];
+            columnItems.forEach(item => {
+                const colName = item.querySelector('input[type="text"]').value.trim();
+                const colType = item.querySelector('select').value;
+                const optionsInput = item.querySelector('.col-options-input');
+
+                if (colName) {
+                    const colDef = { name: colName, type: colType };
+                    // Include options for select/multi_select
+                    if ((colType === 'select' || colType === 'multi_select') && optionsInput) {
+                        const optionsStr = optionsInput.value.trim();
+                        if (optionsStr) {
+                            colDef.options = optionsStr.split(',').map(s => s.trim()).filter(s => s);
+                        }
+                    }
+                    columns.push(colDef);
+                }
+            });
+
+            if (columns.length === 0) {
+                showToast('Please add at least one column');
+                return;
+            }
+
+            const result = await api('create_table', { name: name, columns: columns });
+            if (result.status === 'success') {
+                hideCreateTableModal();
+                await loadTables();
+                selectTable(result.table_name);
+                showToast('Table created');
+            } else {
+                showToast(result.message || 'Error creating table');
+            }
+        }
+
+        // Export CSV
+        async function exportCSV() {
+            if (!currentTable) return;
+            const result = await api('export_csv', { table: currentTable });
+            if (result.status === 'success' && result.file_path) {
+                showToast(`CSV exported to: ${result.file_path}`);
+            }
+        }
+
+        // Add Column Modal
+        function showAddColumnModal() {
+            if (!currentTable) {
+                showToast('Please select a table first');
+                return;
+            }
+            document.getElementById('addColumnModal').classList.remove('hidden');
+            document.getElementById('addColName').value = '';
+            document.getElementById('addColType').value = 'text';
+            document.getElementById('addColOptions').value = '';
+            document.getElementById('addColOptionsGroup').classList.remove('show');
+        }
+
+        function hideAddColumnModal() {
+            document.getElementById('addColumnModal').classList.add('hidden');
+        }
+
+        function toggleAddColOptionsInput() {
+            const type = document.getElementById('addColType').value;
+            const optionsGroup = document.getElementById('addColOptionsGroup');
+            if (type === 'select' || type === 'multi_select') {
+                optionsGroup.classList.add('show');
+            } else {
+                optionsGroup.classList.remove('show');
+            }
+        }
+
+        // Toggle options input in create table modal column items
+        function toggleOptionsInput(selectEl) {
+            const colItem = selectEl.closest('.column-item');
+            const type = selectEl.value;
+            // Check if options input already exists
+            let optionsInput = colItem.querySelector('.col-options-input');
+            if (type === 'select' || type === 'multi_select') {
+                if (!optionsInput) {
+                    optionsInput = document.createElement('input');
+                    optionsInput.type = 'text';
+                    optionsInput.className = 'col-options-input';
+                    optionsInput.placeholder = 'Options (comma-sep)';
+                    optionsInput.style.cssText = 'flex: 1; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 12px; margin-left: 4px;';
+                    colItem.insertBefore(optionsInput, colItem.querySelector('.remove-btn'));
+                }
+            } else if (optionsInput) {
+                optionsInput.remove();
+            }
+        }
+
+        async function addColumnToTable() {
+            const nameInput = document.getElementById('addColName');
+            const typeSelect = document.getElementById('addColType');
+            const optionsInput = document.getElementById('addColOptions');
+
+            // Ensure elements exist before reading values
+            if (!nameInput || !typeSelect) {
+                showToast('Error: form elements not found');
+                return;
+            }
+
+            const name = nameInput.value.trim();
+            const type = typeSelect.value;
+            const optionsStr = optionsInput ? optionsInput.value.trim() : '';
+
+            if (!name) {
+                showToast('Column name required');
+                nameInput.focus();
+                return;
+            }
+
+            const columnDef = { name: name, type: type };
+
+            // Parse options for select/multi_select
+            if ((type === 'select' || type === 'multi_select') && optionsStr) {
+                columnDef.options = optionsStr.split(',').map(s => s.trim()).filter(s => s);
+            }
+
+            const result = await api('add_column', {
+                table: currentTable,
+                name: name,
+                type: type,
+                options: columnDef.options || []
+            });
+
+            if (result.status === 'success') {
+                hideAddColumnModal();
+                showToast('Column added');
+                // Reload tables to get updated schema, then reload rows
+                await loadTables();
+                await selectTable(currentTable);
+            } else {
+                showToast(result.message || 'Error adding column');
+            }
+        }
+
+        // Search handler with debounce
+        // Filter state
+        let filterState = { column: '', condition: 'contains', value: '' };
+
+        function toggleFilterPanel() {
+            const panel = document.getElementById('filterPanel');
+            const isVisible = panel.style.display === 'flex';
+            panel.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) populatePanelColumns();
+        }
+
+        function toggleSortPanel() {
+            const panel = document.getElementById('sortPanel');
+            const isVisible = panel.style.display === 'flex';
+            panel.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) populatePanelColumns();
+        }
+
+        function populatePanelColumns() {
+            const filterCol = document.getElementById('filterColumn');
+            const sortCol = document.getElementById('sortColumn');
+            if (filterCol) {
+                filterCol.innerHTML = '<option value="">All columns</option>' +
+                    currentColumns.map(c => `<option value="${c.name}">${c.display_name || c.name}</option>`).join('');
+            }
+            if (sortCol) {
+                sortCol.innerHTML = '<option value="">None</option>' +
+                    currentColumns.map(c => `<option value="${c.name}">${c.display_name || c.name}</option>`).join('');
+            }
+        }
+
+        function applyFilter() {
+            filterState.column = document.getElementById('filterColumn').value;
+            filterState.condition = document.getElementById('filterCondition').value;
+            filterState.value = document.getElementById('filterValue').value.toLowerCase().trim();
+            renderGrid();
+        }
+
+        function clearFilter() {
+            filterState = { column: '', condition: 'contains', value: '' };
+            document.getElementById('filterColumn').value = '';
+            document.getElementById('filterValue').value = '';
+            renderGrid();
+        }
+
+        function applySortPanel() {
+            const col = document.getElementById('sortColumn').value;
+            const dir = document.getElementById('sortDirection').value;
+            if (col) {
+                sortState.column = col;
+                sortState.direction = dir;
+            } else {
+                sortState.column = null;
+                sortState.direction = null;
+            }
+            renderGrid();
+        }
+
+        function clearSort() {
+            sortState = { column: null, direction: null };
+            document.getElementById('sortColumn').value = '';
+            renderGrid();
+        }
+
+        function handleSearch(query) {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                searchQuery = query.toLowerCase().trim();
+                renderGrid();
+            }, 200);
+        }
+
+        // Get filtered and sorted rows
+        function getDisplayRows() {
+            let rows = [...currentRows];
+
+            // Apply search filter
+            if (searchQuery) {
+                rows = rows.filter(row => {
+                    return currentColumns.some(col => {
+                        const val = row[col.name];
+                        if (val == null) return false;
+                        return String(val).toLowerCase().includes(searchQuery);
+                    });
+                });
+            }
+
+            // Apply panel filter
+            if (filterState.value || filterState.condition === 'is_empty' || filterState.condition === 'not_empty') {
+                rows = rows.filter(row => {
+                    const cols = filterState.column ? [currentColumns.find(c => c.name === filterState.column)].filter(Boolean) : currentColumns;
+                    return cols.some(col => {
+                        const val = row[col.name];
+                        const str = val == null ? '' : String(val).toLowerCase();
+                        if (filterState.condition === 'contains') return str.includes(filterState.value);
+                        if (filterState.condition === 'equals') return str === filterState.value;
+                        if (filterState.condition === 'is_empty') return str === '';
+                        if (filterState.condition === 'not_empty') return str !== '';
+                        return true;
+                    });
+                });
+            }
+
+            // Apply sort
+            if (sortState.column && sortState.direction) {
+                const col = currentColumns.find(c => c.name === sortState.column);
+                if (col) {
+                    rows.sort((a, b) => {
+                        let valA = a[col.name];
+                        let valB = b[col.name];
+
+                        // Handle nulls - null values go last
+                        if (valA == null && valB == null) return 0;
+                        if (valA == null) return 1;
+                        if (valB == null) return -1;
+
+                        let cmp = 0;
+                        if (col.type === 'number') {
+                            cmp = Number(valA) - Number(valB);
+                        } else if (col.type === 'date') {
+                            const dateA = new Date(valA);
+                            const dateB = new Date(valB);
+                            cmp = dateA - dateB;
+                        } else if (col.type === 'boolean') {
+                            // false (0) before true (1) in ascending
+                            cmp = (valA ? 1 : 0) - (valB ? 1 : 0);
+                        } else {
+                            // text, select, url, email, long_text, multi_select
+                            cmp = String(valA).localeCompare(String(valB));
+                        }
+
+                        return sortState.direction === 'desc' ? -cmp : cmp;
+                    });
+                }
+            }
+
+            return rows;
+        }
+
+        // Column sort click handler
+        function toggleColumnSort(colName) {
+            if (sortState.column === colName) {
+                // Cycle: asc -> desc -> clear
+                if (sortState.direction === 'asc') {
+                    sortState.direction = 'desc';
+                } else if (sortState.direction === 'desc') {
+                    sortState.column = null;
+                    sortState.direction = null;
+                }
+            } else {
+                sortState.column = colName;
+                sortState.direction = 'asc';
+            }
+            renderGrid();
+        }
+
+        // Edit column name on double-click
+        function editColumnName(event, colName) {
+            event.stopPropagation();
+            const headerCell = event.currentTarget;
+            const textSpan = headerCell.querySelector('.header-text');
+            if (!textSpan) return;
+
+            const currentName = textSpan.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentName;
+            input.className = 'header-edit-input';
+            input.style.cssText = 'width:100%;font-size:13px;font-weight:500;border:1px solid var(--airtable-blue);border-radius:4px;padding:2px 6px;outline:none;';
+
+            input.onblur = () => saveColumnName(colName, input.value, textSpan, input);
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    input.blur();
+                } else if (e.key === 'Escape') {
+                    textSpan.textContent = currentName;
+                    input.replaceWith(textSpan);
+                }
+            };
+
+            textSpan.replaceWith(input);
+            input.focus();
+            input.select();
+        }
+
+        async function saveColumnName(colName, newName, originalSpan, input) {
+            const col = currentColumns.find(c => c.name === colName);
+            const oldName = col ? (col.display_name || col.name) : colName;
+
+            if (newName.trim() === '' || newName === oldName) {
+                originalSpan.textContent = oldName;
+                input.replaceWith(originalSpan);
+                return;
+            }
+
+            const result = await api('update_column_name', {
+                table: currentTable,
+                column: colName,
+                display_name: newName.trim()
+            });
+
+            if (result.status === 'success') {
+                if (col) col.display_name = newName.trim();
+                showToast('Column renamed');
+                renderGrid();
+            } else {
+                showToast('Failed to rename column: ' + (result.message || 'Unknown error'));
+                originalSpan.textContent = oldName;
+                input.replaceWith(originalSpan);
+            }
+        }
+
+        // Init
+        loadTables();
+    </script>
+<script src="/semantic_memory/global_nav.js"></script>
+
+
+</body>
+</html>

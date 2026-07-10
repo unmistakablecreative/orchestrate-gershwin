@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Sheets | OrchestrateOS
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="sheets.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './sheets_config.json';
+  </script>
+ </head>
+ <body>
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+   <div class="nav-left">
+    <div class="nav-logo">
+     <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+      <rect height="18" rx="2" width="18" x="3" y="3">
+      </rect>
+      <path d="M3 9h18M9 21V9">
+      </path>
+     </svg>
+     Sheets
+    </div>
+   </div>
+   <div class="nav-right">
+    <button class="nav-btn">
+     Share
+    </button>
+    <div class="nav-avatar">
+     S
+    </div>
+   </div>
+  </nav>
+  <div class="app-container">
+   <!-- Left Sidebar -->
+   <aside class="sidebar">
+    <div class="sidebar-header">
+     Tables
+    </div>
+    <div class="table-list" id="tableList">
+     <!-- Tables loaded dynamically -->
+    </div>
+    <div class="new-table-item" onclick="showCreateTableModal()">
+     <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+      <line x1="12" x2="12" y1="5" y2="19">
+      </line>
+      <line x1="5" x2="19" y1="12" y2="12">
+      </line>
+     </svg>
+     New Table
+    </div>
+   </aside>
+   <!-- Main Content -->
+   <main class="main-content">
+    <!-- View Toolbar -->
+    <div class="view-toolbar">
+     <div class="view-tabs">
+      <button class="view-tab active" id="gridViewTab" onclick="switchView('grid')">
+       <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+        <rect height="18" rx="2" width="18" x="3" y="3">
+        </rect>
+        <path d="M3 9h18M9 21V9">
+        </path>
+       </svg>
+       Grid view
+      </button>
+      <button class="view-tab" id="calendarViewTab" onclick="switchView('calendar')">
+       <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+        <rect height="18" rx="2" width="18" x="3" y="4">
+        </rect>
+        <line x1="16" x2="16" y1="2" y2="6">
+        </line>
+        <line x1="8" x2="8" y1="2" y2="6">
+        </line>
+        <line x1="3" x2="21" y1="10" y2="10">
+        </line>
+       </svg>
+       Calendar
+      </button>
+      <button class="view-tab" id="listViewTab" onclick="switchView('list')">
+       <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+        <line x1="8" x2="21" y1="6" y2="6">
+        </line>
+        <line x1="8" x2="21" y1="12" y2="12">
+        </line>
+        <line x1="8" x2="21" y1="18" y2="18">
+        </line>
+        <line x1="3" x2="3.01" y1="6" y2="6">
+        </line>
+        <line x1="3" x2="3.01" y1="12" y2="12">
+        </line>
+        <line x1="3" x2="3.01" y1="18" y2="18">
+        </line>
+       </svg>
+       List
+      </button>
+     </div>
+     <div class="toolbar-actions">
+      <button class="toolbar-btn" onclick="toggleFilterPanel()">
+       <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3">
+        </polygon>
+       </svg>
+       Filter
+      </button>
+      <button class="toolbar-btn" onclick="toggleSortPanel()">
+       <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+        <rect height="7" width="7" x="3" y="3">
+        </rect>
+        <rect height="7" width="7" x="14" y="3">
+        </rect>
+        <rect height="7" width="7" x="14" y="14">
+        </rect>
+        <rect height="7" width="7" x="3" y="14">
+        </rect>
+       </svg>
+       Group
+      </button>
+      <button class="toolbar-btn" onclick="toggleSortPanel()">
+       <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+        <line x1="4" x2="16" y1="6" y2="6">
+        </line>
+        <line x1="4" x2="13" y1="12" y2="12">
+        </line>
+        <line x1="4" x2="10" y1="18" y2="18">
+        </line>
+        <polyline points="15 15 18 18 21 15">
+        </polyline>
+        <line x1="18" x2="18" y1="18" y2="9">
+        </line>
+       </svg>
+       Sort
+      </button>
+      <input class="search-box" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search..." type="text"/>
+      <button class="export-btn" onclick="exportCSV()">
+       Export CSV
+      </button>
+     </div>
+    </div>
+    <!-- Filter Panel -->
+    <div id="filterPanel" style="display:none; padding:8px 16px; background:#f8f8f8; border-bottom:1px solid #e5e5e5; display:none; align-items:center; gap:8px; flex-wrap:wrap;">
+     <span style="font-size:12px;font-weight:600;color:#666;">
+      Filter:
+     </span>
+     <select id="filterColumn" onchange="applyFilter()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+      <option value="">
+       All columns
+      </option>
+     </select>
+     <select id="filterCondition" onchange="applyFilter()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+      <option value="contains">
+       contains
+      </option>
+      <option value="equals">
+       equals
+      </option>
+      <option value="is_empty">
+       is empty
+      </option>
+      <option value="not_empty">
+       is not empty
+      </option>
+     </select>
+     <input id="filterValue" oninput="applyFilter()" placeholder="value..." style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;width:150px;" type="text"/>
+     <button onclick="clearFilter()" style="font-size:11px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;background:white;cursor:pointer;">
+      Clear
+     </button>
+    </div>
+    <!-- Sort Panel -->
+    <div id="sortPanel" style="display:none; padding:8px 16px; background:#f8f8f8; border-bottom:1px solid #e5e5e5; align-items:center; gap:8px;">
+     <span style="font-size:12px;font-weight:600;color:#666;">
+      Sort by:
+     </span>
+     <select id="sortColumn" onchange="applySortPanel()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+      <option value="">
+       None
+      </option>
+     </select>
+     <select id="sortDirection" onchange="applySortPanel()" style="font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+      <option value="asc">
+       A → Z
+      </option>
+      <option value="desc">
+       Z → A
+      </option>
+     </select>
+     <button onclick="clearSort()" style="font-size:11px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;background:white;cursor:pointer;">
+      Clear
+     </button>
+    </div>
+    <!-- Grid Container -->
+    <div class="grid-container" id="gridContainer">
+     <div class="data-grid" id="dataGrid">
+      <!-- Grid rendered dynamically -->
+     </div>
+    </div>
+   </main>
+  </div>
+  <!-- Create Table Modal -->
+  <div class="modal-overlay hidden" id="createTableModal">
+   <div class="modal">
+    <div class="modal-header">
+     <h3>
+      Create New Table
+     </h3>
+     <button class="modal-close" onclick="hideCreateTableModal()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="form-group">
+      <label class="form-label">
+       Table Name
+      </label>
+      <input class="form-input" id="newTableName" placeholder="e.g., Projects, Contacts" type="text"/>
+     </div>
+     <div class="form-group">
+      <label class="form-label">
+       Columns
+      </label>
+      <div class="column-list" id="columnList">
+       <div class="column-item">
+        <input placeholder="Column name" type="text" value="Name"/>
+        <select onchange="toggleOptionsInput(this)">
+         <option value="text">
+          Text
+         </option>
+         <option value="number">
+          Number
+         </option>
+         <option value="date">
+          Date
+         </option>
+         <option value="boolean">
+          Checkbox
+         </option>
+         <option value="select">
+          Select
+         </option>
+         <option value="url">
+          URL
+         </option>
+         <option value="email">
+          Email
+         </option>
+         <option value="long_text">
+          Long Text
+         </option>
+         <option value="multi_select">
+          Multi-Select
+         </option>
+        </select>
+        <button class="remove-btn" onclick="removeColumn(this)">
+         ×
+        </button>
+       </div>
+      </div>
+      <button class="add-column-btn" onclick="addColumn()">
+       + Add Column
+      </button>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button class="btn-cancel" onclick="hideCreateTableModal()">
+      Cancel
+     </button>
+     <button class="btn-primary" onclick="createTable()">
+      Create Table
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay hidden" id="deleteModal">
+   <div class="modal" style="width: 360px;">
+    <div class="modal-header">
+     <h3>
+      Delete Row
+     </h3>
+     <button class="modal-close" onclick="hideDeleteModal()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body confirm-modal">
+     <p>
+      Are you sure you want to delete this row? This action cannot be undone.
+     </p>
+    </div>
+    <div class="modal-footer">
+     <button class="btn-cancel" onclick="hideDeleteModal()">
+      Cancel
+     </button>
+     <button class="btn-danger" onclick="confirmDelete()">
+      Delete
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Add Column Modal -->
+  <div class="modal-overlay hidden" id="addColumnModal">
+   <div class="modal" style="width: 400px;">
+    <div class="modal-header">
+     <h3>
+      Add Column
+     </h3>
+     <button class="modal-close" onclick="hideAddColumnModal()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="form-group">
+      <label class="form-label">
+       Column Name
+      </label>
+      <input class="form-input" id="addColName" placeholder="e.g., Status, Priority" type="text"/>
+     </div>
+     <div class="form-group">
+      <label class="form-label">
+       Column Type
+      </label>
+      <select class="form-select" id="addColType" onchange="toggleAddColOptionsInput()">
+       <option value="text">
+        Text
+       </option>
+       <option value="number">
+        Number
+       </option>
+       <option value="date">
+        Date
+       </option>
+       <option value="boolean">
+        Checkbox
+       </option>
+       <option value="select">
+        Select
+       </option>
+       <option value="url">
+        URL
+       </option>
+       <option value="email">
+        Email
+       </option>
+       <option value="long_text">
+        Long Text
+       </option>
+       <option value="multi_select">
+        Multi-Select
+       </option>
+      </select>
+     </div>
+     <div class="options-input-group" id="addColOptionsGroup">
+      <label>
+       Options (comma-separated)
+      </label>
+      <input id="addColOptions" placeholder="Option 1, Option 2, Option 3" type="text"/>
+      <small>
+       Enter the available choices for this field
+      </small>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button class="btn-cancel" onclick="hideAddColumnModal()">
+      Cancel
+     </button>
+     <button class="btn-primary" onclick="addColumnToTable()">
+      Add Column
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Context Menu -->
+  <div class="context-menu" id="contextMenu">
+   <div class="context-menu-item" onclick="expandRow()">
+    <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14">
+     <polyline points="15 3 21 3 21 9">
+     </polyline>
+     <polyline points="9 21 3 21 3 15">
+     </polyline>
+     <line x1="21" x2="14" y1="3" y2="10">
+     </line>
+     <line x1="3" x2="10" y1="21" y2="14">
+     </line>
+    </svg>
+    Expand row
+   </div>
+   <div class="context-menu-item danger" onclick="deleteRow()">
+    <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14">
+     <polyline points="3 6 5 6 21 6">
+     </polyline>
+     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2">
+     </path>
+    </svg>
+    Delete row
+   </div>
+  </div>
+  <!-- Toast -->
+  <div class="toast" id="toast">
+  </div>
+  <script src="/semantic_memory/global_nav.js">
+  </script>
+  <script src="/semantic_memory/html/dev_hud_loader.js">
+  </script>
+  <script src="/semantic_memory/global_nav.js">
+  </script>
+  <script src="/semantic_memory/html/dev_hud_loader.js">
+  </script>
+  <script src="/semantic_memory/global_nav.js">
+  </script>
+  <script src="/semantic_memory/html/dev_hud_loader.js">
+  </script>
+  <script src="./sheets.js">
+  </script>
+ </body>
+</html>

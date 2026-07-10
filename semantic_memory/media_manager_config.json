@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "source_file": "media_manager.html",
+    "converted_at": "2026-07-08T08:08:18.598534",
+    "version": "1.0"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "api_endpoints": [
+    "/execute_task",
+    "/execute_task"
+  ],
+  "functions": [
+    "formatSize",
+    "selectTab",
+    "handleFile",
+    "showToast",
+    "renderResults",
+    "getFileIcon",
+    "getFileType",
+    "getConversionAction",
+    "addResult"
+  ]
+}

@@ -1,0 +1,31 @@
+# OrchestrateOS Gershwin - Requirements
+# Core server
+fastapi>=0.104.0
+uvicorn>=0.24.0
+httpx>=0.25.0
+
+# Database
+chromadb>=0.4.0
+
+# API integrations
+openai>=1.0.0
+anthropic>=0.7.0
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+gspread>=5.12.0
+notion-client>=2.0.0
+
+# Email & Calendar
+nylas>=6.0.0
+
+# Media & Content
+python-pptx>=0.6.21
+Pillow>=10.0.0
+requests>=2.31.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+aiofiles>=23.0.0
+python-multipart>=0.0.6

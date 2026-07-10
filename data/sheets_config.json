@@ -1,0 +1,28 @@
+{
+  "tables": {
+    "sheet_gershwin_test_table": {
+      "display_name": "gershwin_test_table",
+      "columns": [
+        {
+          "name": "id",
+          "display_name": "id",
+          "type": "number",
+          "options": []
+        },
+        {
+          "name": "description",
+          "display_name": "description",
+          "type": "text",
+          "options": []
+        },
+        {
+          "name": "revenue",
+          "display_name": "Revenue",
+          "type": "text",
+          "options": []
+        }
+      ],
+      "created_at": "2026-07-07T18:59:52.265431"
+    }
+  }
+}

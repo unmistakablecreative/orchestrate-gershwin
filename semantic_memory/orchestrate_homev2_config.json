@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "version": "2.0",
+    "description": "OrchestrateOS Home Command Center"
+  },
+  "actionIcons": [
+    {
+      "id": "create_doc",
+      "label": "Create Doc",
+      "icon": "doc_icon",
+      "description": "Create a document about anything",
+      "tool": "docs",
+      "action": "create_doc",
+      "inputField": {
+        "placeholder": "Describe what you want to write...",
+        "submitLabel": "Create"
+      }
+    },
+    {
+      "id": "design_slides",
+      "label": "Design Slides",
+      "icon": "slides_icon",
+      "description": "Design a slide deck",
+      "tool": "slide_designer_premium",
+      "action": "create_deck",
+      "inputField": {
+        "placeholder": "What's the deck about?",
+        "submitLabel": "Design"
+      }
+    },
+    {
+      "id": "design_mockup",
+      "label": "Design Mockups",
+      "icon": "mockup_icon",
+      "description": "Generate multiple mockup variations",
+      "tool": "mockup_generator",
+      "action": "stage_mockup_batch",
+      "showVariations": true,
+      "defaultVariations": 3,
+      "inputField": {
+        "placeholder": "Describe the page you want to design...",
+        "submitLabel": "Generate"
+      }
+    },
+    {
+      "id": "assign_task",
+      "label": "Assign Task",
+      "icon": "task_icon",
+      "description": "Queue a task for autonomous execution",
+      "tool": "claude_assistant",
+      "action": "create_task",
+      "inputField": {
+        "placeholder": "What do you want done?",
+        "submitLabel": "Assign"
+      }
+    }
+  ],
+  "customActionsEnabled": true,
+  "progressBar": {
+    "enabled": true,
+    "style": "green_gradient",
+    "position": "bottom"
+  },
+  "outputSection": {
+    "enabled": true,
+    "outputTypes": {
+      "visual": {
+        "render": "card",
+        "showThumbnail": false,
+        "examples": ["docs", "mockups", "slides"]
+      },
+      "navigation": {
+        "render": "card",
+        "showIcon": true,
+        "examples": ["created records", "updated items"]
+      },
+      "silent": {
+        "render": "none",
+        "showInProgressBar": true,
+        "examples": ["JSON updates", "config changes", "system maintenance"]
+      }
+    }
+  },
+  "colors": {
+    "background": "#0D0D0F",
+    "card": "#1A1A1E",
+    "accent": "#7C3AED",
+    "progressBar": "linear-gradient(90deg, #22c55e, #16a34a)"
+  }
+}

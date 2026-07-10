@@ -1,0 +1,158 @@
+{"tool": "json_manager", "action": "__tool__", "script_path": "tools/json_manager.py", "locked": false, "referral_unlock_cost": 0, "description": "Save and manage tasks, notes, ideas, or any structured info."}
+{"tool": "json_manager", "action": "add_json_entry", "script_path": "tools/json_manager.py", "params": ["entry_key", "filename"]}
+{"tool": "json_manager", "action": "create_json_file", "script_path": "tools/json_manager.py", "params": ["filename"]}
+{"tool": "json_manager", "action": "list_json_entries", "script_path": "tools/json_manager.py", "params": ["filename", "max_results", "offset"]}
+{"tool": "json_manager", "action": "read_json_entry", "script_path": "tools/json_manager.py", "params": ["entry_key", "filename"]}
+{"tool": "json_manager", "action": "read_json_file", "script_path": "tools/json_manager.py", "params": ["filename"]}
+{"tool": "json_manager", "action": "update_json_entry", "script_path": "tools/json_manager.py", "params": ["entry_key", "filename"]}
+{"tool": "json_manager", "action": "batch_add_json_entries", "script_path": "tools/json_manager.py", "params": ["entries", "filename"]}
+{"tool": "system_settings", "action": "__tool__", "script_path": "tools/system_settings.py", "locked": false, "referral_unlock_cost": 0, "description": "Manage core config \u2014 tools, memory files, routing, and credentials."}
+{"tool": "system_settings", "action": "set_credential", "script_path": "tools/system_settings.py", "params": ["tool_name", "value"]}
+{"tool": "system_settings", "action": "add_tool", "script_path": "tools/system_settings.py", "params": ["locked", "referral_unlock_cost", "script_path", "tool_name"]}
+{"tool": "system_settings", "action": "remove_tool", "script_path": "tools/system_settings.py", "params": ["tool_name"]}
+{"tool": "system_settings", "action": "add_action", "script_path": "tools/system_settings.py", "params": ["action_name", "description", "parameters", "tool_name"]}
+{"tool": "system_settings", "action": "remove_action", "script_path": "tools/system_settings.py", "params": ["action_name", "tool_name"]}
+{"tool": "system_settings", "action": "list_tools", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "list_supported_actions", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "add_memory_file", "script_path": "tools/system_settings.py", "params": ["path"]}
+{"tool": "system_settings", "action": "remove_memory_file", "script_path": "tools/system_settings.py", "params": ["path"]}
+{"tool": "system_settings", "action": "list_memory_files", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "build_working_memory", "script_path": "tools/system_settings.py"}
+{"tool": "system_settings", "action": "refresh_runtime", "script_path": "tools/system_settings.py"}
+{"tool": "unlock_tool", "action": "__tool__", "script_path": "tools/unlock_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Manually unlock tools using credits or referral triggers."}
+{"tool": "unlock_tool", "action": "unlock_tool", "script_path": "tools/unlock_tool.py", "params": ["tool_name"]}
+{"tool": "unlock_tool", "action": "list_marketplace_tools", "script_path": "tools/unlock_tool.py"}
+{"tool": "unlock_tool", "action": "get_credits_balance", "script_path": "tools/unlock_tool.py"}
+{"tool": "terminal", "action": "__tool__", "script_path": "tools/terminal.py", "locked": false, "referral_unlock_cost": 0, "description": "Run safe shell commands, tail logs, or stream live output."}
+{"tool": "terminal", "action": "check_safe", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "ls", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "run_terminal_command", "script_path": "tools/terminal.py", "params": ["command"]}
+{"tool": "terminal", "action": "script", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "stream", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "tail", "script_path": "tools/terminal.py"}
+{"tool": "terminal", "action": "find_file", "script_path": "tools/terminal.py", "params": ["filename", "filename_fragment", "keyword"]}
+{"tool": "terminal", "action": "read_file", "script_path": "tools/terminal.py", "params": ["filename", "filename_fragment", "path"]}
+{"tool": "terminal", "action": "write_file", "script_path": "tools/terminal.py", "params": ["content", "filename", "path", "text"]}
+{"tool": "terminal", "action": "append_file", "script_path": "tools/terminal.py", "params": ["content", "filename", "path", "text"]}
+{"tool": "terminal", "action": "move_file", "script_path": "tools/terminal.py", "params": ["destination", "from", "source", "to"]}
+{"tool": "check_credits", "action": "__tool__", "script_path": "tools/check_credits.py", "locked": false, "referral_unlock_cost": 0, "description": "View your remaining unlock credits and tools currently unlocked."}
+{"tool": "check_credits", "action": "check_credits", "script_path": "tools/check_credits.py"}
+{"tool": "refer_user", "action": "__tool__", "script_path": "tools/refer_user.py", "locked": false, "referral_unlock_cost": 0, "description": "Generate a referral package to share with others."}
+{"tool": "refer_user", "action": "refer_user", "script_path": "tools/refer_user.py", "params": ["email", "name"]}
+{"tool": "doc_editor", "action": "__tool__", "script_path": "tools/doc_editor.py", "locked": false, "referral_unlock_cost": 0, "description": "Create, search, and link documents with bidirectional links."}
+{"tool": "doc_editor", "action": "create_doc", "script_path": "tools/doc_editor.py", "params": ["title", "content", "collection", "convert_markdown"]}
+{"tool": "doc_editor", "action": "read_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "update_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "find", "replace", "title", "collection"]}
+{"tool": "doc_editor", "action": "delete_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "search_docs", "script_path": "tools/doc_editor.py", "params": ["query", "max_results", "status", "has_field", "collection", "min_words", "max_words"]}
+{"tool": "doc_editor", "action": "list_docs", "script_path": "tools/doc_editor.py", "params": ["collection", "min_words", "max_words"]}
+{"tool": "doc_editor", "action": "link_docs", "script_path": "tools/doc_editor.py", "params": ["source_doc_id", "target_doc_id"]}
+{"tool": "doc_editor", "action": "unlink_docs", "script_path": "tools/doc_editor.py", "params": ["source_doc_id", "target_doc_id"]}
+{"tool": "doc_editor", "action": "read_links", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "read_backlinks", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "doc_editor", "action": "append_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "content", "convert_markdown"]}
+{"tool": "doc_editor", "action": "replace_section", "script_path": "tools/doc_editor.py", "params": ["doc_id", "section_header", "new_content", "convert_markdown"]}
+{"tool": "doc_editor", "action": "retrieve_doc", "script_path": "tools/doc_editor.py", "params": ["title", "collection"]}
+{"tool": "doc_editor", "action": "search_within_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "query"]}
+{"tool": "readwise_tool", "action": "__tool__", "script_path": "tools/readwise_tool.py", "locked": true, "referral_unlock_cost": 5, "description": "Import and explore highlights from your synced Readwise library."}
+{"tool": "readwise_tool", "action": "fetch_books", "script_path": "tools/readwise_tool.py", "params": ["api_key", "page_size"]}
+{"tool": "readwise_tool", "action": "fetch_highlights", "script_path": "tools/readwise_tool.py", "params": ["api_key", "book_title"]}
+{"tool": "buffer_engine", "action": "__tool__", "script_path": "tools/buffer_engine.py", "locked": true, "referral_unlock_cost": 12, "description": "Schedule and auto-publish content to social media platforms."}
+{"tool": "buffer_engine", "action": "buffer_loop", "script_path": "tools/buffer_engine.py"}
+{"tool": "buffer_engine", "action": "post_to_platform", "script_path": "tools/buffer_engine.py", "params": ["content"]}
+{"tool": "github_tool_universal", "action": "__tool__", "script_path": "tools/github_tool_universal.py", "locked": true, "referral_unlock_cost": 15, "description": "Manage repos, commits, and pushes to GitHub from within GPT."}
+{"tool": "github_tool_universal", "action": "init_repo", "script_path": "tools/github_tool_universal.py", "params": ["path"]}
+{"tool": "github_tool_universal", "action": "status", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "clone_repo", "script_path": "tools/github_tool_universal.py", "params": ["url", "path"]}
+{"tool": "github_tool_universal", "action": "set_remote", "script_path": "tools/github_tool_universal.py", "params": ["path", "url"]}
+{"tool": "github_tool_universal", "action": "add_files", "script_path": "tools/github_tool_universal.py", "params": ["path", "files"]}
+{"tool": "github_tool_universal", "action": "commit_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "message"]}
+{"tool": "github_tool_universal", "action": "push_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "branch"]}
+{"tool": "github_tool_universal", "action": "pull_repo", "script_path": "tools/github_tool_universal.py", "params": ["path", "branch"]}
+{"tool": "github_tool_universal", "action": "archive_repo", "script_path": "tools/github_tool_universal.py"}
+{"tool": "github_tool_universal", "action": "list_repos", "script_path": "tools/github_tool_universal.py", "params": ["root"]}
+{"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true, "referral_unlock_cost": 10, "description": "Generate beautiful AI-driven images for documents or social posts."}
+{"tool": "ideogram_tool", "action": "generate_image", "script_path": "tools/ideogram_tool.py", "params": ["input", "options"]}
+{"tool": "claude_assistant", "action": "__tool__", "script_path": "tools/claude_assistant.py", "locked": false, "referral_unlock_cost": 25, "description": "Task queue for Claude Code autonomous execution.", "unlocked": true}
+{"tool": "claude_assistant", "action": "assign_task", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "auto_execute", "batch_id", "campaign_id", "cascade_type", "context", "create_output_doc", "description", "doc_id", "priority", "task_id"]}
+{"tool": "claude_assistant", "action": "check_task_status", "script_path": "tools/claude_assistant.py", "params": ["task_id"]}
+{"tool": "claude_assistant", "action": "process_queue", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "peek"]}
+{"tool": "claude_assistant", "action": "execute_queue", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "parallel"]}
+{"tool": "claude_assistant", "action": "stage_task", "script_path": "tools/claude_assistant.py", "params": ["description", "preset"]}
+{"tool": "claude_assistant", "action": "get_staged_tasks", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "cancel_task", "script_path": "tools/claude_assistant.py", "params": ["remove", "task_id"]}
+{"tool": "claude_assistant", "action": "clear_queue", "script_path": "tools/claude_assistant.py"}
+{"tool": "claude_assistant", "action": "mark_task_in_progress", "script_path": "tools/claude_assistant.py", "params": ["card_title", "task_id"]}
+{"tool": "claude_assistant", "action": "log_task_completion", "script_path": "tools/claude_assistant.py", "params": ["actions_taken", "card_stat", "card_title", "errors", "execution_time_seconds", "output", "output_summary", "status", "task_id"]}
+{"tool": "session_tool", "action": "__tool__", "script_path": "tools/session_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Thread/session state management."}
+{"tool": "spark_file", "action": "__tool__", "script_path": "tools/spark_file.py", "locked": false, "referral_unlock_cost": 0, "description": "Zero-friction idea capture with semantic search."}
+{"tool": "spark_file", "action": "add_entry", "script_path": "tools/spark_file.py", "params": ["content"]}
+{"tool": "spark_file", "action": "search", "script_path": "tools/spark_file.py", "params": ["query", "limit"]}
+{"tool": "spark_file", "action": "recent", "script_path": "tools/spark_file.py", "params": ["limit"]}
+{"tool": "spark_file", "action": "export", "script_path": "tools/spark_file.py", "params": ["format"]}
+{"tool": "todolist", "action": "__tool__", "script_path": "tools/todolist.py", "locked": false, "referral_unlock_cost": 0, "description": "Simple task management with add, complete, delete, list."}
+{"tool": "todolist", "action": "add_task", "script_path": "tools/todolist.py", "params": ["content"]}
+{"tool": "todolist", "action": "complete_task", "script_path": "tools/todolist.py", "params": ["id"]}
+{"tool": "todolist", "action": "delete_task", "script_path": "tools/todolist.py", "params": ["id"]}
+{"tool": "todolist", "action": "list_tasks", "script_path": "tools/todolist.py", "params": ["show_completed"]}
+{"tool": "account", "action": "__tool__", "script_path": "tools/account.py", "locked": false, "referral_unlock_cost": 0, "description": "Manage credits, referrals, and tool unlocking."}
+{"tool": "account", "action": "check", "script_path": "tools/account.py", "params": []}
+{"tool": "account", "action": "refer", "script_path": "tools/account.py", "params": ["name", "email"]}
+{"tool": "account", "action": "unlock", "script_path": "tools/account.py", "params": ["tool_name"]}
+{"tool": "media_manager", "action": "__tool__", "script_path": "tools/media_manager.py", "locked": false, "referral_unlock_cost": 0, "description": "Convert, resize, compress media and images."}
+{"tool": "media_manager", "action": "compress_image", "script_path": "tools/media_manager.py", "params": ["filename"]}
+{"tool": "media_manager", "action": "convert_file", "script_path": "tools/media_manager.py", "params": ["filename", "from_format", "to_format"]}
+{"tool": "media_manager", "action": "convert_media", "script_path": "tools/media_manager.py", "params": ["filename"]}
+{"tool": "media_manager", "action": "download_youtube", "script_path": "tools/media_manager.py", "params": ["url"]}
+{"tool": "media_manager", "action": "remove_background", "script_path": "tools/media_manager.py", "params": ["filename"]}
+{"tool": "media_manager", "action": "resize_image", "script_path": "tools/media_manager.py", "params": ["filename", "width", "height"]}
+{"tool": "json_manager", "action": "search_json_entries", "script_path": "tools/json_manager.py", "params": ["filename", "query", "name"]}
+{"tool": "json_manager", "action": "delete_json_entry", "script_path": "tools/json_manager.py", "params": ["filename", "entry_key"]}
+{"tool": "docs", "action": "__tool__", "script_path": "tools/doc_editor.py", "locked": false, "referral_unlock_cost": 0, "description": "Alias for doc_editor - Create and manage documents."}
+{"tool": "docs", "action": "create_doc", "script_path": "tools/doc_editor.py", "params": ["title", "content", "collection", "convert_markdown"]}
+{"tool": "docs", "action": "read_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "docs", "action": "append_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "content", "convert_markdown"]}
+{"tool": "docs", "action": "update_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id", "find", "replace", "title", "collection"]}
+{"tool": "docs", "action": "search_docs", "script_path": "tools/doc_editor.py", "params": ["query", "max_results", "status", "has_field", "collection", "min_words", "max_words"]}
+{"tool": "docs", "action": "list_docs", "script_path": "tools/doc_editor.py", "params": ["collection", "min_words", "max_words"]}
+{"tool": "docs", "action": "delete_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
+{"tool": "files", "action": "__tool__", "script_path": "tools/files.py", "locked": false, "referral_unlock_cost": 0, "description": "File operations - read, write, list, search, and find files."}
+{"tool": "files", "action": "read_file_text", "script_path": "tools/files.py", "params": ["filename"]}
+{"tool": "files", "action": "write_file", "script_path": "tools/files.py", "params": ["filename", "content"]}
+{"tool": "files", "action": "list_files", "script_path": "tools/files.py", "params": ["directory"]}
+{"tool": "files", "action": "grep_content", "script_path": "tools/files.py", "params": ["pattern", "path", "type"]}
+{"tool": "files", "action": "find_file", "script_path": "tools/files.py", "params": ["filename"]}
+{"tool": "files", "action": "append_file_text", "script_path": "tools/files.py", "params": ["filename", "content"]}
+{"tool": "slide_designer", "action": "__tool__", "script_path": "tools/slide_designer.py", "locked": false, "referral_unlock_cost": 0, "description": "Create presentation decks with slides and themes."}
+{"tool": "slide_designer", "action": "create_deck", "script_path": "tools/slide_designer.py", "params": ["title", "theme"]}
+{"tool": "slide_designer", "action": "update_slide", "script_path": "tools/slide_designer.py", "params": ["deck_id", "slide_id", "content"]}
+{"tool": "slide_designer", "action": "delete_slide", "script_path": "tools/slide_designer.py", "params": ["deck_id", "slide_id"]}
+{"tool": "slide_designer", "action": "list_decks", "script_path": "tools/slide_designer.py", "params": []}
+{"tool": "slide_designer", "action": "get_deck", "script_path": "tools/slide_designer.py", "params": ["deck_id"]}
+{"tool": "slide_designer", "action": "delete_deck", "script_path": "tools/slide_designer.py", "params": ["deck_id"]}
+{"tool": "slide_designer", "action": "export_html", "script_path": "tools/slide_designer.py", "params": ["deck_id"]}
+{"tool": "slide_designer", "action": "export_pdf", "script_path": "tools/slide_designer.py", "params": ["deck_id"]}
+{"tool": "slide_designer", "action": "list_layouts", "script_path": "tools/slide_designer.py", "params": []}
+{"tool": "slide_designer", "action": "list_themes", "script_path": "tools/slide_designer.py", "params": []}
+{"tool": "account", "action": "add_user", "script_path": "tools/account.py", "params": ["user_id", "name", "credits"]}
+{"tool": "account", "action": "list_users", "script_path": "tools/account.py", "params": []}
+{"tool": "account", "action": "grant_credits", "script_path": "tools/account.py", "params": ["user_id", "amount"]}
+{"tool": "account", "action": "delete_user", "script_path": "tools/account.py", "params": ["user_id"]}
+{"tool": "knowledge_vault", "action": "__tool__", "script_path": "tools/knowledge_vault.py", "locked": false, "referral_unlock_cost": 0, "description": "Personal knowledge graph with semantic search."}
+{"tool": "knowledge_vault", "action": "get_stats", "script_path": "tools/knowledge_vault.py", "params": []}
+{"tool": "knowledge_vault", "action": "search_knowledge", "script_path": "tools/knowledge_vault.py", "params": ["query"]}
+{"tool": "slide_designer", "action": "add_slide", "description": "Add a slide to a deck", "parameters": ["deck_id", "layout_type", "content", "index", "theme_override"]}
+{"tool": "sheets_tool", "action": "__tool__", "script_path": "tools/sheets_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Create and manage spreadsheet-like tables"}
+{"tool": "sheets_tool", "action": "create_table", "script_path": "tools/sheets_tool.py", "params": ["table_name", "columns"]}
+{"tool": "sheets_tool", "action": "add_row", "script_path": "tools/sheets_tool.py", "params": ["table_name", "data"]}
+{"tool": "sheets_tool", "action": "update_row", "script_path": "tools/sheets_tool.py", "params": ["table_name", "row_id", "data"]}
+{"tool": "sheets_tool", "action": "delete_row", "script_path": "tools/sheets_tool.py", "params": ["table_name", "row_id"]}
+{"tool": "sheets_tool", "action": "query", "script_path": "tools/sheets_tool.py", "params": ["table_name", "conditions", "limit"]}
+{"tool": "sheets_tool", "action": "list_tables", "script_path": "tools/sheets_tool.py", "params": []}
+{"tool": "sheets_tool", "action": "delete_table", "script_path": "tools/sheets_tool.py", "params": ["table_name"]}
+{"tool": "sheets_tool", "action": "export_csv", "script_path": "tools/sheets_tool.py", "params": ["table_name"]}
+{"tool": "sheets_tool", "action": "add_column", "script_path": "tools/sheets_tool.py", "params": ["table_name", "column_name", "column_type"]}
+{"tool": "sheets_tool", "action": "update_column_name", "script_path": "tools/sheets_tool.py", "params": ["table_name", "old_name", "new_name"]}
+{"tool": "gershwin_tester", "action": "__tool__", "script_path": "tools/gershwin_tester.py", "locked": false, "referral_unlock_cost": 0, "description": "Automated tool validation for Gershwin installer readiness."}
+{"tool": "gershwin_tester", "action": "run_all_tests", "script_path": "tools/gershwin_tester.py", "params": []}
+{"tool": "gershwin_tester", "action": "run_single_test", "script_path": "tools/gershwin_tester.py", "params": ["tool_name", "action", "params", "expected_status"]}

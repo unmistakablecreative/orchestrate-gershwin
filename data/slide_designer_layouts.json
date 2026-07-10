@@ -1,0 +1,2429 @@
+{
+  "version": "1.0",
+  "description": "Slide layout definitions for Slide Designer 3.0 - derived from Beautiful.ai reference decks",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9"
+  },
+  "layouts": [
+    {
+      "id": "title_hero",
+      "name": "Title Hero",
+      "category": "title",
+      "description": "Full-screen title slide with centered headline and optional subtitle",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "headline",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.35,
+            "width": 0.8,
+            "height": 0.2
+          },
+          "style": {
+            "align": "center",
+            "size": "hero"
+          }
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "role": "subtitle",
+          "optional": true,
+          "position": {
+            "x": 0.2,
+            "y": 0.58,
+            "width": 0.6,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "large"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid_or_image",
+        "supports": [
+          "solid",
+          "gradient",
+          "image"
+        ]
+      },
+      "use_case": "Opening slides, section dividers, impact statements",
+      "centered": true
+    },
+    {
+      "id": "title_with_image",
+      "name": "Title with Background Image",
+      "category": "title",
+      "description": "Hero title with full-bleed background image and overlay",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "background_image",
+          "type": "image",
+          "role": "background",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          "style": {
+            "fit": "cover",
+            "overlay": true
+          }
+        },
+        {
+          "id": "headline",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.35,
+            "width": 0.8,
+            "height": 0.2
+          },
+          "style": {
+            "align": "center",
+            "size": "hero",
+            "color": "white"
+          }
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "role": "subtitle",
+          "optional": true,
+          "position": {
+            "x": 0.2,
+            "y": 0.58,
+            "width": 0.6,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "large",
+            "color": "white"
+          }
+        }
+      ],
+      "background": {
+        "type": "image_with_overlay",
+        "overlay_opacity": 0.4
+      },
+      "use_case": "Dramatic opening slides, brand statements"
+    },
+    {
+      "id": "split_content",
+      "name": "Split Content (50/50)",
+      "category": "content",
+      "description": "Two-column layout for text+image or text+text",
+      "grid": {
+        "columns": 2,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "left_title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.05,
+            "y": 0.1,
+            "width": 0.4,
+            "height": 0.1
+          },
+          "style": {
+            "align": "left",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "left_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.05,
+            "y": 0.25,
+            "width": 0.4,
+            "height": 0.55
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "right_content",
+          "type": "image_or_text",
+          "role": "media",
+          "position": {
+            "x": 0.5,
+            "y": 0.05,
+            "width": 0.45,
+            "height": 0.9
+          },
+          "style": {
+            "fit": "contain"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Feature explanation, concept + visual"
+    },
+    {
+      "id": "split_content_reverse",
+      "name": "Split Content Reverse (Image Left)",
+      "category": "content",
+      "description": "Two-column layout with image on left, text on right",
+      "grid": {
+        "columns": 2,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "left_content",
+          "type": "image_or_text",
+          "role": "media",
+          "position": {
+            "x": 0.05,
+            "y": 0.05,
+            "width": 0.45,
+            "height": 0.9
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "right_title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.55,
+            "y": 0.1,
+            "width": 0.4,
+            "height": 0.1
+          },
+          "style": {
+            "align": "left",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "right_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.55,
+            "y": 0.25,
+            "width": 0.4,
+            "height": 0.55
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Feature explanation, visual + concept"
+    },
+    {
+      "id": "three_column",
+      "name": "Three Column Grid",
+      "category": "content",
+      "description": "Three equal columns for features, comparisons, or icon+text blocks",
+      "grid": {
+        "columns": 3,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "header",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.08,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "col1_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.08,
+            "y": 0.22,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "col1_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.05,
+            "y": 0.4,
+            "width": 0.26,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "col1_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.05,
+            "y": 0.5,
+            "width": 0.26,
+            "height": 0.35
+          },
+          "style": {
+            "align": "center",
+            "size": "body"
+          }
+        },
+        {
+          "id": "col2_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.4,
+            "y": 0.22,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "col2_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.37,
+            "y": 0.4,
+            "width": 0.26,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "col2_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.37,
+            "y": 0.5,
+            "width": 0.26,
+            "height": 0.35
+          },
+          "style": {
+            "align": "center",
+            "size": "body"
+          }
+        },
+        {
+          "id": "col3_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.72,
+            "y": 0.22,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "col3_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.69,
+            "y": 0.4,
+            "width": 0.26,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "col3_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.69,
+            "y": 0.5,
+            "width": 0.26,
+            "height": 0.35
+          },
+          "style": {
+            "align": "center",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Feature lists, pricing tiers, service offerings, process steps"
+    },
+    {
+      "id": "four_grid",
+      "name": "Four Grid (2x2)",
+      "category": "content",
+      "description": "2x2 grid for four equal items with icons or images",
+      "grid": {
+        "columns": 2,
+        "rows": 2
+      },
+      "slots": [
+        {
+          "id": "header",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.05,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "cell1_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.12,
+            "y": 0.18,
+            "width": 0.1,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "cell1_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.07,
+            "y": 0.3,
+            "width": 0.36,
+            "height": 0.06
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "cell1_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.07,
+            "y": 0.37,
+            "width": 0.36,
+            "height": 0.12
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "cell2_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.62,
+            "y": 0.18,
+            "width": 0.1,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "cell2_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.57,
+            "y": 0.3,
+            "width": 0.36,
+            "height": 0.06
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "cell2_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.57,
+            "y": 0.37,
+            "width": 0.36,
+            "height": 0.12
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "cell3_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.12,
+            "y": 0.55,
+            "width": 0.1,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "cell3_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.07,
+            "y": 0.67,
+            "width": 0.36,
+            "height": 0.06
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "cell3_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.07,
+            "y": 0.74,
+            "width": 0.36,
+            "height": 0.12
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "cell4_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.62,
+            "y": 0.55,
+            "width": 0.1,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "cell4_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.57,
+            "y": 0.67,
+            "width": 0.36,
+            "height": 0.06
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "cell4_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.57,
+            "y": 0.74,
+            "width": 0.36,
+            "height": 0.12
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Feature grids, capabilities, team members, product benefits"
+    },
+    {
+      "id": "big_number",
+      "name": "Big Number / Statistic",
+      "category": "data",
+      "description": "Large number with supporting context",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "number",
+          "type": "text",
+          "role": "stat",
+          "position": {
+            "x": 0.1,
+            "y": 0.25,
+            "width": 0.8,
+            "height": 0.3
+          },
+          "style": {
+            "align": "center",
+            "size": "stat",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "label",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.15,
+            "y": 0.58,
+            "width": 0.7,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "large"
+          }
+        },
+        {
+          "id": "context",
+          "type": "text",
+          "role": "body",
+          "optional": true,
+          "position": {
+            "x": 0.2,
+            "y": 0.72,
+            "width": 0.6,
+            "height": 0.12
+          },
+          "style": {
+            "align": "center",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient",
+          "image"
+        ]
+      },
+      "use_case": "Key metrics, impact numbers, milestones"
+    },
+    {
+      "id": "stats_row",
+      "name": "Stats Row (3-4 numbers)",
+      "category": "data",
+      "description": "Multiple statistics displayed horizontally",
+      "grid": {
+        "columns": 4,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "header",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.1,
+            "width": 0.8,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "stat1_number",
+          "type": "text",
+          "role": "stat",
+          "position": {
+            "x": 0.05,
+            "y": 0.35,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center",
+            "size": "stat"
+          }
+        },
+        {
+          "id": "stat1_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.05,
+            "y": 0.52,
+            "width": 0.2,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "stat2_number",
+          "type": "text",
+          "role": "stat",
+          "position": {
+            "x": 0.28,
+            "y": 0.35,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center",
+            "size": "stat"
+          }
+        },
+        {
+          "id": "stat2_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.28,
+            "y": 0.52,
+            "width": 0.2,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "stat3_number",
+          "type": "text",
+          "role": "stat",
+          "position": {
+            "x": 0.52,
+            "y": 0.35,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center",
+            "size": "stat"
+          }
+        },
+        {
+          "id": "stat3_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.52,
+            "y": 0.52,
+            "width": 0.2,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "stat4_number",
+          "type": "text",
+          "role": "stat",
+          "optional": true,
+          "position": {
+            "x": 0.75,
+            "y": 0.35,
+            "width": 0.2,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center",
+            "size": "stat"
+          }
+        },
+        {
+          "id": "stat4_label",
+          "type": "text",
+          "role": "label",
+          "optional": true,
+          "position": {
+            "x": 0.75,
+            "y": 0.52,
+            "width": 0.2,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "KPIs, company metrics, performance overview"
+    },
+    {
+      "id": "quote",
+      "name": "Quote / Testimonial",
+      "category": "content",
+      "description": "Large quote with attribution",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "quote_text",
+          "type": "text",
+          "role": "quote",
+          "position": {
+            "x": 0.1,
+            "y": 0.2,
+            "width": 0.8,
+            "height": 0.4
+          },
+          "style": {
+            "align": "center",
+            "size": "quote",
+            "font_style": "italic"
+          }
+        },
+        {
+          "id": "author_image",
+          "type": "image",
+          "role": "avatar",
+          "optional": true,
+          "position": {
+            "x": 0.42,
+            "y": 0.65,
+            "width": 0.08,
+            "height": 0.14
+          },
+          "style": {
+            "shape": "circle"
+          }
+        },
+        {
+          "id": "author_name",
+          "type": "text",
+          "role": "attribution",
+          "position": {
+            "x": 0.2,
+            "y": 0.82,
+            "width": 0.6,
+            "height": 0.06
+          },
+          "style": {
+            "align": "center",
+            "size": "body",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "author_title",
+          "type": "text",
+          "role": "subtitle",
+          "optional": true,
+          "position": {
+            "x": 0.2,
+            "y": 0.88,
+            "width": 0.6,
+            "height": 0.05
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient",
+          "image"
+        ]
+      },
+      "use_case": "Customer testimonials, expert quotes, inspiration"
+    },
+    {
+      "id": "text_only",
+      "name": "Text Only",
+      "category": "content",
+      "description": "Title and body text, no media",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.1,
+            "width": 0.8,
+            "height": 0.12
+          },
+          "style": {
+            "align": "left",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.1,
+            "y": 0.26,
+            "width": 0.8,
+            "height": 0.6
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Explanations, detailed content, bullet points"
+    },
+    {
+      "id": "bullet_list",
+      "name": "Bullet List",
+      "category": "content",
+      "description": "Title with bullet points",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.1,
+            "width": 0.8,
+            "height": 0.1
+          },
+          "style": {
+            "align": "left",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "bullets",
+          "type": "list",
+          "role": "list",
+          "position": {
+            "x": 0.1,
+            "y": 0.25,
+            "width": 0.75,
+            "height": 0.6
+          },
+          "style": {
+            "list_style": "bullet",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Key points, agendas, feature lists"
+    },
+    {
+      "id": "numbered_steps",
+      "name": "Numbered Steps",
+      "category": "process",
+      "description": "Sequential steps with numbers",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.08,
+            "width": 0.8,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "steps",
+          "type": "list",
+          "role": "list",
+          "position": {
+            "x": 0.1,
+            "y": 0.22,
+            "width": 0.8,
+            "height": 0.7
+          },
+          "style": {
+            "list_style": "numbered",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "How-to guides, processes, instructions"
+    },
+    {
+      "id": "timeline_horizontal",
+      "name": "Horizontal Timeline",
+      "category": "process",
+      "description": "Events/milestones on a horizontal timeline",
+      "grid": {
+        "columns": 5,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.08,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "timeline_line",
+          "type": "shape",
+          "role": "decoration",
+          "position": {
+            "x": 0.08,
+            "y": 0.45,
+            "width": 0.84,
+            "height": 0.01
+          },
+          "style": {
+            "shape": "line"
+          }
+        },
+        {
+          "id": "point1_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.05,
+            "y": 0.25,
+            "width": 0.15,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "point1_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.03,
+            "y": 0.55,
+            "width": 0.18,
+            "height": 0.3
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "point2_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.22,
+            "y": 0.25,
+            "width": 0.15,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "point2_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.2,
+            "y": 0.55,
+            "width": 0.18,
+            "height": 0.3
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "point3_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.42,
+            "y": 0.25,
+            "width": 0.15,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "point3_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.4,
+            "y": 0.55,
+            "width": 0.18,
+            "height": 0.3
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "point4_label",
+          "type": "text",
+          "role": "label",
+          "position": {
+            "x": 0.62,
+            "y": 0.25,
+            "width": 0.15,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "point4_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.6,
+            "y": 0.55,
+            "width": 0.18,
+            "height": 0.3
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        },
+        {
+          "id": "point5_label",
+          "type": "text",
+          "role": "label",
+          "optional": true,
+          "position": {
+            "x": 0.82,
+            "y": 0.25,
+            "width": 0.15,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "point5_body",
+          "type": "text",
+          "role": "body",
+          "optional": true,
+          "position": {
+            "x": 0.8,
+            "y": 0.55,
+            "width": 0.18,
+            "height": 0.3
+          },
+          "style": {
+            "align": "center",
+            "size": "small"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Company history, project phases, roadmaps"
+    },
+    {
+      "id": "image_full",
+      "name": "Full Screen Image",
+      "category": "media",
+      "description": "Full-bleed image with optional caption",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "image",
+          "type": "image",
+          "role": "media",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          "style": {
+            "fit": "cover"
+          }
+        },
+        {
+          "id": "caption",
+          "type": "text",
+          "role": "caption",
+          "optional": true,
+          "position": {
+            "x": 0.05,
+            "y": 0.9,
+            "width": 0.9,
+            "height": 0.06
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "color": "white"
+          }
+        }
+      ],
+      "background": {
+        "type": "image",
+        "supports": [
+          "image"
+        ]
+      },
+      "use_case": "Product photos, screenshots, visual breaks"
+    },
+    {
+      "id": "image_gallery",
+      "name": "Image Gallery (3 images)",
+      "category": "media",
+      "description": "Three images in a row",
+      "grid": {
+        "columns": 3,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.05,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "image1",
+          "type": "image",
+          "role": "media",
+          "position": {
+            "x": 0.03,
+            "y": 0.18,
+            "width": 0.3,
+            "height": 0.7
+          },
+          "style": {
+            "fit": "cover",
+            "border_radius": "8px"
+          }
+        },
+        {
+          "id": "image2",
+          "type": "image",
+          "role": "media",
+          "position": {
+            "x": 0.35,
+            "y": 0.18,
+            "width": 0.3,
+            "height": 0.7
+          },
+          "style": {
+            "fit": "cover",
+            "border_radius": "8px"
+          }
+        },
+        {
+          "id": "image3",
+          "type": "image",
+          "role": "media",
+          "position": {
+            "x": 0.67,
+            "y": 0.18,
+            "width": 0.3,
+            "height": 0.7
+          },
+          "style": {
+            "fit": "cover",
+            "border_radius": "8px"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Portfolio, product showcase, before/after"
+    },
+    {
+      "id": "chart_single",
+      "name": "Single Chart",
+      "category": "data",
+      "description": "One chart with title and optional insights",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.05,
+            "y": 0.05,
+            "width": 0.6,
+            "height": 0.08
+          },
+          "style": {
+            "align": "left",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "chart",
+          "type": "chart",
+          "role": "chart",
+          "position": {
+            "x": 0.05,
+            "y": 0.15,
+            "width": 0.6,
+            "height": 0.75
+          },
+          "style": {
+            "chart_types": [
+              "bar",
+              "line",
+              "pie",
+              "donut",
+              "area"
+            ]
+          }
+        },
+        {
+          "id": "insights",
+          "type": "text",
+          "role": "body",
+          "optional": true,
+          "position": {
+            "x": 0.68,
+            "y": 0.2,
+            "width": 0.28,
+            "height": 0.6
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid"
+        ]
+      },
+      "use_case": "Data visualization, metrics, trends"
+    },
+    {
+      "id": "comparison_table",
+      "name": "Comparison Table",
+      "category": "data",
+      "description": "Side-by-side comparison with checkmarks",
+      "grid": {
+        "columns": 3,
+        "rows": "dynamic"
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.05,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "table",
+          "type": "table",
+          "role": "table",
+          "position": {
+            "x": 0.1,
+            "y": 0.18,
+            "width": 0.8,
+            "height": 0.75
+          },
+          "style": {
+            "header_style": "bold",
+            "alternate_rows": true
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid"
+        ]
+      },
+      "use_case": "Feature comparisons, pricing tables, specifications"
+    },
+    {
+      "id": "team_grid",
+      "name": "Team Grid",
+      "category": "people",
+      "description": "Team member photos with names and titles",
+      "grid": {
+        "columns": 4,
+        "rows": 2
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.02,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "member1_photo",
+          "type": "image",
+          "role": "avatar",
+          "position": {
+            "x": 0.06,
+            "y": 0.14,
+            "width": 0.12,
+            "height": 0.21
+          },
+          "style": {
+            "fit": "cover",
+            "shape": "circle"
+          }
+        },
+        {
+          "id": "member1_name",
+          "type": "text",
+          "role": "name",
+          "position": {
+            "x": 0.03,
+            "y": 0.36,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "member1_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.03,
+            "y": 0.4,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "xsmall"
+          }
+        },
+        {
+          "id": "member2_photo",
+          "type": "image",
+          "role": "avatar",
+          "position": {
+            "x": 0.28,
+            "y": 0.14,
+            "width": 0.12,
+            "height": 0.21
+          },
+          "style": {
+            "fit": "cover",
+            "shape": "circle"
+          }
+        },
+        {
+          "id": "member2_name",
+          "type": "text",
+          "role": "name",
+          "position": {
+            "x": 0.25,
+            "y": 0.36,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "member2_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.25,
+            "y": 0.4,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "xsmall"
+          }
+        },
+        {
+          "id": "member3_photo",
+          "type": "image",
+          "role": "avatar",
+          "position": {
+            "x": 0.53,
+            "y": 0.14,
+            "width": 0.12,
+            "height": 0.21
+          },
+          "style": {
+            "fit": "cover",
+            "shape": "circle"
+          }
+        },
+        {
+          "id": "member3_name",
+          "type": "text",
+          "role": "name",
+          "position": {
+            "x": 0.5,
+            "y": 0.36,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "member3_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.5,
+            "y": 0.4,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "xsmall"
+          }
+        },
+        {
+          "id": "member4_photo",
+          "type": "image",
+          "role": "avatar",
+          "position": {
+            "x": 0.78,
+            "y": 0.14,
+            "width": 0.12,
+            "height": 0.21
+          },
+          "style": {
+            "fit": "cover",
+            "shape": "circle"
+          }
+        },
+        {
+          "id": "member4_name",
+          "type": "text",
+          "role": "name",
+          "position": {
+            "x": 0.75,
+            "y": 0.36,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "small",
+            "font_weight": "bold"
+          }
+        },
+        {
+          "id": "member4_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.75,
+            "y": 0.4,
+            "width": 0.18,
+            "height": 0.04
+          },
+          "style": {
+            "align": "center",
+            "size": "xsmall"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Team introductions, about us, organization charts"
+    },
+    {
+      "id": "logo_grid",
+      "name": "Logo Grid",
+      "category": "branding",
+      "description": "Grid of logos (clients, partners, press)",
+      "grid": {
+        "columns": 4,
+        "rows": 2
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.08,
+            "width": 0.8,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "logo1",
+          "type": "image",
+          "role": "logo",
+          "position": {
+            "x": 0.08,
+            "y": 0.28,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo2",
+          "type": "image",
+          "role": "logo",
+          "position": {
+            "x": 0.3,
+            "y": 0.28,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo3",
+          "type": "image",
+          "role": "logo",
+          "position": {
+            "x": 0.52,
+            "y": 0.28,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo4",
+          "type": "image",
+          "role": "logo",
+          "position": {
+            "x": 0.74,
+            "y": 0.28,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo5",
+          "type": "image",
+          "role": "logo",
+          "optional": true,
+          "position": {
+            "x": 0.08,
+            "y": 0.55,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo6",
+          "type": "image",
+          "role": "logo",
+          "optional": true,
+          "position": {
+            "x": 0.3,
+            "y": 0.55,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo7",
+          "type": "image",
+          "role": "logo",
+          "optional": true,
+          "position": {
+            "x": 0.52,
+            "y": 0.55,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        },
+        {
+          "id": "logo8",
+          "type": "image",
+          "role": "logo",
+          "optional": true,
+          "position": {
+            "x": 0.74,
+            "y": 0.55,
+            "width": 0.17,
+            "height": 0.2
+          },
+          "style": {
+            "fit": "contain"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid"
+        ]
+      },
+      "use_case": "Client logos, partner showcase, press mentions"
+    },
+    {
+      "id": "cta_closing",
+      "name": "CTA / Closing",
+      "category": "closing",
+      "description": "Call-to-action with contact info",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "headline",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.25,
+            "width": 0.8,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center",
+            "size": "hero"
+          }
+        },
+        {
+          "id": "subtext",
+          "type": "text",
+          "role": "body",
+          "optional": true,
+          "position": {
+            "x": 0.15,
+            "y": 0.45,
+            "width": 0.7,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "large"
+          }
+        },
+        {
+          "id": "cta_button",
+          "type": "button",
+          "role": "cta",
+          "optional": true,
+          "position": {
+            "x": 0.35,
+            "y": 0.6,
+            "width": 0.3,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "style": "primary"
+          }
+        },
+        {
+          "id": "contact_info",
+          "type": "text",
+          "role": "contact",
+          "optional": true,
+          "position": {
+            "x": 0.2,
+            "y": 0.75,
+            "width": 0.6,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid_or_image",
+        "supports": [
+          "solid",
+          "gradient",
+          "image"
+        ]
+      },
+      "use_case": "Final slide, contact info, next steps"
+    },
+    {
+      "id": "section_divider",
+      "name": "Section Divider",
+      "category": "title",
+      "description": "Simple section header",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "section_number",
+          "type": "text",
+          "role": "label",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.35,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "large",
+            "opacity": 0.6
+          }
+        },
+        {
+          "id": "section_title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.45,
+            "width": 0.8,
+            "height": 0.15
+          },
+          "style": {
+            "align": "center",
+            "size": "hero"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient",
+          "image"
+        ]
+      },
+      "use_case": "Section breaks, chapter headers"
+    },
+    {
+      "id": "agenda",
+      "name": "Agenda",
+      "category": "navigation",
+      "description": "Presentation agenda/outline",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "position": {
+            "x": 0.1,
+            "y": 0.1,
+            "width": 0.8,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "agenda_items",
+          "type": "list",
+          "role": "list",
+          "position": {
+            "x": 0.15,
+            "y": 0.28,
+            "width": 0.7,
+            "height": 0.6
+          },
+          "style": {
+            "list_style": "numbered",
+            "size": "large",
+            "spacing": "loose"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Table of contents, meeting agenda"
+    },
+    {
+      "id": "icon_list",
+      "name": "Icon List",
+      "category": "content",
+      "description": "Vertical list with icons",
+      "grid": {
+        "columns": 1,
+        "rows": "dynamic"
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.08,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "left",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "item1_icon",
+          "type": "icon",
+          "role": "icon",
+          "position": {
+            "x": 0.1,
+            "y": 0.22,
+            "width": 0.06,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "item1_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.18,
+            "y": 0.22,
+            "width": 0.7,
+            "height": 0.04
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "item1_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.18,
+            "y": 0.27,
+            "width": 0.7,
+            "height": 0.08
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "item2_icon",
+          "type": "icon",
+          "role": "icon",
+          "position": {
+            "x": 0.1,
+            "y": 0.4,
+            "width": 0.06,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "item2_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.18,
+            "y": 0.4,
+            "width": 0.7,
+            "height": 0.04
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "item2_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.18,
+            "y": 0.45,
+            "width": 0.7,
+            "height": 0.08
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "item3_icon",
+          "type": "icon",
+          "role": "icon",
+          "position": {
+            "x": 0.1,
+            "y": 0.58,
+            "width": 0.06,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "item3_title",
+          "type": "text",
+          "role": "subtitle",
+          "position": {
+            "x": 0.18,
+            "y": 0.58,
+            "width": 0.7,
+            "height": 0.04
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "item3_body",
+          "type": "text",
+          "role": "body",
+          "position": {
+            "x": 0.18,
+            "y": 0.63,
+            "width": 0.7,
+            "height": 0.08
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        },
+        {
+          "id": "item4_icon",
+          "type": "icon",
+          "role": "icon",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.76,
+            "width": 0.06,
+            "height": 0.1
+          },
+          "style": {
+            "align": "center"
+          }
+        },
+        {
+          "id": "item4_title",
+          "type": "text",
+          "role": "subtitle",
+          "optional": true,
+          "position": {
+            "x": 0.18,
+            "y": 0.76,
+            "width": 0.7,
+            "height": 0.04
+          },
+          "style": {
+            "align": "left",
+            "size": "subheading"
+          }
+        },
+        {
+          "id": "item4_body",
+          "type": "text",
+          "role": "body",
+          "optional": true,
+          "position": {
+            "x": 0.18,
+            "y": 0.81,
+            "width": 0.7,
+            "height": 0.08
+          },
+          "style": {
+            "align": "left",
+            "size": "body"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid",
+          "gradient"
+        ]
+      },
+      "use_case": "Feature benefits, service offerings, capabilities"
+    },
+    {
+      "id": "video_embed",
+      "name": "Video Embed",
+      "category": "media",
+      "description": "Embedded video with title",
+      "grid": {
+        "columns": 1,
+        "rows": 1
+      },
+      "slots": [
+        {
+          "id": "title",
+          "type": "text",
+          "role": "title",
+          "optional": true,
+          "position": {
+            "x": 0.1,
+            "y": 0.05,
+            "width": 0.8,
+            "height": 0.08
+          },
+          "style": {
+            "align": "center",
+            "size": "heading"
+          }
+        },
+        {
+          "id": "video",
+          "type": "video",
+          "role": "media",
+          "position": {
+            "x": 0.1,
+            "y": 0.18,
+            "width": 0.8,
+            "height": 0.72
+          },
+          "style": {
+            "fit": "contain"
+          }
+        }
+      ],
+      "background": {
+        "type": "solid",
+        "supports": [
+          "solid"
+        ]
+      },
+      "use_case": "Demo videos, explainer content, testimonials"
+    }
+  ],
+  "categories": {
+    "title": "Title & hero slides for opening/sections",
+    "content": "Text-heavy slides for explanations",
+    "data": "Charts, stats, and data visualization",
+    "media": "Images, galleries, and video",
+    "process": "Timelines, steps, and workflows",
+    "people": "Team and individual profiles",
+    "branding": "Logos and brand elements",
+    "closing": "CTA and closing slides",
+    "navigation": "Agenda and section navigation"
+  },
+  "slot_types": {
+    "text": "Text content (title, body, quote, etc)",
+    "image": "Image or photo",
+    "icon": "SVG icon from icon library",
+    "chart": "Data visualization",
+    "table": "Tabular data",
+    "list": "Bulleted or numbered list",
+    "video": "Embedded video",
+    "button": "CTA button",
+    "shape": "Decorative shape"
+  },
+  "slot_roles": {
+    "title": "Main heading",
+    "subtitle": "Secondary heading",
+    "body": "Body text content",
+    "stat": "Large statistic/number",
+    "quote": "Quotation text",
+    "attribution": "Quote source",
+    "label": "Small label text",
+    "caption": "Image caption",
+    "media": "Primary media content",
+    "background": "Full-slide background",
+    "avatar": "Person photo (circular)",
+    "logo": "Company/brand logo",
+    "icon": "Decorative icon",
+    "chart": "Data chart",
+    "table": "Data table",
+    "list": "List items",
+    "cta": "Call-to-action button",
+    "contact": "Contact information",
+    "name": "Person name",
+    "decoration": "Visual decoration"
+  }
+}

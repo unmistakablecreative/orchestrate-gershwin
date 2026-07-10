@@ -1,0 +1,413 @@
+{
+  "entries": {
+    "json_manager.create_json_file": {
+      "tool": "json_manager",
+      "action": "create_json_file",
+      "aliases": [
+        "create a new file",
+        "make a json file",
+        "start a new list",
+        "initialize a document"
+      ],
+      "display_name": "\ud83d\udcc4 Create JSON File",
+      "locked": false
+    },
+    "json_manager.add_json_entry": {
+      "tool": "json_manager",
+      "action": "add_json_entry",
+      "aliases": [
+        "add an entry",
+        "save this note",
+        "log this",
+        "add to the list",
+        "record this"
+      ],
+      "display_name": "\u2795 Add Entry",
+      "locked": false
+    },
+    "json_manager.read_json_file": {
+      "tool": "json_manager",
+      "action": "read_json_file",
+      "aliases": [
+        "show me the file",
+        "read the list",
+        "what's in the file",
+        "display entries"
+      ],
+      "display_name": "\ud83d\udcd6 Read File",
+      "locked": false
+    },
+    "json_manager.read_json_entry": {
+      "tool": "json_manager",
+      "action": "read_json_entry",
+      "aliases": [
+        "show me that entry",
+        "get the details",
+        "look up this item"
+      ],
+      "display_name": "\ud83d\udd0d Read Entry",
+      "locked": false
+    },
+    "json_manager.update_json_entry": {
+      "tool": "json_manager",
+      "action": "update_json_entry",
+      "aliases": [
+        "update this entry",
+        "change the status",
+        "modify this item",
+        "edit the record"
+      ],
+      "display_name": "\u270f\ufe0f Update Entry",
+      "locked": false
+    },
+    "json_manager.list_json_entries": {
+      "tool": "json_manager",
+      "action": "list_json_entries",
+      "aliases": [
+        "list all entries",
+        "show me everything",
+        "what entries exist"
+      ],
+      "display_name": "\ud83d\udccb List Entries",
+      "locked": false
+    },
+    "json_manager.batch_add_json_entries": {
+      "tool": "json_manager",
+      "action": "batch_add_json_entries",
+      "aliases": [
+        "add multiple entries",
+        "bulk import",
+        "add several items at once"
+      ],
+      "display_name": "\ud83d\udce5 Batch Add",
+      "locked": false
+    },
+    "system_settings.list_tools": {
+      "tool": "system_settings",
+      "action": "list_tools",
+      "aliases": [
+        "what tools do I have",
+        "show my tools",
+        "list available tools",
+        "what can you do"
+      ],
+      "display_name": "\ud83d\udd27 List Tools",
+      "locked": false
+    },
+    "system_settings.set_credential": {
+      "tool": "system_settings",
+      "action": "set_credential",
+      "aliases": [
+        "set my api key",
+        "add credentials",
+        "configure api access",
+        "save my token"
+      ],
+      "display_name": "\ud83d\udd11 Set Credential",
+      "locked": false
+    },
+    "system_settings.add_memory_file": {
+      "tool": "system_settings",
+      "action": "add_memory_file",
+      "aliases": [
+        "remember this file",
+        "add to context",
+        "include this in memory"
+      ],
+      "display_name": "\ud83e\udde0 Add Memory File",
+      "locked": false
+    },
+    "system_settings.list_memory_files": {
+      "tool": "system_settings",
+      "action": "list_memory_files",
+      "aliases": [
+        "what files are in memory",
+        "show context files",
+        "list memory"
+      ],
+      "display_name": "\ud83d\udcda List Memory Files",
+      "locked": false
+    },
+    "unlock_tool.unlock_tool": {
+      "tool": "unlock_tool",
+      "action": "unlock_tool",
+      "aliases": [
+        "unlock this tool",
+        "enable this feature",
+        "activate tool"
+      ],
+      "display_name": "\ud83d\udd13 Unlock Tool",
+      "locked": false
+    },
+    "unlock_tool.list_marketplace_tools": {
+      "tool": "unlock_tool",
+      "action": "list_marketplace_tools",
+      "aliases": [
+        "what tools can I unlock",
+        "show marketplace",
+        "available tools to unlock"
+      ],
+      "display_name": "\ud83d\uded2 Marketplace",
+      "locked": false
+    },
+    "unlock_tool.get_credits_balance": {
+      "tool": "unlock_tool",
+      "action": "get_credits_balance",
+      "aliases": [
+        "how many credits do I have",
+        "check my balance",
+        "show credits"
+      ],
+      "display_name": "\ud83d\udcb0 Check Credits",
+      "locked": false
+    },
+    "check_credits.check_credits": {
+      "tool": "check_credits",
+      "action": "check_credits",
+      "aliases": [
+        "check credits",
+        "my credit balance",
+        "how many unlocks left"
+      ],
+      "display_name": "\ud83d\udcb3 Credits Balance",
+      "locked": false
+    },
+    "refer_user.refer_user": {
+      "tool": "refer_user",
+      "action": "refer_user",
+      "aliases": [
+        "refer a friend",
+        "invite someone",
+        "share referral",
+        "get referral link"
+      ],
+      "display_name": "\ud83d\udc65 Refer User",
+      "locked": false
+    },
+    "file_ops_tool.read_file": {
+      "tool": "file_ops_tool",
+      "action": "read_file",
+      "aliases": [
+        "read this file",
+        "open the document",
+        "show file contents"
+      ],
+      "display_name": "\ud83d\udcd6 Read File",
+      "locked": false
+    },
+    "file_ops_tool.find_file": {
+      "tool": "file_ops_tool",
+      "action": "find_file",
+      "aliases": [
+        "find a file",
+        "search for file",
+        "locate document"
+      ],
+      "display_name": "\ud83d\udd0e Find File",
+      "locked": false
+    },
+    "file_ops_tool.extract_pdf": {
+      "tool": "file_ops_tool",
+      "action": "extract_pdf",
+      "aliases": [
+        "read this pdf",
+        "extract pdf text",
+        "parse pdf"
+      ],
+      "display_name": "\ud83d\udcd1 Extract PDF",
+      "locked": false
+    },
+    "file_ops_tool.extract_csv": {
+      "tool": "file_ops_tool",
+      "action": "extract_csv",
+      "aliases": [
+        "read this csv",
+        "parse spreadsheet",
+        "extract csv data"
+      ],
+      "display_name": "\ud83d\udcca Extract CSV",
+      "locked": false
+    },
+    "mem_tool.create_note": {
+      "tool": "mem_tool",
+      "action": "create_note",
+      "aliases": [
+        "save this to mem",
+        "create a note",
+        "remember this insight"
+      ],
+      "display_name": "\ud83e\udde0 Create Note",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "mem_tool.mem_it": {
+      "tool": "mem_tool",
+      "action": "mem_it",
+      "aliases": [
+        "mem this",
+        "process and save",
+        "capture this thought"
+      ],
+      "display_name": "\ud83d\udcad Mem It",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "readwise_tool.fetch_books": {
+      "tool": "readwise_tool",
+      "action": "fetch_books",
+      "aliases": [
+        "show my books",
+        "list readwise books",
+        "what have I read"
+      ],
+      "display_name": "\ud83d\udcda Fetch Books",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "readwise_tool.fetch_highlights": {
+      "tool": "readwise_tool",
+      "action": "fetch_highlights",
+      "aliases": [
+        "show highlights",
+        "get book highlights",
+        "my reading notes"
+      ],
+      "display_name": "\u2728 Fetch Highlights",
+      "locked": true,
+      "unlock_cost": 5
+    },
+    "buffer_engine.post_to_platform": {
+      "tool": "buffer_engine",
+      "action": "post_to_platform",
+      "aliases": [
+        "post to social media",
+        "share this online",
+        "publish to twitter"
+      ],
+      "display_name": "\ud83d\udce4 Post to Social",
+      "locked": true,
+      "unlock_cost": 7
+    },
+    "buffer_engine.buffer_loop": {
+      "tool": "buffer_engine",
+      "action": "buffer_loop",
+      "aliases": [
+        "run social scheduler",
+        "process post queue",
+        "publish scheduled posts"
+      ],
+      "display_name": "\ud83d\udd04 Buffer Loop",
+      "locked": true,
+      "unlock_cost": 7
+    },
+    "ideogram_tool.generate_image": {
+      "tool": "ideogram_tool",
+      "action": "generate_image",
+      "aliases": [
+        "generate an image",
+        "create art",
+        "make a picture",
+        "design graphics"
+      ],
+      "display_name": "\ud83c\udfa8 Generate Image",
+      "locked": true,
+      "unlock_cost": 7
+    },
+    "github_tool_universal.status": {
+      "tool": "github_tool_universal",
+      "action": "status",
+      "aliases": [
+        "check git status",
+        "repo status",
+        "what changed in repo"
+      ],
+      "display_name": "\ud83d\udcca Git Status",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.commit_repo": {
+      "tool": "github_tool_universal",
+      "action": "commit_repo",
+      "aliases": [
+        "commit changes",
+        "save to git",
+        "commit my code"
+      ],
+      "display_name": "\ud83d\udcbe Git Commit",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.push_repo": {
+      "tool": "github_tool_universal",
+      "action": "push_repo",
+      "aliases": [
+        "push to github",
+        "upload changes",
+        "sync to remote"
+      ],
+      "display_name": "\u2b06\ufe0f Git Push",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.pull_repo": {
+      "tool": "github_tool_universal",
+      "action": "pull_repo",
+      "aliases": [
+        "pull from github",
+        "get latest changes",
+        "sync from remote"
+      ],
+      "display_name": "\u2b07\ufe0f Git Pull",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "github_tool_universal.list_repos": {
+      "tool": "github_tool_universal",
+      "action": "list_repos",
+      "aliases": [
+        "list my repos",
+        "show github repos",
+        "what repos do I have"
+      ],
+      "display_name": "\ud83d\udcc1 List Repos",
+      "locked": true,
+      "unlock_cost": 8
+    },
+    "terminal.run_terminal_command": {
+      "tool": "terminal",
+      "action": "run_terminal_command",
+      "aliases": [
+        "run command",
+        "execute in terminal",
+        "run shell command"
+      ],
+      "display_name": "\ud83d\udcbb Run Command",
+      "locked": true,
+      "unlock_cost": 10
+    },
+    "terminal.ls": {
+      "tool": "terminal",
+      "action": "ls",
+      "aliases": [
+        "list directory",
+        "show folder contents",
+        "what files are here"
+      ],
+      "display_name": "\ud83d\udcc2 List Directory",
+      "locked": true,
+      "unlock_cost": 10
+    },
+    "terminal.tail": {
+      "tool": "terminal",
+      "action": "tail",
+      "aliases": [
+        "show recent logs",
+        "tail the file",
+        "last lines of file"
+      ],
+      "display_name": "\ud83d\udcdc Tail Log",
+      "locked": true,
+      "unlock_cost": 10
+    }
+  }
+}

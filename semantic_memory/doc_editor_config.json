@@ -1,0 +1,143 @@
+{
+  "db_path": "data/docs.db",
+  "whoosh_index_dir": "data/whoosh_index",
+  "index_mtime_marker": ".last_build_mtime",
+  "lintable_collections": [
+    "newsletter",
+    "newsletters",
+    "blog",
+    "blogs",
+    "inbox"
+  ],
+  "keyboardShortcuts": {
+    "CmdShift1": "formatH1",
+    "CmdShift2": "formatH2",
+    "CmdShift3": "formatH3",
+    "CmdShiftX": "formatStrikethrough",
+    "CmdShiftU": "formatUL",
+    "CmdShiftO": "formatOL",
+    "CmdShiftQ": "formatQuote",
+    "CmdShiftK": "insertCodeBlock"
+  },
+  "slashMenuItems": [
+    {
+      "cmd": "respond",
+      "alias": null,
+      "label": "Ask Claude AI",
+      "icon": "AI",
+      "action": "respondToDoc"
+    },
+    {
+      "cmd": "viral",
+      "alias": null,
+      "label": "Virality Analysis",
+      "icon": "\ud83d\udd25",
+      "action": "runViralityAnalysis"
+    },
+    {
+      "cmd": "linkedin-posts",
+      "alias": "linkedin",
+      "label": "LinkedIn Posts",
+      "icon": "\ud83d\udcbc",
+      "action": "generateLinkedinPosts"
+    },
+    {
+      "cmd": "twitter-knowledge",
+      "alias": "twitter",
+      "label": "Twitter Knowledge",
+      "icon": "\ud83d\udcda",
+      "action": "generateTwitterKnowledge"
+    },
+    {
+      "cmd": "approve-social",
+      "alias": "approve",
+      "label": "Approve & Load Social",
+      "icon": "\u2705",
+      "action": "approveSocial"
+    },
+    {
+      "cmd": "fact-check",
+      "alias": "verify",
+      "label": "Fact Check",
+      "icon": "\ud83d\udd0d",
+      "action": "factCheck"
+    },
+    {
+      "cmd": "heading",
+      "alias": "h1",
+      "label": "Heading 1",
+      "icon": "H1",
+      "action": "formatH1"
+    },
+    {
+      "cmd": "h2",
+      "alias": null,
+      "label": "Heading 2",
+      "icon": "H2",
+      "action": "formatH2"
+    },
+    {
+      "cmd": "h3",
+      "alias": null,
+      "label": "Heading 3",
+      "icon": "H3",
+      "action": "formatH3"
+    },
+    {
+      "cmd": "text",
+      "alias": "p",
+      "label": "Normal Text",
+      "icon": "P",
+      "action": "formatP"
+    },
+    {
+      "cmd": "code",
+      "alias": null,
+      "label": "Code Block",
+      "icon": "{}",
+      "action": "insertCodeBlock"
+    },
+    {
+      "cmd": "table",
+      "alias": null,
+      "label": "Table (3x3)",
+      "icon": "[]",
+      "action": "insertTable"
+    },
+    {
+      "cmd": "bullet",
+      "alias": "list",
+      "label": "Bullet List",
+      "icon": "*",
+      "action": "formatUL"
+    },
+    {
+      "cmd": "numbered",
+      "alias": null,
+      "label": "Numbered List",
+      "icon": "1.",
+      "action": "formatOL"
+    },
+    {
+      "cmd": "quote",
+      "alias": null,
+      "label": "Block Quote",
+      "icon": "\"",
+      "action": "formatQuote"
+    },
+    {
+      "cmd": "divider",
+      "alias": "hr",
+      "label": "Horizontal Rule",
+      "icon": "-",
+      "action": "formatHR"
+    },
+    {
+      "cmd": "consolidate",
+      "alias": "cleanup",
+      "label": "Consolidate & Clean",
+      "icon": "\ud83e\uddf9",
+      "action": "consolidateDoc"
+    }
+  ]
+}

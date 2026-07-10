@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "source_file": "spark_file.html",
+    "converted_at": "2026-07-08T08:08:18.641587",
+    "version": "1.0"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "functions": [
+    "showTab",
+    "escapeHtml",
+    "clearSearch",
+    "showToast"
+  ]
+}

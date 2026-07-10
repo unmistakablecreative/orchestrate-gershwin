@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrchestrateOS App Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --bg-card: #1e1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.6);
+            --text-muted: #86868b;
+            --accent: #0a84ff;
+            --accent-hover: #409cff;
+            --green: #30d158;
+            --orange: #ff9f0a;
+            --purple: #bf5af2;
+            --red: #ff453a;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .header-left h1 {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #00d9ff 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 17px;
+        }
+
+        .credits-badge {
+            background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px 24px;
+            text-align: right;
+        }
+
+        .credits-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .credits-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-pill {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Category Filters */
+        .categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover {
+            border-color: rgba(255,255,255,0.3);
+            color: var(--text-primary);
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: linear-gradient(145deg, rgba(30,26,46,0.9) 0%, rgba(20,18,35,0.9) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--card-radius);
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tool-card:hover {
+            border-color: rgba(10,132,255,0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .tool-card.locked {
+            opacity: 0.6;
+        }
+
+        .tool-card.locked:hover {
+            opacity: 0.85;
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .tool-icon.blue { background: rgba(10,132,255,0.2); }
+        .tool-icon.purple { background: rgba(191,90,242,0.2); }
+        .tool-icon.green { background: rgba(48,209,88,0.2); }
+        .tool-icon.orange { background: rgba(255,159,10,0.2); }
+        .tool-icon.red { background: rgba(255,69,58,0.2); }
+
+        .tool-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .tool-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-badge.unlocked {
+            background: rgba(48,209,88,0.15);
+            color: var(--green);
+        }
+
+        .tool-badge.locked {
+            background: rgba(255,69,58,0.15);
+            color: var(--red);
+        }
+
+        .tool-badge.free {
+            background: rgba(10,132,255,0.15);
+            color: var(--accent);
+        }
+
+        .tool-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            min-height: 42px;
+        }
+
+        .tool-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .tool-cost {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .tool-cost.free { color: var(--green); }
+        .tool-cost.paid { color: var(--orange); }
+
+        .tool-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-primary:disabled {
+            background: #3a3a3c;
+            color: #636366;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.12);
+            color: var(--text-primary);
+        }
+
+        .btn-success {
+            background: rgba(48,209,88,0.15);
+            color: var(--green);
+            border: 1px solid rgba(48,209,88,0.3);
+        }
+
+        .btn-refer {
+            background: rgba(191,90,242,0.15);
+            color: var(--purple);
+            border: 1px solid rgba(191,90,242,0.3);
+        }
+
+        .btn-refer:hover {
+            background: rgba(191,90,242,0.25);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .modal h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            margin-bottom: 12px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .modal input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .modal input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .modal-btn.primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-color: var(--green); }
+        .toast.error { border-color: var(--red); }
+
+        /* Refresh Button */
+        .refresh-btn {
+            position: fixed;
+            bottom: 32px;
+            left: 32px;
+            background: rgba(10,132,255,0.1);
+            border: 1px solid rgba(10,132,255,0.3);
+            color: var(--accent);
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(10,132,255,0.2);
+        }
+
+        /* Search */
+        .search-bar {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            flex: 1;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>OrchestrateOS App Store</h1>
+                <p>Unlock powerful tools with referral credits</p>
+            </div>
+            <div class="credits-badge">
+                <div class="credits-label">Available Credits</div>
+                <div class="credits-value" id="creditsValue">-</div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-pill">
+                <span class="stat-icon">📦</span>
+                <div class="stat-info">
+                    <span class="stat-value" id="totalTools">-</span>
+                    <span class="stat-label">Total Apps</span>
+                </div>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-icon">🔓</span>
+                <div class="stat-info">
+                    <span class="stat-value" id="unlockedTools">-</span>
+                    <span class="stat-label">Unlocked</span>
+                </div>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-icon">🔒</span>
+                <div class="stat-info">
+                    <span class="stat-value" id="lockedTools">-</span>
+                    <span class="stat-label">Locked</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search apps..." oninput="filterTools()">
+        </div>
+
+        <div class="categories">
+            <button class="category-btn active" onclick="filterCategory('all')">All Apps</button>
+            <button class="category-btn" onclick="filterCategory('productivity')">Productivity</button>
+            <button class="category-btn" onclick="filterCategory('ai')">AI & Automation</button>
+            <button class="category-btn" onclick="filterCategory('integration')">Integrations</button>
+            <button class="category-btn" onclick="filterCategory('content')">Content</button>
+        </div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading apps...</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+
+    <!-- Unlock Modal -->
+    <div class="modal-overlay" id="unlockModal">
+        <div class="modal">
+            <h3>Unlock <span id="unlockToolName"></span></h3>
+            <p>This will cost <span id="unlockCost" style="color:var(--orange);font-weight:700;"></span> credits from your balance.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal('unlockModal')">Cancel</button>
+                <button class="modal-btn primary" onclick="confirmUnlock()">Unlock App</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credentials Modal -->
+    <div class="modal-overlay" id="credentialsModal">
+        <div class="modal">
+            <h3>Configure <span id="credToolName"></span></h3>
+            <p>Enter your API credentials to activate this app</p>
+            <div id="credentialFields"></div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal('credentialsModal')">Cancel</button>
+                <button class="modal-btn primary" onclick="saveCredentials()">Save Credentials</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Modal -->
+    <div class="modal-overlay" id="referralModal">
+        <div class="modal">
+            <h3>Refer a Friend</h3>
+            <p>Earn 3 credits for each successful referral. Share the power of OrchestrateOS!</p>
+            <input type="text" id="referralName" placeholder="Friend's name">
+            <input type="email" id="referralEmail" placeholder="Friend's email">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal('referralModal')">Cancel</button>
+                <button class="modal-btn primary" onclick="submitReferral()">Send Invite</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let tools = [];
+        let userCredits = 0;
+        let pendingUnlock = null;
+        let pendingCredTool = null;
+        let currentCategory = 'all';
+
+        const API = window.location.origin;
+
+        // Icon mapping by category/type
+        const iconMap = {
+            'ai': '🤖',
+            'email': '📧',
+            'calendar': '📅',
+            'docs': '📄',
+            'analytics': '📊',
+            'social': '📱',
+            'automation': '⚡',
+            'integration': '🔗',
+            'content': '✍️',
+            'storage': '💾',
+            'search': '🔍',
+            'media': '🎬',
+            'default': '🔧'
+        };
+
+        // Color classes for variety
+        const colorClasses = ['blue', 'purple', 'green', 'orange', 'red'];
+
+        // Category mapping
+        const categoryMap = {
+            'claude_assistant': 'ai',
+            'ai_writer': 'ai',
+            'automation_engine': 'ai',
+            'nylas_inbox': 'integration',
+            'google_calendar': 'integration',
+            'google_ads': 'integration',
+            'hubspot': 'integration',
+            'notion': 'integration',
+            'stripe': 'integration',
+            'slack': 'integration',
+            'docs': 'content',
+            'doc_editor': 'content',
+            'newsletter_tool': 'content',
+            'blog': 'content',
+            'articles': 'content',
+            'podcast': 'content',
+            'files': 'productivity',
+            'tasks': 'productivity',
+            'codebase_index': 'productivity',
+            'system_settings': 'productivity'
+        };
+
+        document.addEventListener('DOMContentLoaded', loadData);
+
+        async function loadData() {
+            await Promise.all([loadToolCatalog(), loadCredits()]);
+            renderTools();
+        }
+
+        async function loadToolCatalog() {
+            try {
+                const res = await fetch(`${API}/get_tool_catalog`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    tools = data.tools;
+                    document.getElementById('totalTools').textContent = data.total;
+                    document.getElementById('unlockedTools').textContent = data.unlocked_count;
+                    document.getElementById('lockedTools').textContent = data.total - data.unlocked_count;
+                }
+            } catch (e) {
+                console.error('Failed to load catalog:', e);
+                showToast('Failed to load apps', 'error');
+            }
+        }
+
+        async function loadCredits() {
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({tool_name: 'check_credits', action: 'check_credits', params: {}})
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    userCredits = data.credits || 0;
+                    document.getElementById('creditsValue').textContent = userCredits;
+                }
+            } catch (e) {
+                console.error('Failed to load credits:', e);
+            }
+        }
+
+        function getIcon(toolName) {
+            const cat = categoryMap[toolName] || 'default';
+            return iconMap[cat] || iconMap.default;
+        }
+
+        function getCategory(toolName) {
+            return categoryMap[toolName] || 'productivity';
+        }
+
+        function filterTools() {
+            renderTools();
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(cat) || (cat === 'all' && btn.textContent === 'All Apps')) {
+                    btn.classList.add('active');
+                }
+            });
+            renderTools();
+        }
+
+        function renderTools() {
+            const grid = document.getElementById('toolsGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            // Filter out internal tools
+            const hiddenTools = ['unlock_tool', 'system_control', 'check_credits', 'refer_user'];
+            let visible = tools.filter(t => !hiddenTools.includes(t.name));
+
+            // Search filter
+            if (search) {
+                visible = visible.filter(t =>
+                    t.label.toLowerCase().includes(search) ||
+                    t.description.toLowerCase().includes(search) ||
+                    t.name.toLowerCase().includes(search)
+                );
+            }
+
+            // Category filter
+            if (currentCategory !== 'all') {
+                visible = visible.filter(t => getCategory(t.name) === currentCategory);
+            }
+
+            // Sort: unlocked first, then by cost
+            visible.sort((a, b) => {
+                if (a.unlocked && !b.unlocked) return -1;
+                if (!a.unlocked && b.unlocked) return 1;
+                return (a.cost || 0) - (b.cost || 0);
+            });
+
+            if (!visible.length) {
+                grid.innerHTML = '<div class="loading"><p>No apps found</p></div>';
+                return;
+            }
+
+            grid.innerHTML = visible.map((tool, idx) => {
+                const canAfford = userCredits >= (tool.cost || 0);
+                const hasCreds = localStorage.getItem('creds_' + tool.name) === 'true';
+                const colorClass = colorClasses[idx % colorClasses.length];
+                const icon = getIcon(tool.name);
+                const isFree = !tool.cost || tool.cost === 0;
+
+                let badge = '';
+                if (tool.unlocked) {
+                    badge = '<span class="tool-badge unlocked">Unlocked</span>';
+                } else if (isFree) {
+                    badge = '<span class="tool-badge free">Free</span>';
+                } else {
+                    badge = '<span class="tool-badge locked">Locked</span>';
+                }
+
+                let actions = '';
+                if (!tool.unlocked && tool.cost > 0) {
+                    actions = `
+                        <button class="btn btn-primary" onclick="showUnlockModal('${tool.name}', '${tool.label}', ${tool.cost})" ${!canAfford ? 'disabled title="Need more credits"' : ''}>
+                            Unlock
+                        </button>
+                        <button class="btn btn-refer" onclick="showReferralModal()">+ Refer</button>
+                    `;
+                } else if (tool.unlocked && tool.requires_credentials) {
+                    actions = `
+                        <button class="btn ${hasCreds ? 'btn-success' : 'btn-secondary'}" onclick="showCredentialsModal('${tool.name}', '${tool.label}', ${JSON.stringify(tool.credential_fields || []).replace(/"/g, '&quot;')})">
+                            ${hasCreds ? '✓ Configured' : 'Configure'}
+                        </button>
+                    `;
+                } else if (tool.unlocked) {
+                    actions = '<span style="color:var(--green);font-size:13px;">✓ Ready</span>';
+                }
+
+                return `
+                <div class="tool-card ${tool.unlocked ? '' : 'locked'}">
+                    <div class="tool-icon ${colorClass}">${icon}</div>
+                    <div class="tool-header">
+                        <div>
+                            <div class="tool-name">${tool.label}</div>
+                        </div>
+                        ${badge}
+                    </div>
+                    <div class="tool-desc">${tool.description || 'No description available'}</div>
+                    <div class="tool-footer">
+                        <div class="tool-cost ${isFree ? 'free' : 'paid'}">
+                            ${isFree ? 'Free' : tool.cost + ' credits'}
+                        </div>
+                        <div class="tool-actions">
+                            ${actions}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function showUnlockModal(name, label, cost) {
+            pendingUnlock = {name, label, cost};
+            document.getElementById('unlockToolName').textContent = label;
+            document.getElementById('unlockCost').textContent = cost;
+            document.getElementById('unlockModal').classList.add('active');
+        }
+
+        function showCredentialsModal(name, label, fields) {
+            pendingCredTool = {name, label, fields};
+            document.getElementById('credToolName').textContent = label;
+            document.getElementById('credentialFields').innerHTML = fields.map(f =>
+                `<input type="text" id="cred_${f}" placeholder="${f}">`
+            ).join('');
+            document.getElementById('credentialsModal').classList.add('active');
+        }
+
+        function showReferralModal() {
+            document.getElementById('referralModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        async function confirmUnlock() {
+            if (!pendingUnlock) return;
+            closeModal('unlockModal');
+
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tool_name: 'unlock_tool',
+                        action: 'unlock_tool',
+                        params: {tool_name: pendingUnlock.name}
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showToast(`${pendingUnlock.label} unlocked!`, 'success');
+                    await loadData();
+
+                    const unlockedTool = tools.find(t => t.name === pendingUnlock.name);
+                    if (unlockedTool && unlockedTool.requires_credentials && unlockedTool.credential_fields?.length > 0) {
+                        setTimeout(() => {
+                            showCredentialsModal(unlockedTool.name, unlockedTool.label, unlockedTool.credential_fields);
+                        }, 500);
+                    }
+                } else {
+                    showToast(data.message || data.error || 'Unlock failed', 'error');
+                }
+            } catch (e) {
+                showToast('Unlock failed: ' + e.message, 'error');
+            }
+            pendingUnlock = null;
+        }
+
+        async function saveCredentials() {
+            if (!pendingCredTool) return;
+
+            const values = {};
+            for (const f of pendingCredTool.fields) {
+                const input = document.getElementById('cred_' + f);
+                if (input && input.value.trim()) {
+                    values[f] = input.value.trim();
+                }
+            }
+
+            if (Object.keys(values).length === 0) {
+                showToast('Please enter at least one credential', 'error');
+                return;
+            }
+
+            closeModal('credentialsModal');
+
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tool_name: 'system_settings',
+                        action: 'set_credential',
+                        params: {tool_name: pendingCredTool.name, value: JSON.stringify(values)}
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success' || !data.error) {
+                    localStorage.setItem('creds_' + pendingCredTool.name, 'true');
+                    showToast('Credentials saved!', 'success');
+                    renderTools();
+                } else {
+                    showToast(data.message || 'Failed to save', 'error');
+                }
+            } catch (e) {
+                showToast('Save failed: ' + e.message, 'error');
+            }
+            pendingCredTool = null;
+        }
+
+        async function submitReferral() {
+            const name = document.getElementById('referralName').value.trim();
+            const email = document.getElementById('referralEmail').value.trim();
+
+            if (!name || !email) {
+                showToast('Please enter name and email', 'error');
+                return;
+            }
+
+            closeModal('referralModal');
+
+            try {
+                const res = await fetch(`${API}/execute_task`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tool_name: 'refer_user',
+                        action: 'refer_user',
+                        params: {name, email}
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showToast('Referral sent! +3 credits', 'success');
+                    document.getElementById('referralName').value = '';
+                    document.getElementById('referralEmail').value = '';
+                    await loadData();
+                } else {
+                    showToast(data.message || 'Referral failed', 'error');
+                }
+            } catch (e) {
+                showToast('Referral failed: ' + e.message, 'error');
+            }
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

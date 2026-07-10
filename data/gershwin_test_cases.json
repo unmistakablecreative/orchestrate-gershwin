@@ -1,0 +1,136 @@
+[
+  {
+    "name": "docs_create_doc",
+    "tool_name": "doc_editor",
+    "action": "create_doc",
+    "params": {"title": "Gershwin Test Doc", "content": "This is a test document created by the Gershwin tester.", "collection": "test"},
+    "expected_status": "success",
+    "capture": "doc_id"
+  },
+  {
+    "name": "docs_update_doc",
+    "tool_name": "doc_editor",
+    "action": "update_doc",
+    "params": {"doc_id": "${doc_id}", "content": "Updated content for the Gershwin test document."},
+    "expected_status": "success",
+    "depends_on": "docs_create_doc"
+  },
+  {
+    "name": "json_manager_create_file",
+    "tool_name": "json_manager",
+    "action": "create_json_file",
+    "params": {"filename": "gershwin_test_output.json"},
+    "expected_status": "success"
+  },
+  {
+    "name": "json_manager_add_entry",
+    "tool_name": "json_manager",
+    "action": "add_json_entry",
+    "params": {"filename": "gershwin_test_output.json", "entry_key": "test_entry_001", "entry_data": {"test": true, "value": "gershwin_test_data"}},
+    "expected_status": "success"
+  },
+  {
+    "name": "json_manager_read_entry",
+    "tool_name": "json_manager",
+    "action": "read_json_entry",
+    "params": {"filename": "gershwin_test_output.json", "entry_key": "test_entry_001"},
+    "expected_status": "success"
+  },
+  {
+    "name": "json_manager_list_entries",
+    "tool_name": "json_manager",
+    "action": "list_json_entries",
+    "params": {"filename": "gershwin_test_output.json"},
+    "expected_status": "success"
+  },
+  {
+    "name": "slide_designer_create_deck",
+    "tool_name": "slide_designer",
+    "action": "create_deck",
+    "params": {"title": "Gershwin Test Deck", "theme": "executive"},
+    "expected_status": "success",
+    "capture": "deck_id"
+  },
+  {
+    "name": "slide_designer_add_slide",
+    "tool_name": "slide_designer",
+    "action": "add_slide",
+    "params": {"deck_id": "${deck_id}", "layout_type": "title", "content": {"title": "Test Slide", "subtitle": "Automated test"}},
+    "expected_status": "success",
+    "depends_on": "slide_designer_create_deck"
+  },
+  {
+    "name": "slide_designer_list_decks",
+    "tool_name": "slide_designer",
+    "action": "list_decks",
+    "params": {},
+    "expected_status": "success"
+  },
+  {
+    "name": "slide_designer_export_html",
+    "tool_name": "slide_designer",
+    "action": "export_html",
+    "params": {"deck_id": "${deck_id}"},
+    "expected_status": "success",
+    "depends_on": "slide_designer_create_deck"
+  },
+  {
+    "name": "spark_file_add_entry",
+    "tool_name": "spark_file",
+    "action": "add_entry",
+    "params": {"content": "Gershwin test idea: automated installer validation"},
+    "expected_status": "success"
+  },
+  {
+    "name": "spark_file_recent",
+    "tool_name": "spark_file",
+    "action": "recent",
+    "params": {"limit": 5},
+    "expected_status": "success"
+  },
+  {
+    "name": "spark_file_search",
+    "tool_name": "spark_file",
+    "action": "search",
+    "params": {"query": "gershwin installer", "limit": 5},
+    "expected_status": "success"
+  },
+  {
+    "name": "todolist_add_task",
+    "tool_name": "todolist",
+    "action": "add_task",
+    "params": {"content": "Gershwin test task - verify installer"},
+    "expected_status": "success",
+    "capture": "task_id"
+  },
+  {
+    "name": "todolist_list_tasks",
+    "tool_name": "todolist",
+    "action": "list_tasks",
+    "params": {"show_completed": false},
+    "expected_status": "success"
+  },
+  {
+    "name": "todolist_complete_task",
+    "tool_name": "todolist",
+    "action": "complete_task",
+    "params": {"id": "${task_id}"},
+    "expected_status": "success",
+    "depends_on": "todolist_add_task"
+  },
+  {
+    "name": "system_settings_set_credential",
+    "tool_name": "system_settings",
+    "action": "set_credential",
+    "params": {"tool_name": "ideogram_tool", "value": "fake_test_key_12345"},
+    "expected_status": "success"
+  },
+  {
+    "name": "account_unlock_ideogram",
+    "tool_name": "account",
+    "action": "unlock",
+    "params": {"tool_id": "ideogram_tool"},
+    "expected_status": "success",
+    "note": "May fail if already unlocked or insufficient credits - both are valid test scenarios"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "source_file": "tool_dashboard.html",
+    "converted_at": "2026-07-08T08:08:18.658881",
+    "version": "1.0"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "status_mappings": {
+    "status_map_0": "{\"tool_name\": pendingUnlock.name}",
+    "status_map_1": "{pendingUnlock.label}",
+    "status_map_2": "{\"tool_name\": pendingCredTool.name, \"value\": JSON.stringify(values)}",
+    "status_map_3": "{\n                    localStorage.setItem(\"creds_\" + pendingCredTool.name, \"true\");\n                    showToast(\"Credentials saved!\", \"success\");\n                    renderTools();\n                }"
+  },
+  "ui_strings": {
+    "button_2": "+ Refer",
+    "button_3": "${hasCreds ? '\u2713 Configured' : 'Configure'}",
+    "button_5": "Unlock",
+    "placeholder_0": "${f}"
+  },
+  "functions": [
+    "showUnlockModal",
+    "loadData",
+    "showToast",
+    "showCredentialsModal",
+    "filterTools",
+    "closeModal",
+    "getIcon",
+    "showReferralModal",
+    "getCategory"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "source_file": "files.html",
+    "converted_at": "2026-07-08T08:08:18.594519",
+    "version": "1.0"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "functions": [
+    "formatDate",
+    "loadFiles",
+    "searchFiles",
+    "getRankClass",
+    "formatBytes"
+  ]
+}

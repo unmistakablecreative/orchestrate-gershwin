@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "source_file": "todolist.html",
+    "converted_at": "2026-07-08T08:08:18.655695",
+    "version": "1.0"
+  },
+  "colors": {
+    "color_0": "#10003"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "status_mappings": {
+    "status_map_0": "{\"show_completed\": showCompleted}",
+    "status_map_1": "{\n                    showToast(\"Task completed\", \"success\");\n                    await loadTasks();\n                }",
+    "status_map_2": "{currentFilter === \"pending\" ? \"All done! No pending tasks.\" : \"No tasks yet. Add one above.\"}",
+    "status_map_3": "{task.completed ? \"completed\" : \"\"}",
+    "status_map_4": "{task.completed ? \"checked\" : \"\"}"
+  },
+  "ui_strings": {
+    "button_1": "Delete"
+  },
+  "functions": [
+    "escapeHtml",
+    "setFilter",
+    "showToast"
+  ]
+}

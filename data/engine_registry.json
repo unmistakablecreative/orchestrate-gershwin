@@ -1,0 +1,6 @@
+{
+  "engines": [
+    "claude_execution_engine.py",
+    "buffer_engine.py"
+  ]
+}

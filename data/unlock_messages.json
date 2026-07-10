@@ -1,0 +1,562 @@
+{
+  "meta": {
+    "render": "guided",
+    "flow_control": true,
+    "advance_on": [
+      "user_input",
+      "action_success"
+    ],
+    "note": "Each unlock triggers mini-onboarding. For tools requiring credentials, credential_setup runs BEFORE guided_activation."
+  },
+  "nylasinbox": {
+    "message": "Email Tool unlocked!",
+    "requires_credentials": true,
+    "credential_key": "nylas_grant_id",
+    "credential_setup_url": "Connect via OAuth during setup",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your email account.",
+        "instruction": "1. Email integration uses OAuth (secure login through your provider)\n2. You'll be redirected to sign in with Google/Microsoft\n3. Grant OrchestrateOS permission to read and send emails",
+        "prompt": "Paste your Nylas Grant ID (provided after OAuth):",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "nylasinbox",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to your email!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's see what's in your inbox. Checking your latest emails...",
+        "action": {
+          "tool": "nylasinbox",
+          "action": "get_inbox",
+          "params": {
+            "limit": 5
+          }
+        },
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Here are your 5 most recent emails:\n\n{{result.emails_formatted}}\n\nWant me to draft a reply to one of these?",
+        "prompt": "Reply to which email? (1-5, or 'skip'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "What should I say in the reply?",
+        "prompt": "Quick summary of your reply:",
+        "requires_user_input": true,
+        "skip_if": "{{previous_input == 'skip'}}",
+        "next": "step_4"
+      },
+      "step_4": {
+        "narration": "Drafting your reply...",
+        "action_template": {
+          "tool": "nylasinbox",
+          "action": "draft_reply",
+          "params": {
+            "email_index": "{{step_2_input}}",
+            "content": "{{user_input}}"
+          }
+        },
+        "narration_after": "Draft saved! You can review and send it, or I can send it directly.\n\nYou can now say:\n- 'Check my inbox'\n- 'Send an email to [person] about [topic]'\n- 'Summarize my unread emails'",
+        "skip_if": "{{step_2_input == 'skip'}}",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "nylas_calendar": {
+    "message": "Calendar unlocked!",
+    "requires_credentials": true,
+    "credential_key": "nylas_grant_id",
+    "credential_setup_url": "Connect via OAuth during setup",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your calendar.",
+        "instruction": "1. Calendar integration uses OAuth (secure login through your provider)\n2. You'll be redirected to sign in with Google/Microsoft\n3. Grant OrchestrateOS permission to read and create events",
+        "prompt": "Paste your Nylas Grant ID (provided after OAuth):",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "nylas_calendar",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to your calendar!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's see your schedule. What day do you want to check?",
+        "prompt": "Day (today, tomorrow, Monday, etc.):",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Checking your calendar...",
+        "action_template": {
+          "tool": "nylas_calendar",
+          "action": "get_events",
+          "params": {
+            "date": "{{user_input}}"
+          }
+        },
+        "narration_after": "Your schedule for {{user_input}}:\n\n{{result.events_formatted}}\n\nWant to add something to your calendar?",
+        "prompt": "What event? (or 'skip'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "When should I schedule '{{user_input}}'?",
+        "prompt": "Time (e.g., '3pm', '2:30pm tomorrow'):",
+        "requires_user_input": true,
+        "skip_if": "{{step_2_input == 'skip'}}",
+        "next": "step_4"
+      },
+      "step_4": {
+        "narration": "Scheduling...",
+        "action_template": {
+          "tool": "nylas_calendar",
+          "action": "create_event",
+          "params": {
+            "title": "{{step_2_input}}",
+            "when": "{{user_input}}"
+          }
+        },
+        "narration_after": "Done! '{{step_2_input}}' is on your calendar for {{user_input}}.\n\nYou can now say:\n- 'What's on my calendar today?'\n- 'Schedule a meeting with [person] about [topic]'\n- 'Block time for deep work tomorrow afternoon'",
+        "skip_if": "{{step_2_input == 'skip'}}",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "readwise_tool": {
+    "message": "Readwise unlocked!",
+    "requires_credentials": true,
+    "credential_key": "readwise_api_key",
+    "credential_setup_url": "https://readwise.io/access_token",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Readwise account.",
+        "instruction": "1. Go to https://readwise.io/access_token\n2. Copy your access token\n3. This gives OrchestrateOS read-only access to your highlights",
+        "prompt": "Paste your Readwise API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "readwise_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to Readwise!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's pull up your reading highlights. Fetching your latest...",
+        "action": {
+          "tool": "readwise_tool",
+          "action": "get_highlights",
+          "params": {
+            "limit": 5
+          }
+        },
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Here are your 5 most recent highlights:\n\n{{result.highlights_formatted}}\n\nWant me to find highlights on a specific topic?",
+        "prompt": "Search topic (or 'skip'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "Searching your highlights for '{{user_input}}'...",
+        "action_template": {
+          "tool": "readwise_tool",
+          "action": "search_highlights",
+          "params": {
+            "query": "{{user_input}}"
+          }
+        },
+        "narration_after": "Found {{result.count}} highlights about '{{user_input}}':\n\n{{result.highlights_formatted}}\n\nYou can now say:\n- 'Show me highlights from [book name]'\n- 'What did I highlight about [topic]?'\n- 'Summarize my highlights from this week'",
+        "skip_if": "{{user_input == 'skip'}}",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "mem_tool": {
+    "message": "Mem unlocked!",
+    "requires_credentials": true,
+    "credential_key": "mem_api_key",
+    "credential_setup_url": "https://mem.ai/settings/api",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Mem account.",
+        "instruction": "1. Go to https://mem.ai/settings/api\n2. Click 'Create API Key'\n3. Copy the key",
+        "prompt": "Paste your Mem API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "mem_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to Mem!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's save your first idea to Mem. What's on your mind?",
+        "prompt": "Quick thought or idea:",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Saving to Mem...",
+        "action_template": {
+          "tool": "mem_tool",
+          "action": "create_mem",
+          "params": {
+            "content": "{{user_input}}"
+          }
+        },
+        "narration_after": "Saved! Your thought is now in Mem and fully searchable.\n\nYou can now say:\n- 'Save this to Mem: [idea]'\n- 'Search my Mem for [topic]'\n- 'Create a daily journal entry'",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "github_tool_universal": {
+    "message": "GitHub unlocked!",
+    "requires_credentials": true,
+    "credential_key": "github_token",
+    "credential_setup_url": "https://github.com/settings/tokens",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your GitHub account.",
+        "instruction": "1. Go to https://github.com/settings/tokens\n2. Click 'Generate new token (classic)'\n3. Select scopes: repo, read:user\n4. Copy the token",
+        "prompt": "Paste your GitHub personal access token:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "github_tool_universal",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to GitHub!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's see your repos. Fetching your GitHub activity...",
+        "action": {
+          "tool": "github_tool_universal",
+          "action": "list_repos",
+          "params": {
+            "limit": 5
+          }
+        },
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Your recent repositories:\n\n{{result.repos_formatted}}\n\nWant to check issues or PRs on one of these?",
+        "prompt": "Repo name (or 'skip'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "Fetching open issues for {{user_input}}...",
+        "action_template": {
+          "tool": "github_tool_universal",
+          "action": "list_issues",
+          "params": {
+            "repo": "{{user_input}}"
+          }
+        },
+        "narration_after": "Open issues for {{user_input}}:\n\n{{result.issues_formatted}}\n\nYou can now say:\n- 'Show PRs for [repo]'\n- 'Create an issue in [repo] about [topic]'\n- 'What's my GitHub activity this week?'",
+        "skip_if": "{{user_input == 'skip'}}",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "buffer_engine": {
+    "message": "Buffer unlocked!",
+    "requires_credentials": true,
+    "credential_key": "buffer_access_token",
+    "credential_setup_url": "https://publish.buffer.com/profile/apps",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Buffer account.",
+        "instruction": "1. Go to https://publish.buffer.com/profile/apps\n2. Create a new app or use an existing one\n3. Copy your access token",
+        "prompt": "Paste your Buffer access token:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "buffer_engine",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to Buffer!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's schedule your first post. What do you want to share?",
+        "prompt": "Post content (keep it short):",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "When should this go out?",
+        "prompt": "Time (e.g., 'now', 'tomorrow 9am', 'next slot'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "Scheduling your post...",
+        "action_template": {
+          "tool": "buffer_engine",
+          "action": "create_update",
+          "params": {
+            "text": "{{step_1_input}}",
+            "scheduled_at": "{{user_input}}"
+          }
+        },
+        "narration_after": "Post scheduled for {{user_input}}!\n\nPreview: '{{step_1_input}}'\n\nYou can now say:\n- 'Schedule a post about [topic]'\n- 'Show my scheduled posts'\n- 'Create a week of posts about [theme]'",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "ideogram_tool": {
+    "message": "Ideogram unlocked!",
+    "requires_credentials": true,
+    "credential_key": "ideogram_api_key",
+    "credential_setup_url": "https://ideogram.ai/manage-api",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Ideogram account.",
+        "instruction": "1. Go to https://ideogram.ai/manage-api\n2. Create an API key\n3. Copy the key",
+        "prompt": "Paste your Ideogram API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "ideogram_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to Ideogram!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's generate your first image. What do you want to see?",
+        "prompt": "Describe the image:",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Generating '{{user_input}}'...",
+        "action_template": {
+          "tool": "ideogram_tool",
+          "action": "generate",
+          "params": {
+            "prompt": "{{user_input}}"
+          }
+        },
+        "narration_after": "Image generated!\n\n{{result.image_url}}\n\nYou can now say:\n- 'Generate an image of [description]'\n- 'Create a social media graphic about [topic]'\n- 'Make variations of this image'",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "notion_tool": {
+    "message": "Notion unlocked!",
+    "requires_credentials": true,
+    "credential_key": "notion_api_key",
+    "credential_setup_url": "https://www.notion.so/my-integrations",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Notion account.",
+        "instruction": "1. Go to https://www.notion.so/my-integrations\n2. Click 'New integration'\n3. Give it a name and select your workspace\n4. Copy the 'Internal Integration Token'",
+        "prompt": "Paste your Notion API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "notion_tool",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to Notion!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's see your Notion workspace. Fetching your pages...",
+        "action": {
+          "tool": "notion_tool",
+          "action": "search",
+          "params": {
+            "query": ""
+          }
+        },
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Found {{result.count}} pages in your workspace.\n\nTop pages:\n{{result.pages_formatted}}\n\nWant to create a new page?",
+        "prompt": "Page title (or 'skip'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "Creating '{{user_input}}' in Notion...",
+        "action_template": {
+          "tool": "notion_tool",
+          "action": "create_page",
+          "params": {
+            "title": "{{user_input}}"
+          }
+        },
+        "narration_after": "Page created!\n\nURL: {{result.url}}\n\nYou can now say:\n- 'Create a Notion page about [topic]'\n- 'Search my Notion for [query]'\n- 'Add to my [page name]: [content]'",
+        "skip_if": "{{user_input == 'skip'}}",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "convertkit_tool": {
+    "message": "ConvertKit unlocked!",
+    "requires_credentials": false,
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's check your subscriber stats. Fetching...",
+        "action": {
+          "tool": "convertkit_tool",
+          "action": "get_subscribers",
+          "params": {}
+        },
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Your ConvertKit stats:\n\n- Total subscribers: {{result.total_subscribers}}\n- New this week: {{result.new_this_week}}\n\nWant to draft a broadcast?",
+        "prompt": "Broadcast topic (or 'skip'):",
+        "requires_user_input": true,
+        "next": "step_3"
+      },
+      "step_3": {
+        "narration": "Creating a draft broadcast about '{{user_input}}'...",
+        "action_template": {
+          "tool": "convertkit_tool",
+          "action": "create_broadcast_draft",
+          "params": {
+            "subject": "{{user_input}}",
+            "content": "Draft content for {{user_input}}"
+          }
+        },
+        "narration_after": "Draft created!\n\nYou can now say:\n- 'Show my subscriber growth'\n- 'Create a broadcast about [topic]'\n- 'List my email sequences'",
+        "skip_if": "{{user_input == 'skip'}}",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "gamma_engine": {
+    "message": "Gamma unlocked!",
+    "requires_credentials": true,
+    "credential_key": "gamma_api_key",
+    "credential_setup_url": "https://gamma.app/settings/developer",
+    "credential_setup": {
+      "step_1": {
+        "narration": "First, we need to connect your Gamma account.",
+        "instruction": "1. Go to https://gamma.app/settings/developer\n2. Generate an API key\n3. Copy the key",
+        "prompt": "Paste your Gamma API key:",
+        "requires_user_input": true,
+        "action_template": {
+          "tool": "system_settings",
+          "action": "set_credential",
+          "params": {
+            "tool_name": "gamma_engine",
+            "value": "{{user_input}}"
+          }
+        },
+        "narration_after": "\u2705 Connected to Gamma!",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's create your first presentation. What's it about?",
+        "prompt": "Presentation topic:",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Generating slides for '{{user_input}}'...",
+        "action_template": {
+          "tool": "gamma_engine",
+          "action": "generate",
+          "params": {
+            "topic": "{{user_input}}",
+            "num_cards": 5
+          }
+        },
+        "narration_after": "Presentation created!\n\nURL: {{result.url}}\nSlides: {{result.num_cards}}\n\nYou can now say:\n- 'Create a deck about [topic]'\n- 'Make a pitch deck for [idea]'\n- 'Generate slides from my notes on [topic]'",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  },
+  "claude_assistant": {
+    "message": "Claude Assistant unlocked! Run the setup script to authenticate with your Claude subscription.",
+    "requires_credentials": false,
+    "credential_setup": {
+      "step_1": {
+        "narration": "Claude Assistant requires Claude Code CLI and an active Claude Pro or Team subscription.",
+        "instruction": "Run this in Terminal to authenticate:\n\nbash /Applications/OrchestrateOS.app/Contents/Resources/orchestrate/auth/setup_claude_auth.sh\n\nThis will:\n1. Install Claude Code CLI if needed\n2. Open your browser for Claude OAuth sign-in\n3. Connect your subscription to OrchestrateOS",
+        "requires_user_input": false,
+        "narration_after": "Once authenticated, Claude can execute tasks autonomously.",
+        "next": "guided_activation"
+      }
+    },
+    "guided_activation": {
+      "step_1": {
+        "narration": "Let's test Claude Assistant with a simple task.",
+        "prompt": "Describe a task for Claude to execute (e.g., 'Write a summary of my recent notes'):",
+        "requires_user_input": true,
+        "next": "step_2"
+      },
+      "step_2": {
+        "narration": "Assigning task to Claude Assistant...",
+        "action_template": {
+          "tool": "claude_assistant",
+          "action": "assign_task",
+          "params": {
+            "description": "{{user_input}}"
+          }
+        },
+        "narration_after": "Task assigned! Claude will execute it autonomously in the background.\n\nYou can now say:\n- 'Assign Claude: [complex task description]'\n- 'Check Claude task status'\n- 'Show completed Claude tasks'",
+        "next": "return_to_onboarding_sequence_step_9"
+      }
+    }
+  }
+}

@@ -1,0 +1,255 @@
+// Tool display configuration - loaded from app_store_config.json
+let TOOL_CONFIG = {
+    preInstalled: [],
+    hidden: [],
+    displayInfo: {}
+};
+
+let toolsData = [];
+let accountData = { credits: 0, credits_earned: 0 };
+
+// Initialize
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadConfig();
+    loadTools();
+    loadAccountData();
+    setupEventListeners();
+});
+
+async function loadConfig() {
+    try {
+        const response = await fetch('app_store_config.json');
+        if (response.ok) {
+            TOOL_CONFIG = await response.json();
+        } else {
+            console.error('Failed to load app_store_config.json');
+        }
+    } catch (error) {
+        console.error('Error loading config:', error);
+    }
+}
+
+async function executeTask(toolName, action, params = {}) {
+    try {
+        const response = await fetch('/execute_task', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                tool_name: toolName,
+                action: action,
+                params: params
+            })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Execute task error:', error);
+        return { status: 'error', message: error.message };
+    }
+}
+
+async function loadTools() {
+    const result = await executeTask('system_settings', 'list_tools');
+
+    if (result.status === 'success' && result.tools) {
+        toolsData = processTools(result.tools);
+        renderTools(toolsData);
+    } else {
+        // Fallback: parse from system_settings.ndjson display
+        document.getElementById('tools-grid').innerHTML = `
+            <div class="loading">
+                <p>Unable to load tools. Please refresh.</p>
+            </div>
+        `;
+    }
+}
+
+function processTools(tools) {
+    const processed = [];
+    const seen = new Set();
+
+    for (const tool of tools) {
+        const toolName = tool.tool || tool.name;
+
+        // Skip hidden tools and duplicates
+        if (TOOL_CONFIG.hidden.includes(toolName) || seen.has(toolName)) continue;
+
+        // Skip 'docs' if we already have 'doc_editor' (they're the same)
+        if (toolName === 'docs' && seen.has('doc_editor')) continue;
+        if (toolName === 'doc_editor') seen.add('docs');
+
+        seen.add(toolName);
+
+        const displayInfo = TOOL_CONFIG.displayInfo[toolName] || {
+            name: toolName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            icon: '🔧',
+            iconClass: 'icon-gray'
+        };
+
+        const isPreInstalled = TOOL_CONFIG.preInstalled.includes(toolName);
+        const isLocked = tool.locked === true && !isPreInstalled;
+
+        processed.push({
+            name: toolName,
+            displayName: displayInfo.name,
+            icon: displayInfo.icon,
+            iconClass: displayInfo.iconClass,
+            open_url: displayInfo.open_url || null,
+            description: tool.description || 'No description available',
+            locked: isLocked,
+            preInstalled: isPreInstalled,
+            cost: tool.referral_unlock_cost || 0
+        });
+    }
+
+    // Sort: pre-installed first, then unlocked, then locked (by cost ascending)
+    return processed.sort((a, b) => {
+        if (a.preInstalled && !b.preInstalled) return -1;
+        if (!a.preInstalled && b.preInstalled) return 1;
+        if (!a.locked && b.locked) return -1;
+        if (a.locked && !b.locked) return 1;
+        return a.cost - b.cost;
+    });
+}
+
+function renderTools(tools, filter = 'all') {
+    const grid = document.getElementById('tools-grid');
+
+    const filtered = tools.filter(tool => {
+        if (filter === 'all') return true;
+        if (filter === 'unlocked') return !tool.locked || tool.preInstalled;
+        if (filter === 'locked') return tool.locked && !tool.preInstalled;
+        return true;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="loading"><p>No tools found</p></div>`;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(tool => {
+        const statusClass = tool.preInstalled ? 'pre-installed' : (tool.locked ? 'locked' : 'unlocked');
+        const statusText = tool.preInstalled ? 'Open' : (tool.locked ? 'Locked' : 'Unlocked');
+        const statusIcon = tool.preInstalled ? '✓' : (tool.locked ? '🔒' : '✓');
+        const badgeClickable = tool.open_url ? `onclick="window.parent.postMessage({type:'open_url',url:'${tool.open_url}'},'*')" style="cursor:pointer"` : '';
+
+        let unlockSection = '';
+        if (tool.locked && !tool.preInstalled) {
+            const canUnlock = accountData.credits >= tool.cost;
+            unlockSection = `
+                <div class="unlock-info">
+                    <div class="unlock-cost">
+                        <span>🎫</span>
+                        <span>${tool.cost} credit${tool.cost !== 1 ? 's' : ''}</span>
+                    </div>
+                    <button class="unlock-btn"
+                            onclick="unlockTool('${tool.name}', ${tool.cost})">
+                        Install
+                    </button>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="tool-card ${tool.locked && !tool.preInstalled ? 'locked' : ''} ${tool.preInstalled ? 'pre-installed' : ''}">
+                <span class="status-badge ${statusClass}" ${badgeClickable}>${statusIcon} ${statusText}</span>
+                <div class="tool-header">
+                    <div class="tool-icon ${tool.iconClass}">${tool.icon}</div>
+                    <div class="tool-info">
+                        <div class="tool-name">${tool.displayName}</div>
+                        <div class="tool-description">${tool.description}</div>
+                    </div>
+                </div>
+                ${unlockSection}
+            </div>
+        `;
+    }).join('');
+}
+
+async function loadAccountData() {
+    const result = await executeTask('account', 'check');
+
+    if (result.status === 'success') {
+        // account.check returns credits in result.data.credits
+        const data = result.data || result;
+        accountData = {
+            credits: data.credits || result.credits || 0,
+            credits_earned: data.credits_earned || data.referrals_sent || result.referrals_sent || 0
+        };
+
+        document.getElementById('credits-balance').textContent = accountData.credits;
+        // credits-earned element removed from UI
+    }
+}
+
+async function unlockTool(toolName, cost) {
+    if (accountData.credits < cost) {
+        showToast('Not enough credits to unlock this tool', 'error');
+        return;
+    }
+
+    const result = await executeTask('account', 'unlock', { tool_id: toolName });
+
+    if (result.status === 'success') {
+        showToast(result.message || `${toolName} unlocked successfully!`, 'success');
+
+        // Notify parent frame if claude_assistant was unlocked
+        if (toolName === 'claude_assistant' && window.parent !== window) {
+            window.parent.claudeAssistantUnlocked = true;
+            localStorage.setItem('claudeAssistantUnlocked', 'true');
+            try { window.parent.localStorage.setItem('claudeAssistantUnlocked', 'true'); } catch(e) {}
+        }
+
+        // Refresh data
+        await Promise.all([loadTools(), loadAccountData()]);
+    } else {
+        showToast(result.message || 'Failed to unlock tool', 'error');
+    }
+}
+
+async function sendReferral() {
+    const email = document.getElementById('referral-email').value.trim();
+
+    if (!email || !email.includes('@')) {
+        showToast('Please enter a valid email address', 'error');
+        return;
+    }
+
+    const result = await executeTask('account', 'refer', { emails: email });
+
+    if (result.status === 'success') {
+        showToast(result.message || 'Referral sent! +1 credit', 'success');
+        document.getElementById('referral-email').value = '';
+        await loadAccountData();
+    } else {
+        showToast(result.message || 'Failed to send referral', 'error');
+    }
+}
+
+function setupEventListeners() {
+    // Filter tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            renderTools(toolsData, tab.dataset.filter);
+        });
+    });
+
+    // Referral button
+    document.getElementById('send-referral').addEventListener('click', sendReferral);
+
+    // Enter key on referral input
+    document.getElementById('referral-email').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendReferral();
+    });
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <base href="/semantic_memory/"/>
+  <title>
+   Gershwin
+  </title>
+  <link href="orchestrate_home.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './orchestrate_home_config.json';
+  </script>
+ </head>
+ <body>
+  <div class="app-container">
+   <!-- Sidebar -->
+   <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+     <div class="logo">
+      <div class="logo-icon">
+       G
+      </div>
+      <span>
+       Gershwin
+      </span>
+     </div>
+     <button class="collapse-btn" id="collapse-btn" title="Toggle sidebar">
+      <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14">
+       <polyline points="15 18 9 12 15 6">
+       </polyline>
+      </svg>
+     </button>
+    </div>
+    <div class="nav-section">
+     <div class="nav-item active" data-shortcut="H" data-view="home">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z">
+       </path>
+       <polyline points="9 22 9 12 15 12 15 22">
+       </polyline>
+      </svg>
+      <span>
+       Home
+      </span>
+     </div>
+     <div class="nav-item" data-shortcut="T" data-src="task_board.html" data-view="tasks">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <path d="M9 11l3 3L22 4">
+       </path>
+       <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11">
+       </path>
+      </svg>
+      <span>
+       Tasks
+      </span>
+     </div>
+     <div class="nav-item" data-shortcut="D" data-src="doc_editor.html" data-view="docs">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+       </path>
+       <polyline points="14 2 14 8 20 8">
+       </polyline>
+       <line x1="16" x2="8" y1="13" y2="13">
+       </line>
+       <line x1="16" x2="8" y1="17" y2="17">
+       </line>
+      </svg>
+      <span>
+       Docs
+      </span>
+     </div>
+     <div class="nav-item" data-shortcut="O" data-src="todolist.html" data-view="todo">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <line x1="8" x2="21" y1="6" y2="6">
+       </line>
+       <line x1="8" x2="21" y1="12" y2="12">
+       </line>
+       <line x1="8" x2="21" y1="18" y2="18">
+       </line>
+       <line x1="3" x2="3.01" y1="6" y2="6">
+       </line>
+       <line x1="3" x2="3.01" y1="12" y2="12">
+       </line>
+       <line x1="3" x2="3.01" y1="18" y2="18">
+       </line>
+      </svg>
+      <span>
+       Todo
+      </span>
+     </div>
+     <div class="nav-item" data-shortcut="S" data-src="spark_file.html" data-view="spark">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2">
+       </polygon>
+      </svg>
+      <span>
+       Spark
+      </span>
+     </div>
+     <div class="nav-item" data-shortcut="M" data-src="media_manager.html" data-view="media">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <rect height="18" rx="2" ry="2" width="18" x="3" y="3">
+       </rect>
+       <circle cx="8.5" cy="8.5" r="1.5">
+       </circle>
+       <polyline points="21 15 16 10 5 21">
+       </polyline>
+      </svg>
+      <span>
+       Media
+      </span>
+     </div>
+     <div class="nav-divider">
+     </div>
+     <!-- Custom Links Section -->
+     <div id="custom-links-container">
+     </div>
+     <div class="nav-item add-link-btn" id="add-link-btn" title="Add custom link">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <circle cx="12" cy="12" r="10">
+       </circle>
+       <line x1="12" x2="12" y1="8" y2="16">
+       </line>
+       <line x1="8" x2="16" y1="12" y2="12">
+       </line>
+      </svg>
+      <span>
+       Add Link
+      </span>
+     </div>
+     <div class="nav-divider">
+     </div>
+     <button class="shortcuts-btn" id="shortcuts-btn">
+      <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+       <rect height="16" rx="2" width="20" x="2" y="4">
+       </rect>
+       <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h12">
+       </path>
+      </svg>
+      <span>
+       Keyboard Shortcuts
+      </span>
+     </button>
+    </div>
+   </nav>
+   <!-- Main Content -->
+   <main class="main-content">
+    <!-- Home View (shown by default) -->
+    <div class="home-view" id="home-view">
+     <div class="home-header">
+      <h1>
+       Welcome to Gershwin
+      </h1>
+      <p>
+       Your unified command center
+      </p>
+     </div>
+     <div class="quick-actions">
+      <div class="glass-card" onclick="navigateTo('tasks')">
+       <div class="card-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+         <path d="M9 11l3 3L22 4">
+         </path>
+         <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11">
+         </path>
+        </svg>
+       </div>
+       <h3>
+        Tasks
+       </h3>
+      </div>
+      <div class="glass-card" onclick="navigateTo('docs')">
+       <div class="card-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+         </path>
+         <polyline points="14 2 14 8 20 8">
+         </polyline>
+         <line x1="16" x2="8" y1="13" y2="13">
+         </line>
+         <line x1="16" x2="8" y1="17" y2="17">
+         </line>
+        </svg>
+       </div>
+       <h3>
+        Docs
+       </h3>
+      </div>
+      <div class="glass-card" onclick="navigateTo('todo')">
+       <div class="card-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+         <line x1="8" x2="21" y1="6" y2="6">
+         </line>
+         <line x1="8" x2="21" y1="12" y2="12">
+         </line>
+         <line x1="8" x2="21" y1="18" y2="18">
+         </line>
+         <line x1="3" x2="3.01" y1="6" y2="6">
+         </line>
+         <line x1="3" x2="3.01" y1="12" y2="12">
+         </line>
+         <line x1="3" x2="3.01" y1="18" y2="18">
+         </line>
+        </svg>
+       </div>
+       <h3>
+        Todo
+       </h3>
+      </div>
+      <div class="glass-card" onclick="navigateTo('spark')">
+       <div class="card-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2">
+         </polygon>
+        </svg>
+       </div>
+       <h3>
+        Spark
+       </h3>
+      </div>
+      <div class="glass-card" onclick="navigateTo('media')">
+       <div class="card-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+         <rect height="18" rx="2" ry="2" width="18" x="3" y="3">
+         </rect>
+         <circle cx="8.5" cy="8.5" r="1.5">
+         </circle>
+         <polyline points="21 15 16 10 5 21">
+         </polyline>
+        </svg>
+       </div>
+       <h3>
+        Media
+       </h3>
+      </div>
+     </div>
+    </div>
+    <!-- Content iframe (hidden by default) -->
+    <iframe class="content-frame" id="content-frame" style="display: none;">
+    </iframe>
+    <!-- Status Bar -->
+    <div class="status-bar">
+     <span class="status-indicator">
+     </span>
+     <span id="status-text">
+      Ready
+     </span>
+    </div>
+   </main>
+  </div>
+  <!-- Add Link Modal -->
+  <div class="modal-overlay add-link-modal" id="add-link-modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3 id="link-modal-title">
+      Add Custom Link
+     </h3>
+     <button class="modal-close" id="link-modal-close">
+      ×
+     </button>
+    </div>
+    <form id="add-link-form">
+     <div class="form-group">
+      <label for="link-name">
+       Name
+      </label>
+      <input id="link-name" placeholder="e.g., Analytics Dashboard" required="" type="text"/>
+     </div>
+     <div class="form-group">
+      <label for="link-url">
+       URL
+      </label>
+      <input id="link-url" placeholder="https://example.com" required="" type="url"/>
+      <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">
+       External URLs (http/https) open in a new tab. Local files load in the sidebar.
+      </small>
+     </div>
+     <div class="modal-actions">
+      <button class="btn btn-secondary" id="link-cancel" type="button">
+       Cancel
+      </button>
+      <button class="btn btn-primary" id="link-save" type="submit">
+       Add Link
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-overlay" id="shortcuts-modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>
+      Keyboard Shortcuts
+     </h3>
+     <button class="modal-close" id="modal-close">
+      ×
+     </button>
+    </div>
+    <div class="shortcuts-list">
+     <div class="shortcut-item">
+      <span>
+       Home
+      </span>
+      <kbd>
+       ⌘H
+      </kbd>
+     </div>
+     <div class="shortcut-item">
+      <span>
+       Tasks
+      </span>
+      <kbd>
+       ⌘T
+      </kbd>
+     </div>
+     <div class="shortcut-item">
+      <span>
+       Docs
+      </span>
+      <kbd>
+       ⌘D
+      </kbd>
+     </div>
+     <div class="shortcut-item">
+      <span>
+       Todo
+      </span>
+      <kbd>
+       ⌘O
+      </kbd>
+     </div>
+     <div class="shortcut-item">
+      <span>
+       Spark
+      </span>
+      <kbd>
+       ⌘S
+      </kbd>
+     </div>
+     <div class="shortcut-item">
+      <span>
+       Media
+      </span>
+      <kbd>
+       ⌘M
+      </kbd>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script src="./orchestrate_home.js">
+  </script>
+ </body>
+</html>

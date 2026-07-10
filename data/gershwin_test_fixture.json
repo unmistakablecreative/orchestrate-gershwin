@@ -1,0 +1,8 @@
+{
+    "entries": {
+        "test_entry_001": {
+            "test_field": "test_value",
+            "number": 42
+        }
+    }
+}

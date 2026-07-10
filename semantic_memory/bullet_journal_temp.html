@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Bullet Journal
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link href="bullet_journal.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './bullet_journal_config.json';
+  </script>
+ </head>
+ <body>
+  <div class="header">
+   <h1>
+    Bullet Journal
+   </h1>
+   <div class="stats">
+    <div class="stat">
+     <div class="stat-num green" id="taskCount">
+      0
+     </div>
+     <div class="stat-label">
+      Tasks
+     </div>
+    </div>
+    <div class="stat">
+     <div class="stat-num blue" id="eventCount">
+      0
+     </div>
+     <div class="stat-label">
+      Events
+     </div>
+    </div>
+    <div class="stat">
+     <div class="stat-num yellow" id="noteCount">
+      0
+     </div>
+     <div class="stat-label">
+      Notes
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="filters">
+   <div class="filter active" data-filter="all">
+    All
+   </div>
+   <div class="filter" data-filter="task">
+    Tasks
+   </div>
+   <div class="filter" data-filter="event">
+    Events
+   </div>
+   <div class="filter" data-filter="note">
+    Notes
+   </div>
+   <div class="filter" data-filter="done">
+    Done
+   </div>
+   <div class="collection-dropdown" id="collectionFilters">
+    <select class="collection-select" id="collectionSelect">
+     <option value="">
+      All Collections
+     </option>
+    </select>
+   </div>
+   <button class="sync-btn" onclick="loadData()">
+    Refresh
+   </button>
+  </div>
+  <div class="grid" id="entriesGrid">
+  </div>
+  <button class="add-btn" onclick="openModal()">
+   +
+  </button>
+  <div class="modal" id="addModal">
+   <div class="modal-content">
+    <h2>
+     New Entry
+    </h2>
+    <div class="form-group">
+     <label>
+      Type
+     </label>
+     <select id="entryType">
+      <option value="task">
+       Task
+      </option>
+      <option value="event">
+       Event
+      </option>
+      <option value="note">
+       Note
+      </option>
+     </select>
+    </div>
+    <div class="form-group">
+     <label>
+      Content
+     </label>
+     <textarea id="entryContent" placeholder="What's on your mind?"></textarea>
+    </div>
+    <div class="form-group">
+     <label>
+      Collection
+     </label>
+     <input id="entryCollection" placeholder="SHIP, HANDLE, PUBLISH, or IDEAS" type="text"/>
+    </div>
+    <div class="modal-actions">
+     <button class="btn btn-cancel" onclick="closeModal()">
+      Cancel
+     </button>
+     <button class="btn btn-save" onclick="saveEntry()">
+      Save
+     </button>
+    </div>
+   </div>
+  </div>
+  <script src="./bullet_journal.js">
+  </script>
+ </body>
+</html>

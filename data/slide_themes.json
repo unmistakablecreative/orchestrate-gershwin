@@ -1,0 +1,428 @@
+{
+  "themes": {
+    "dark_pro": {
+      "name": "Dark Pro",
+      "description": "Orange accent on dark gray - professional and bold",
+      "default": true,
+      "colors": {
+        "primary": "#FF6B35",
+        "secondary": "#F7931E",
+        "accent": "#FF6B35",
+        "background": "#1A1A1A",
+        "surface": "#2D2D2D",
+        "text": "#FFFFFF",
+        "text_secondary": "#AAAAAA",
+        "text_muted": "#666666",
+        "border": "#3D3D3D"
+      },
+      "fonts": {
+        "heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "css_vars": {
+        "--theme-primary": "#FF6B35",
+        "--theme-secondary": "#F7931E",
+        "--theme-accent": "#FF6B35",
+        "--theme-bg": "#1A1A1A",
+        "--theme-surface": "#2D2D2D",
+        "--theme-text": "#FFFFFF",
+        "--theme-text-secondary": "#AAAAAA",
+        "--theme-text-muted": "#666666",
+        "--theme-border": "#3D3D3D",
+        "--theme-font-heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 24px rgba(0, 0, 0, 0.4)"
+      }
+    },
+    "light_corporate": {
+      "name": "Light Corporate",
+      "description": "Navy accent on white - clean and professional",
+      "default": false,
+      "colors": {
+        "primary": "#1E3A5F",
+        "secondary": "#2E5A8F",
+        "accent": "#1E3A5F",
+        "background": "#FFFFFF",
+        "surface": "#F5F7FA",
+        "text": "#1A1A1A",
+        "text_secondary": "#4A5568",
+        "text_muted": "#718096",
+        "border": "#E2E8F0"
+      },
+      "fonts": {
+        "heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "css_vars": {
+        "--theme-primary": "#1E3A5F",
+        "--theme-secondary": "#2E5A8F",
+        "--theme-accent": "#1E3A5F",
+        "--theme-bg": "#FFFFFF",
+        "--theme-surface": "#F5F7FA",
+        "--theme-text": "#1A1A1A",
+        "--theme-text-secondary": "#4A5568",
+        "--theme-text-muted": "#718096",
+        "--theme-border": "#E2E8F0",
+        "--theme-font-heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 24px rgba(0, 0, 0, 0.08)"
+      }
+    },
+    "startup_bold": {
+      "name": "Startup Bold",
+      "description": "Purple gradient accent - modern and energetic",
+      "default": false,
+      "colors": {
+        "primary": "#7C3AED",
+        "secondary": "#A855F7",
+        "accent": "#7C3AED",
+        "background": "#0F0A1A",
+        "surface": "#1A1225",
+        "text": "#FFFFFF",
+        "text_secondary": "#C4B5FD",
+        "text_muted": "#7C7A85",
+        "border": "#2D2640"
+      },
+      "fonts": {
+        "heading": "Poppins, Inter, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 800,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "gradient": "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%)",
+      "css_vars": {
+        "--theme-primary": "#7C3AED",
+        "--theme-secondary": "#A855F7",
+        "--theme-accent": "#7C3AED",
+        "--theme-bg": "#0F0A1A",
+        "--theme-surface": "#1A1225",
+        "--theme-text": "#FFFFFF",
+        "--theme-text-secondary": "#C4B5FD",
+        "--theme-text-muted": "#7C7A85",
+        "--theme-border": "#2D2640",
+        "--theme-gradient": "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%)",
+        "--theme-font-heading": "Poppins, Inter, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 32px rgba(124, 58, 237, 0.3)"
+      }
+    },
+    "minimal_clean": {
+      "name": "Minimal Clean",
+      "description": "Gray on white - lots of whitespace and clarity",
+      "default": false,
+      "colors": {
+        "primary": "#374151",
+        "secondary": "#6B7280",
+        "accent": "#374151",
+        "background": "#FFFFFF",
+        "surface": "#FAFAFA",
+        "text": "#111827",
+        "text_secondary": "#4B5563",
+        "text_muted": "#9CA3AF",
+        "border": "#E5E7EB"
+      },
+      "fonts": {
+        "heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 600,
+        "subheading": 500,
+        "body": 400,
+        "bold": 500
+      },
+      "css_vars": {
+        "--theme-primary": "#374151",
+        "--theme-secondary": "#6B7280",
+        "--theme-accent": "#374151",
+        "--theme-bg": "#FFFFFF",
+        "--theme-surface": "#FAFAFA",
+        "--theme-text": "#111827",
+        "--theme-text-secondary": "#4B5563",
+        "--theme-text-muted": "#9CA3AF",
+        "--theme-border": "#E5E7EB",
+        "--theme-font-heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 1px 3px rgba(0, 0, 0, 0.05)"
+      }
+    },
+    "tech_neon": {
+      "name": "Tech Neon",
+      "description": "Cyan on dark - futuristic and techy",
+      "default": false,
+      "colors": {
+        "primary": "#00D9FF",
+        "secondary": "#00FFB2",
+        "accent": "#00D9FF",
+        "background": "#0A0E14",
+        "surface": "#0D1117",
+        "text": "#E6EDF3",
+        "text_secondary": "#7DD3FC",
+        "text_muted": "#4A5568",
+        "border": "#21262D"
+      },
+      "fonts": {
+        "heading": "JetBrains Mono, Fira Code, monospace",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "css_vars": {
+        "--theme-primary": "#00D9FF",
+        "--theme-secondary": "#00FFB2",
+        "--theme-accent": "#00D9FF",
+        "--theme-bg": "#0A0E14",
+        "--theme-surface": "#0D1117",
+        "--theme-text": "#E6EDF3",
+        "--theme-text-secondary": "#7DD3FC",
+        "--theme-text-muted": "#4A5568",
+        "--theme-border": "#21262D",
+        "--theme-font-heading": "JetBrains Mono, Fira Code, monospace",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 0 32px rgba(0, 217, 255, 0.2)",
+        "--theme-glow": "0 0 20px rgba(0, 217, 255, 0.5)"
+      }
+    },
+    "warm_earth": {
+      "name": "Warm Earth",
+      "description": "Terracotta on cream - warm and inviting",
+      "default": false,
+      "colors": {
+        "primary": "#C2410C",
+        "secondary": "#EA580C",
+        "accent": "#C2410C",
+        "background": "#FFFBEB",
+        "surface": "#FEF3C7",
+        "text": "#451A03",
+        "text_secondary": "#78350F",
+        "text_muted": "#A16207",
+        "border": "#FDE68A"
+      },
+      "fonts": {
+        "heading": "Merriweather, Georgia, serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "css_vars": {
+        "--theme-primary": "#C2410C",
+        "--theme-secondary": "#EA580C",
+        "--theme-accent": "#C2410C",
+        "--theme-bg": "#FFFBEB",
+        "--theme-surface": "#FEF3C7",
+        "--theme-text": "#451A03",
+        "--theme-text-secondary": "#78350F",
+        "--theme-text-muted": "#A16207",
+        "--theme-border": "#FDE68A",
+        "--theme-font-heading": "Merriweather, Georgia, serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 24px rgba(194, 65, 12, 0.15)"
+      }
+    },
+    "ocean_calm": {
+      "name": "Ocean Calm",
+      "description": "Teal on light blue-gray - calm and trustworthy",
+      "default": false,
+      "colors": {
+        "primary": "#0D9488",
+        "secondary": "#14B8A6",
+        "accent": "#0D9488",
+        "background": "#F0FDFA",
+        "surface": "#CCFBF1",
+        "text": "#134E4A",
+        "text_secondary": "#115E59",
+        "text_muted": "#5EEAD4",
+        "border": "#99F6E4"
+      },
+      "fonts": {
+        "heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 600,
+        "subheading": 500,
+        "body": 400,
+        "bold": 500
+      },
+      "css_vars": {
+        "--theme-primary": "#0D9488",
+        "--theme-secondary": "#14B8A6",
+        "--theme-accent": "#0D9488",
+        "--theme-bg": "#F0FDFA",
+        "--theme-surface": "#CCFBF1",
+        "--theme-text": "#134E4A",
+        "--theme-text-secondary": "#115E59",
+        "--theme-text-muted": "#5EEAD4",
+        "--theme-border": "#99F6E4",
+        "--theme-font-heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 24px rgba(13, 148, 136, 0.15)"
+      }
+    },
+    "executive": {
+      "name": "Executive",
+      "description": "Gold on charcoal - premium and sophisticated",
+      "default": false,
+      "colors": {
+        "primary": "#D4AF37",
+        "secondary": "#F5D76E",
+        "accent": "#D4AF37",
+        "background": "#1C1C1C",
+        "surface": "#2A2A2A",
+        "text": "#FAFAFA",
+        "text_secondary": "#D4D4D4",
+        "text_muted": "#737373",
+        "border": "#404040"
+      },
+      "fonts": {
+        "heading": "Playfair Display, Georgia, serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "css_vars": {
+        "--theme-primary": "#D4AF37",
+        "--theme-secondary": "#F5D76E",
+        "--theme-accent": "#D4AF37",
+        "--theme-bg": "#1C1C1C",
+        "--theme-surface": "#2A2A2A",
+        "--theme-text": "#FAFAFA",
+        "--theme-text-secondary": "#D4D4D4",
+        "--theme-text-muted": "#737373",
+        "--theme-border": "#404040",
+        "--theme-font-heading": "Playfair Display, Georgia, serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 32px rgba(212, 175, 55, 0.2)"
+      }
+    },
+    "playful": {
+      "name": "Playful",
+      "description": "Multicolor accents - fun and creative",
+      "default": false,
+      "colors": {
+        "primary": "#F43F5E",
+        "secondary": "#8B5CF6",
+        "accent": "#F43F5E",
+        "background": "#FEFEFE",
+        "surface": "#FFF7ED",
+        "text": "#18181B",
+        "text_secondary": "#3F3F46",
+        "text_muted": "#71717A",
+        "border": "#E4E4E7"
+      },
+      "fonts": {
+        "heading": "Poppins, Inter, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "accent_colors": ["#F43F5E", "#8B5CF6", "#06B6D4", "#10B981", "#F59E0B"],
+      "css_vars": {
+        "--theme-primary": "#F43F5E",
+        "--theme-secondary": "#8B5CF6",
+        "--theme-accent": "#F43F5E",
+        "--theme-accent-2": "#8B5CF6",
+        "--theme-accent-3": "#06B6D4",
+        "--theme-accent-4": "#10B981",
+        "--theme-accent-5": "#F59E0B",
+        "--theme-bg": "#FEFEFE",
+        "--theme-surface": "#FFF7ED",
+        "--theme-text": "#18181B",
+        "--theme-text-secondary": "#3F3F46",
+        "--theme-text-muted": "#71717A",
+        "--theme-border": "#E4E4E7",
+        "--theme-font-heading": "Poppins, Inter, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 24px rgba(244, 63, 94, 0.15)"
+      }
+    },
+    "monochrome": {
+      "name": "Monochrome",
+      "description": "Black and white only - stark and impactful",
+      "default": false,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#333333",
+        "accent": "#000000",
+        "background": "#FFFFFF",
+        "surface": "#F5F5F5",
+        "text": "#000000",
+        "text_secondary": "#333333",
+        "text_muted": "#666666",
+        "border": "#E0E0E0"
+      },
+      "fonts": {
+        "heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "mono": "JetBrains Mono, Fira Code, monospace"
+      },
+      "font_weights": {
+        "heading": 700,
+        "subheading": 600,
+        "body": 400,
+        "bold": 600
+      },
+      "css_vars": {
+        "--theme-primary": "#000000",
+        "--theme-secondary": "#333333",
+        "--theme-accent": "#000000",
+        "--theme-bg": "#FFFFFF",
+        "--theme-surface": "#F5F5F5",
+        "--theme-text": "#000000",
+        "--theme-text-secondary": "#333333",
+        "--theme-text-muted": "#666666",
+        "--theme-border": "#E0E0E0",
+        "--theme-font-heading": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-font-body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "--theme-shadow": "0 4px 24px rgba(0, 0, 0, 0.1)"
+      }
+    }
+  },
+  "meta": {
+    "version": "3.0",
+    "created": "2026-05-17",
+    "description": "Theme definitions for Slide Designer 3.0",
+    "default_theme": "dark_pro"
+  }
+}

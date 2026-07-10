@@ -1,0 +1,10 @@
+{
+  "param__sheets_tool__add_row__name": {
+    "type": "param_correction",
+    "tool": "sheets_tool",
+    "action": "add_row",
+    "wrong_param": "name",
+    "correct_param": "table",
+    "message": "The param 'name' does not exist for sheets_tool.add_row. Use 'table' instead."
+  }
+}

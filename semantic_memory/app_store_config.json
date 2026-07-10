@@ -1,0 +1,109 @@
+{
+  "preInstalled": [
+    "doc_editor",
+    "docs",
+    "sheets_tool",
+    "slide_designer",
+    "todolist",
+    "spark_file",
+    "media_manager"
+  ],
+  "hidden": [
+    "knowledge_vault",
+    "session_tool",
+    "system_settings",
+    "unlock_tool",
+    "check_credits",
+    "refer_user",
+    "account"
+  ],
+  "displayInfo": {
+    "doc_editor": {
+      "name": "Docs",
+      "icon": "📄",
+      "iconClass": "icon-blue",
+      "open_url": "/docs"
+    },
+    "docs": {
+      "name": "Docs",
+      "icon": "📄",
+      "iconClass": "icon-blue",
+      "open_url": "/docs"
+    },
+    "sheets_tool": {
+      "name": "Sheets",
+      "icon": "📊",
+      "iconClass": "icon-green",
+      "open_url": "/sheets"
+    },
+    "slide_designer": {
+      "name": "Slides",
+      "icon": "📽️",
+      "iconClass": "icon-orange",
+      "open_url": "/slides"
+    },
+    "todolist": {
+      "name": "Todolist",
+      "icon": "✅",
+      "iconClass": "icon-teal",
+      "open_url": "/todo"
+    },
+    "spark_file": {
+      "name": "Spark File",
+      "icon": "⚡",
+      "iconClass": "icon-purple",
+      "open_url": "/spark"
+    },
+    "json_manager": {
+      "name": "JSON Manager",
+      "icon": "🗂️",
+      "iconClass": "icon-gray"
+    },
+    "terminal": {
+      "name": "Terminal",
+      "icon": "💻",
+      "iconClass": "icon-gray"
+    },
+    "account": {
+      "name": "Account",
+      "icon": "👤",
+      "iconClass": "icon-blue"
+    },
+    "media_manager": {
+      "name": "Media Manager",
+      "icon": "🎨",
+      "iconClass": "icon-pink",
+      "open_url": "/media"
+    },
+    "files": {
+      "name": "Files",
+      "icon": "📁",
+      "iconClass": "icon-teal"
+    },
+    "readwise_tool": {
+      "name": "Readwise",
+      "icon": "📚",
+      "iconClass": "icon-orange"
+    },
+    "buffer_engine": {
+      "name": "Buffer Engine",
+      "icon": "📢",
+      "iconClass": "icon-blue"
+    },
+    "github_tool_universal": {
+      "name": "GitHub",
+      "icon": "🐙",
+      "iconClass": "icon-gray"
+    },
+    "ideogram_tool": {
+      "name": "Ideogram",
+      "icon": "🎨",
+      "iconClass": "icon-purple"
+    },
+    "claude_assistant": {
+      "name": "Claude Assistant",
+      "icon": "🤖",
+      "iconClass": "icon-orange"
+    }
+  }
+}

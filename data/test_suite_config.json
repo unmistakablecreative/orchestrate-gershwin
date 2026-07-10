@@ -1,0 +1,600 @@
+{
+  "metadata": {
+    "description": "Gershwin Test Suite Configuration",
+    "version": "1.0",
+    "notes": "Add or remove tests by editing this file. Each test requires tool_name, action, params, criteria, and description."
+  },
+  "tests": [
+    {
+      "id": "1.1",
+      "section": "docs",
+      "section_title": "docs Tool",
+      "description": "Create a test document",
+      "tool_name": "docs",
+      "action": "create_doc",
+      "params": {
+        "title": "Test Doc Alpha",
+        "content": "This is test content for validation.",
+        "collection": "Test"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "doc_id"}
+      ],
+      "store_field": "doc_id",
+      "store_as": "doc_id"
+    },
+    {
+      "id": "1.2",
+      "section": "docs",
+      "description": "Read the created document",
+      "tool_name": "docs",
+      "action": "read_doc",
+      "params": {
+        "doc_id": "<DOC_ID>"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "field_contains", "field": "content", "contains": "test content for validation"}
+      ]
+    },
+    {
+      "id": "1.3",
+      "section": "docs",
+      "description": "Append content to document",
+      "tool_name": "docs",
+      "action": "append_doc",
+      "params": {
+        "doc_id": "<DOC_ID>",
+        "content": "\n\nAppended paragraph for testing."
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "1.4",
+      "section": "docs",
+      "description": "Update document with find/replace",
+      "tool_name": "docs",
+      "action": "update_doc",
+      "params": {
+        "doc_id": "<DOC_ID>",
+        "find": "test content",
+        "replace": "REPLACED content"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "1.5",
+      "section": "docs",
+      "description": "Search documents by query",
+      "tool_name": "docs",
+      "action": "search_docs",
+      "params": {
+        "query": "Alpha"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "docs"}
+      ]
+    },
+    {
+      "id": "1.6",
+      "section": "docs",
+      "description": "List documents in collection",
+      "tool_name": "docs",
+      "action": "list_docs",
+      "params": {
+        "collection": "Test"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "docs"}
+      ]
+    },
+    {
+      "id": "1.7",
+      "section": "docs",
+      "description": "Delete the test document",
+      "tool_name": "docs",
+      "action": "delete_doc",
+      "params": {
+        "doc_id": "<DOC_ID>"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ],
+      "clear_state": "doc_id"
+    },
+    {
+      "id": "2.1",
+      "section": "files",
+      "section_title": "files Tool",
+      "description": "Read a Python file",
+      "tool_name": "files",
+      "action": "read_file_text",
+      "params": {
+        "filename": "execution_hub.py"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "content"}
+      ]
+    },
+    {
+      "id": "2.2",
+      "section": "files",
+      "description": "List files in directory",
+      "tool_name": "files",
+      "action": "list_files",
+      "params": {
+        "directory": "tools"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "files"}
+      ]
+    },
+    {
+      "id": "2.3",
+      "section": "files",
+      "description": "Grep content in files",
+      "tool_name": "files",
+      "action": "grep_content",
+      "params": {
+        "pattern": "def execute",
+        "path": "tools",
+        "type": "py"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "matches"}
+      ]
+    },
+    {
+      "id": "2.4",
+      "section": "files",
+      "description": "Find file by name",
+      "tool_name": "files",
+      "action": "find_file",
+      "params": {
+        "filename": "doc_editor.py"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "matches"}
+      ]
+    },
+    {
+      "id": "2.5",
+      "section": "files",
+      "description": "Write a test file",
+      "tool_name": "files",
+      "action": "write_file",
+      "params": {
+        "filename": "data/test_output.txt",
+        "content": "Test file content for validation."
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "3.1",
+      "section": "terminal",
+      "section_title": "terminal Tool",
+      "description": "Run echo command",
+      "tool_name": "terminal",
+      "action": "run_terminal_command",
+      "params": {
+        "command": "echo Hello Gershwin Test"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "field_contains", "field": "output", "contains": "Hello Gershwin Test"}
+      ]
+    },
+    {
+      "id": "3.2",
+      "section": "terminal",
+      "description": "List directory via files tool",
+      "tool_name": "files",
+      "action": "list_files",
+      "params": {
+        "directory": "tools"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "files"}
+      ]
+    },
+    {
+      "id": "3.3",
+      "section": "terminal",
+      "description": "Read README file",
+      "tool_name": "files",
+      "action": "read_file_text",
+      "params": {
+        "filename": "README.md"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "content"}
+      ]
+    },
+    {
+      "id": "4.1",
+      "section": "json_manager",
+      "section_title": "json_manager Tool",
+      "description": "Create a test JSON file",
+      "tool_name": "json_manager",
+      "action": "create_json_file",
+      "params": {
+        "filename": "data/test_json.json",
+        "initial_data": []
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "4.2",
+      "section": "json_manager",
+      "description": "Add entry to JSON file",
+      "tool_name": "json_manager",
+      "action": "add_json_entry",
+      "params": {
+        "filename": "data/test_json.json",
+        "entry_key": "entry_001",
+        "name": "Test Entry",
+        "value": 42
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "4.3",
+      "section": "json_manager",
+      "description": "Read JSON file",
+      "tool_name": "json_manager",
+      "action": "read_json_file",
+      "params": {
+        "filename": "data/test_json.json"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "entries"}
+      ]
+    },
+    {
+      "id": "4.4",
+      "section": "json_manager",
+      "description": "Search JSON entries",
+      "tool_name": "json_manager",
+      "action": "search_json_entries",
+      "params": {
+        "filename": "data/test_json.json",
+        "name": "Test"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "results"}
+      ]
+    },
+    {
+      "id": "4.5",
+      "section": "json_manager",
+      "description": "Update JSON entry",
+      "tool_name": "json_manager",
+      "action": "update_json_entry",
+      "params": {
+        "filename": "data/test_json.json",
+        "entry_key": "entry_001",
+        "value": 100
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "4.6",
+      "section": "json_manager",
+      "description": "Delete JSON entry",
+      "tool_name": "json_manager",
+      "action": "delete_json_entry",
+      "params": {
+        "filename": "data/test_json.json",
+        "entry_key": "entry_001"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "5.1",
+      "section": "media_manager",
+      "section_title": "media_manager Tool",
+      "description": "Media manager tests skipped",
+      "skip": true,
+      "skip_reason": "media_manager handles conversions, requires actual media files",
+      "tool_name": "media_manager",
+      "action": "list",
+      "params": {},
+      "criteria": []
+    },
+    {
+      "id": "6.1",
+      "section": "spark_file",
+      "section_title": "spark_file Tool",
+      "description": "Add entry to spark file",
+      "tool_name": "spark_file",
+      "action": "add_entry",
+      "params": {
+        "content": "Test idea: Build a semantic search engine for personal notes"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "id"}
+      ],
+      "store_field": "id",
+      "store_as": "spark_entry_id"
+    },
+    {
+      "id": "6.2",
+      "section": "spark_file",
+      "description": "Search spark file",
+      "tool_name": "spark_file",
+      "action": "search",
+      "params": {
+        "query": "semantic search",
+        "limit": 5
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "results"}
+      ]
+    },
+    {
+      "id": "6.3",
+      "section": "spark_file",
+      "description": "Get recent spark entries",
+      "tool_name": "spark_file",
+      "action": "recent",
+      "params": {
+        "limit": 10
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "entries"}
+      ]
+    },
+    {
+      "id": "6.4",
+      "section": "spark_file",
+      "description": "Export spark file",
+      "tool_name": "spark_file",
+      "action": "export",
+      "params": {
+        "format": "json"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "data"}
+      ]
+    },
+    {
+      "id": "7.1",
+      "section": "todolist",
+      "section_title": "todolist Tool",
+      "description": "Add a task",
+      "tool_name": "todolist",
+      "action": "add_task",
+      "params": {
+        "content": "Test task: Review test suite results"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "id"}
+      ],
+      "store_field": "id",
+      "store_as": "task_id"
+    },
+    {
+      "id": "7.2",
+      "section": "todolist",
+      "description": "List tasks",
+      "tool_name": "todolist",
+      "action": "list_tasks",
+      "params": {
+        "show_completed": false
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "tasks"}
+      ]
+    },
+    {
+      "id": "7.3",
+      "section": "todolist",
+      "description": "Complete a task",
+      "tool_name": "todolist",
+      "action": "complete_task",
+      "params": {
+        "id": "<TASK_ID>"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "7.4",
+      "section": "todolist",
+      "description": "Delete a task",
+      "tool_name": "todolist",
+      "action": "delete_task",
+      "params": {
+        "id": "<TASK_ID>"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ],
+      "clear_state": "task_id"
+    },
+    {
+      "id": "8.1",
+      "section": "account",
+      "section_title": "account Tool (User Management)",
+      "description": "Add a test user to the ledger",
+      "tool_name": "account",
+      "action": "add_user",
+      "params": {
+        "user_id": "test_user_gershwin",
+        "name": "Gershwin Test User",
+        "credits": 0
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "user_id"}
+      ],
+      "store_field": "user_id",
+      "store_as": "test_user_id"
+    },
+    {
+      "id": "8.2",
+      "section": "account",
+      "description": "List all users in ledger",
+      "tool_name": "account",
+      "action": "list_users",
+      "params": {},
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "users"}
+      ]
+    },
+    {
+      "id": "8.3",
+      "section": "account",
+      "description": "Grant credits to test user",
+      "tool_name": "account",
+      "action": "grant_credits",
+      "params": {
+        "user_id": "test_user_gershwin",
+        "amount": 10
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "new_balance"}
+      ]
+    },
+    {
+      "id": "8.4",
+      "section": "account",
+      "description": "Submit a referral for test user",
+      "tool_name": "account",
+      "action": "refer",
+      "params": {
+        "name": "Referred Friend",
+        "email": "friend@testexample.com"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "referral_id"}
+      ]
+    },
+    {
+      "id": "8.5",
+      "section": "account",
+      "description": "Check account credits after referral",
+      "tool_name": "account",
+      "action": "check",
+      "params": {},
+      "criteria": [
+        {"type": "status"}
+      ]
+    },
+    {
+      "id": "8.6",
+      "section": "account",
+      "description": "Delete test user from ledger",
+      "tool_name": "account",
+      "action": "delete_user",
+      "params": {
+        "user_id": "test_user_gershwin"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ],
+      "clear_state": "test_user_id"
+    },
+    {
+      "id": "9.1",
+      "section": "slide_designer",
+      "section_title": "slide_designer Tool",
+      "description": "List slide layouts",
+      "tool_name": "slide_designer",
+      "action": "list_layouts",
+      "params": {},
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "layouts"}
+      ]
+    },
+    {
+      "id": "9.2",
+      "section": "slide_designer",
+      "description": "List slide themes",
+      "tool_name": "slide_designer",
+      "action": "list_themes",
+      "params": {},
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "themes"}
+      ]
+    },
+    {
+      "id": "9.3",
+      "section": "slide_designer",
+      "description": "List slide decks",
+      "tool_name": "slide_designer",
+      "action": "list_decks",
+      "params": {},
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "10.1",
+      "section": "knowledge_vault",
+      "section_title": "knowledge_vault Tool",
+      "description": "Get knowledge vault stats",
+      "tool_name": "knowledge_vault",
+      "action": "get_stats",
+      "params": {},
+      "criteria": [
+        {"type": "status", "value": "success"}
+      ]
+    },
+    {
+      "id": "10.2",
+      "section": "knowledge_vault",
+      "description": "Search knowledge vault",
+      "tool_name": "knowledge_vault",
+      "action": "search_knowledge",
+      "params": {
+        "query": "execution hub"
+      },
+      "criteria": [
+        {"type": "status", "value": "success"},
+        {"type": "has_field", "field": "results"}
+      ]
+    }
+  ],
+  "cleanup_files": [
+    "data/test_json.json",
+    "data/test_output.txt"
+  ]
+}

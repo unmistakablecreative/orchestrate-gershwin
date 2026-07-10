@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   OrchestrateOS - Task Board
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="task_board.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './task_board_config.json';
+  </script>
+ </head>
+ <body>
+  <div class="container">
+   <header class="header">
+    <div>
+     <h1>
+      OrchestrateOS
+     </h1>
+     <div class="header-sub">
+      Enter a task. Press go. It gets done.
+     </div>
+    </div>
+   </header>
+   <div class="input-card">
+    <div class="input-top">
+     <select class="preset-select" id="presetSelect" onchange="updatePlaceholder()">
+      <option value="custom">
+       ✏️ Custom Task
+      </option>
+      <option value="image">
+       📸 Generate Images
+      </option>
+      <option value="document">
+       📝 Document
+      </option>
+      <option value="research">
+       🔍 Research
+      </option>
+      <option value="social">
+       📱 Social Post
+      </option>
+      <option value="newsletter">
+       📧 Newsletter
+      </option>
+      <option value="code">
+       💻 Code Task
+      </option>
+      <option value="automation">
+       ⚙️ Add Automation Rule
+      </option>
+      <option value="mockup">
+       🎨 Site Mockup
+      </option>
+     </select>
+     <select class="preset-select collection-select" id="collectionSelect" style="display:none">
+      <option value="Inbox">
+       📥 Inbox
+      </option>
+      <option value="Blogs">
+       📰 Blogs
+      </option>
+      <option value="Projects">
+       📁 Projects
+      </option>
+      <option value="Logs">
+       📋 Logs
+      </option>
+      <option value="Newsletters">
+       ✉️ Newsletters
+      </option>
+      <option value="Resources">
+       📚 Resources
+      </option>
+      <option value="Sprints">
+       🏃 Sprints
+      </option>
+      <option value="Literature Notes">
+       📖 Literature Notes
+      </option>
+      <option value="Permanent Notes">
+       💎 Permanent Notes
+      </option>
+     </select>
+    </div>
+    <div class="textarea-wrapper">
+     <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Click to speak">
+      🎤
+     </button>
+     <textarea class="task-textarea" id="taskTextarea" placeholder="Describe what Claude should do..."></textarea>
+    </div>
+    <div class="btn-row">
+     <button class="btn btn-add" onclick="addToStaging()">
+      + Add Another
+     </button>
+     <button class="btn btn-execute" onclick="executeNow()">
+      Execute Now
+     </button>
+    </div>
+    <div class="staging-area" id="stagingArea">
+     <div class="staged-list" id="stagedList">
+     </div>
+     <div class="staging-footer">
+      <span class="staging-count">
+       <strong id="stagedCount">
+        0
+       </strong>
+       tasks staged
+      </span>
+      <button class="btn-execute-all" onclick="executeAll()">
+       Execute All
+      </button>
+     </div>
+    </div>
+   </div>
+   <div class="row-section hidden" id="activeSection">
+    <div class="row-header">
+     <div class="row-label">
+      Active
+      <span class="row-count active-count" id="activeCountBadge">
+       0
+      </span>
+     </div>
+     <div class="row-nav">
+      <span class="page-indicator" id="activePage">
+      </span>
+      <div class="nav-arrows">
+       <div class="nav-arrow disabled" id="activePrev" onclick="slideRow('active',-1)">
+        ‹
+       </div>
+       <div class="nav-arrow disabled" id="activeNext" onclick="slideRow('active',1)">
+        ›
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="row-window">
+     <div class="row-track" id="activeTrack">
+     </div>
+    </div>
+   </div>
+   <div class="row-section" id="recentSection">
+    <div class="row-header">
+     <div class="row-label">
+      Recent
+      <span class="row-count done-count" id="recentCountBadge">
+       0
+      </span>
+     </div>
+     <div class="row-nav">
+      <a class="see-all-link" href="#" id="seeAllLink" onclick="toggleAllResults(event)">
+       See all
+       <span class="count" id="allCount">
+       </span>
+      </a>
+      <div class="nav-arrows">
+       <div class="nav-arrow disabled" id="recentPrev" onclick="slideRow('recent',-1)">
+        ‹
+       </div>
+       <div class="nav-arrow disabled" id="recentNext" onclick="slideRow('recent',1)">
+        ›
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="row-window">
+     <div class="row-track" id="recentTrack">
+     </div>
+    </div>
+    <div class="expanded-grid" id="expandedGrid" style="display:none">
+    </div>
+   </div>
+  </div>
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+   <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">
+     ✕
+    </button>
+    <div class="modal-status-badge" id="modalBadge">
+    </div>
+    <div class="modal-title" id="modalTitle">
+    </div>
+    <div id="modalContent">
+    </div>
+   </div>
+  </div>
+  <div class="toast" id="toast">
+  </div>
+  <script src="./task_board.js">
+  </script>
+ </body>
+</html>

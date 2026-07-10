@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "source_file": "orchestrate_home.html",
+    "converted_at": "2026-07-08T11:05:00.000000",
+    "version": "2.0"
+  },
+  "sidebar": [
+    {
+      "id": "home",
+      "label": "Home",
+      "icon": "home",
+      "src": null,
+      "shortcut": "H"
+    },
+    {
+      "id": "tasks",
+      "label": "Tasks",
+      "icon": "check-square",
+      "src": "task_board.html",
+      "shortcut": "T",
+      "requires_unlock": "claude_assistant"
+    },
+    {
+      "id": "docs",
+      "label": "Docs",
+      "icon": "file-text",
+      "src": "doc_editor.html",
+      "shortcut": "D"
+    },
+    {
+      "id": "slides",
+      "label": "Slides",
+      "icon": "monitor",
+      "src": "orchestrate_slides.html",
+      "shortcut": "L"
+    },
+    {
+      "id": "sheets",
+      "label": "Sheets",
+      "icon": "grid",
+      "src": "sheets.html",
+      "shortcut": "E"
+    },
+    {
+      "id": "todo",
+      "label": "Todo",
+      "icon": "list",
+      "src": "todolist.html",
+      "shortcut": "O"
+    },
+    {
+      "id": "spark",
+      "label": "Spark",
+      "icon": "zap",
+      "src": "spark_file.html",
+      "shortcut": "S"
+    },
+    {
+      "id": "media",
+      "label": "Media",
+      "icon": "image",
+      "src": "media_manager.html",
+      "shortcut": "M",
+      "divider_after": true
+    },
+    {
+      "id": "appstore",
+      "label": "App Store",
+      "icon": "plus-square",
+      "src": "app_store.html",
+      "shortcut": "A"
+    }
+  ],
+  "icons": {
+    "home": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg>",
+    "check-square": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 11l3 3L22 4\"/><path d=\"M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11\"/></svg>",
+    "file-text": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"16\" y1=\"13\" x2=\"8\" y2=\"13\"/><line x1=\"16\" y1=\"17\" x2=\"8\" y2=\"17\"/></svg>",
+    "monitor": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" ry=\"2\"/><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\"/><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\"/></svg>",
+    "grid": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"/><line x1=\"3\" y1=\"9\" x2=\"21\" y2=\"9\"/><line x1=\"3\" y1=\"15\" x2=\"21\" y2=\"15\"/><line x1=\"9\" y1=\"3\" x2=\"9\" y2=\"21\"/></svg>",
+    "list": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"8\" y1=\"6\" x2=\"21\" y2=\"6\"/><line x1=\"8\" y1=\"12\" x2=\"21\" y2=\"12\"/><line x1=\"8\" y1=\"18\" x2=\"21\" y2=\"18\"/><line x1=\"3\" y1=\"6\" x2=\"3.01\" y2=\"6\"/><line x1=\"3\" y1=\"12\" x2=\"3.01\" y2=\"12\"/><line x1=\"3\" y1=\"18\" x2=\"3.01\" y2=\"18\"/></svg>",
+    "zap": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"/></svg>",
+    "image": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"/><circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"/><polyline points=\"21 15 16 10 5 21\"/></svg>",
+    "plus-square": "<svg class=\"icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"/><path d=\"M12 8v8\"/><path d=\"M8 12h8\"/></svg>"
+  },
+  "home_views": {
+    "locked": {
+      "type": "iframe",
+      "src": "app_store.html"
+    },
+    "unlocked": {
+      "type": "action_cards",
+      "cards": [
+        { "id": "create_doc", "label": "Create Doc", "icon": "file-text", "action": "navigateTo", "target": "docs" },
+        { "id": "create_slides", "label": "Create Slides", "icon": "monitor", "action": "navigateTo", "target": "slides" },
+        { "id": "view_tasks", "label": "Tasks", "icon": "check-square", "action": "navigateTo", "target": "tasks" },
+        { "id": "view_todo", "label": "Todo", "icon": "list", "action": "navigateTo", "target": "todo" },
+        { "id": "view_spark", "label": "Spark", "icon": "zap", "action": "navigateTo", "target": "spark" },
+        { "id": "view_media", "label": "Media", "icon": "image", "action": "navigateTo", "target": "media" }
+      ]
+    }
+  },
+  "unlock_gate_tool": "claude_assistant"
+}

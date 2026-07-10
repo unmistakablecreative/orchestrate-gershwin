@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gershwin Test Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&family=Playfair+Display:wght@700&family=Merriweather:wght@700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --theme-primary: #D4AF37; --theme-secondary: #F5D76E; --theme-accent: #D4AF37; --theme-bg: #1C1C1C; --theme-surface: #2A2A2A; --theme-text: #FAFAFA; --theme-text-secondary: #D4D4D4; --theme-text-muted: #737373; --theme-border: #404040; --theme-font-heading: Playfair Display, Georgia, serif; --theme-font-body: Inter, -apple-system, BlinkMacSystemFont, sans-serif; --theme-shadow: 0 4px 32px rgba(212, 175, 55, 0.2) }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; min-height: 100vh; padding: 40px; }
+        .deck-container { max-width: 1200px; margin: 0 auto; }
+        .deck-title { color: white; font-family: Inter, sans-serif; font-size: 32px; margin-bottom: 32px; }
+        .slide-wrapper { margin-bottom: 40px; }
+        .slide-number { color: #666; font-family: Inter, sans-serif; font-size: 14px; margin-bottom: 8px; }
+        
+/* Slide Designer 3.0 - Slide Styles */
+.slide {
+    width: 1920px;
+    height: 1080px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px;
+    box-sizing: border-box;
+    background: var(--theme-bg);
+    color: var(--theme-text);
+    font-family: var(--theme-font-body);
+    overflow: hidden;
+}
+
+.slide h1, .slide h2, .slide h3, .slide h4 {
+    font-family: var(--theme-font-heading);
+    color: var(--theme-text);
+    margin: 0 0 24px 0;
+}
+
+.slide h1 { font-size: 72px; font-weight: 700; }
+.slide h2 { font-size: 48px; font-weight: 600; }
+.slide h3 { font-size: 32px; font-weight: 600; }
+.slide h4 { font-size: 24px; font-weight: 600; }
+
+.slide p { font-size: 24px; line-height: 1.6; color: var(--theme-text-secondary); }
+
+/* Title Hero */
+.layout-title_hero .title-hero-content { text-align: center; }
+.layout-title_hero .hero-headline { font-size: 96px; margin-bottom: 32px; }
+.layout-title_hero .hero-subtitle { font-size: 36px; color: var(--theme-text-secondary); }
+
+/* Split Content */
+.layout-split_content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+.split-left, .split-right { display: flex; flex-direction: column; justify-content: center; }
+
+/* Three Column */
+.three-column-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; width: 100%; }
+.column-card { text-align: center; padding: 40px; background: var(--theme-surface); border-radius: 16px; }
+.column-icon { width: 64px; height: 64px; margin: 0 auto 24px; }
+.column-icon svg { width: 100%; height: 100%; stroke: var(--theme-accent); }
+
+/* Four Grid */
+.four-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; width: 100%; }
+.grid-card { padding: 40px; background: var(--theme-surface); border-radius: 16px; }
+.grid-icon { width: 48px; height: 48px; margin-bottom: 16px; }
+.grid-icon svg { width: 100%; height: 100%; stroke: var(--theme-accent); }
+
+/* Big Number */
+.big-number-content { text-align: center; }
+.big-number { font-size: 200px; font-weight: 800; color: var(--theme-accent); display: block; line-height: 1; }
+.big-label { font-size: 48px; color: var(--theme-text); display: block; margin-top: 24px; }
+.big-context { font-size: 24px; margin-top: 16px; }
+
+/* Stats Row */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; width: 100%; }
+.stat-card { text-align: center; padding: 40px; background: var(--theme-surface); border-radius: 16px; }
+.stat-number { font-size: 64px; font-weight: 700; color: var(--theme-accent); display: block; }
+.stat-label { font-size: 20px; color: var(--theme-text-secondary); margin-top: 8px; display: block; }
+
+/* Quote */
+.quote-content { text-align: center; max-width: 1200px; }
+.quote-content blockquote { font-size: 48px; font-style: italic; line-height: 1.4; margin: 0 0 48px 0; color: var(--theme-text); }
+.quote-attribution { display: flex; flex-direction: column; gap: 8px; }
+.author-name { font-size: 28px; font-weight: 600; }
+.author-title { font-size: 20px; color: var(--theme-text-secondary); }
+
+/* Bullet List */
+.bullet-list { list-style: none; padding: 0; margin: 32px 0 0 0; }
+.bullet-list li { font-size: 28px; padding: 16px 0; padding-left: 40px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: var(--theme-accent); border-radius: 50%; }
+
+/* Timeline */
+.timeline-horizontal { display: flex; justify-content: space-between; width: 100%; position: relative; }
+.timeline-horizontal::before { content: ''; position: absolute; top: 24px; left: 48px; right: 48px; height: 4px; background: var(--theme-border); }
+.timeline-point { text-align: center; flex: 1; position: relative; }
+.timeline-marker { width: 48px; height: 48px; background: var(--theme-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; margin: 0 auto 24px; position: relative; z-index: 1; }
+.timeline-label { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.timeline-body { font-size: 18px; color: var(--theme-text-secondary); padding: 0 16px; }
+
+/* Comparison Table */
+.comparison-table { width: 100%; border-collapse: collapse; margin-top: 32px; }
+.comparison-table th, .comparison-table td { padding: 20px 32px; text-align: left; border-bottom: 1px solid var(--theme-border); }
+.comparison-table th { background: var(--theme-surface); font-weight: 600; font-size: 20px; }
+.comparison-table td { font-size: 18px; }
+
+/* Team Grid */
+.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; width: 100%; }
+.team-card { text-align: center; }
+.team-photo { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; }
+.team-photo-placeholder { width: 160px; height: 160px; border-radius: 50%; background: var(--theme-surface); margin: 0 auto 16px; }
+.team-card h4 { margin-bottom: 4px; }
+.team-title { font-size: 16px; color: var(--theme-text-secondary); }
+
+/* Logo Grid */
+.logo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px; width: 100%; }
+.logo-cell { display: flex; align-items: center; justify-content: center; padding: 32px; background: var(--theme-surface); border-radius: 16px; }
+.partner-logo { max-width: 200px; max-height: 80px; object-fit: contain; }
+
+/* CTA Closing */
+.cta-content { text-align: center; }
+.cta-content h1 { font-size: 72px; margin-bottom: 24px; }
+.cta-subtext { font-size: 28px; margin-bottom: 48px; }
+.cta-button { display: inline-block; padding: 24px 64px; background: var(--theme-accent); color: white; font-size: 24px; font-weight: 600; text-decoration: none; border-radius: 12px; }
+
+/* Section Divider */
+.section-divider-content { text-align: center; }
+.section-divider-content h1 { font-size: 80px; }
+
+/* Image Full */
+.image-full { width: 100%; height: 100%; background-size: cover; background-position: center; position: absolute; top: 0; left: 0; }
+.image-caption { position: absolute; bottom: 40px; left: 40px; right: 40px; padding: 24px; background: rgba(0,0,0,0.7); color: white; font-size: 24px; border-radius: 8px; }
+
+/* Text Only */
+.text-only-content { max-width: 1400px; }
+.text-only-content h2 { margin-bottom: 32px; }
+.text-only-content p { font-size: 28px; line-height: 1.8; }
+
+/* Icon List */
+.icon-list { margin-top: 32px; }
+.icon-list-item { display: flex; align-items: center; gap: 24px; padding: 16px 0; font-size: 24px; }
+.icon-list-icon { width: 40px; height: 40px; }
+.icon-list-icon svg { width: 100%; height: 100%; stroke: var(--theme-accent); }
+
+/* Numbered Steps */
+.numbered-steps { margin-top: 32px; }
+.step { display: flex; gap: 32px; padding: 24px 0; }
+.step-number { width: 56px; height: 56px; background: var(--theme-accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; flex-shrink: 0; }
+.step-content h4 { margin-bottom: 8px; }
+.step-content p { font-size: 20px; margin: 0; }
+
+/* Chart */
+.chart-slide { width: 100%; }
+.chart-slide h2 { text-align: center; margin-bottom: 40px; }
+.chart-container { width: 100%; height: 600px; display: flex; align-items: center; justify-content: center; }
+.chart-insights { text-align: center; margin-top: 24px; }
+
+/* Agenda */
+.agenda-list { margin-top: 40px; }
+.agenda-item { display: flex; align-items: center; gap: 32px; padding: 24px 0; border-bottom: 1px solid var(--theme-border); }
+.agenda-number { font-size: 24px; font-weight: 700; color: var(--theme-accent); }
+.agenda-text { font-size: 28px; }
+
+/* Preview Scale */
+.slide-preview {
+    transform-origin: top left;
+    box-shadow: var(--theme-shadow);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+        .slide { transform: scale(0.5); transform-origin: top left; margin-bottom: -540px; }
+    </style>
+</head>
+<body>
+    <div class="deck-container">
+        <h1 class="deck-title">Gershwin Test Deck</h1>
+
+        <div class="slide-wrapper">
+            <div class="slide-number">Slide 1</div>
+            <div class="slide layout-title_hero" style="--theme-primary: #D4AF37; --theme-secondary: #F5D76E; --theme-accent: #D4AF37; --theme-bg: #1C1C1C; --theme-surface: #2A2A2A; --theme-text: #FAFAFA; --theme-text-secondary: #D4D4D4; --theme-text-muted: #737373; --theme-border: #404040; --theme-font-heading: Playfair Display, Georgia, serif; --theme-font-body: Inter, -apple-system, BlinkMacSystemFont, sans-serif; --theme-shadow: 0 4px 32px rgba(212, 175, 55, 0.2)">
+            <div class="title-hero-content">
+                <h1 class="hero-headline"></h1>
+                <p class="hero-subtitle">Automated test</p>
+            </div>
+        </div>
+        </div>
+
+    </div>
+</body>
+</html>

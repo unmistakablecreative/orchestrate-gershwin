@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Slide Designer - OrchestrateOS
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Lora:wght@400;500;600;700&amp;family=Source+Sans+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js">
+  </script>
+  <link href="orchestrate_slides.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './orchestrate_slides_config.json';
+  </script>
+ </head>
+ <body>
+  <header class="header">
+   <h1>
+    <button class="back-btn" id="backBtn" onclick="goToHome()">
+     <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16">
+      <polyline points="15 18 9 12 15 6">
+      </polyline>
+     </svg>
+     Decks
+    </button>
+    <span id="headerTitle">
+     <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="24">
+      <rect height="14" rx="2" width="20" x="2" y="3">
+      </rect>
+      <line x1="8" x2="16" y1="21" y2="21">
+      </line>
+      <line x1="12" x2="12" y1="17" y2="21">
+      </line>
+     </svg>
+     Slide Designer
+    </span>
+   </h1>
+   <div class="header-actions">
+    <div class="saving-indicator" id="savingIndicator">
+     <div class="saving-spinner">
+     </div>
+     <span>
+      Saving...
+     </span>
+    </div>
+    <select class="btn btn-secondary" id="themeSelector" onchange="applyTheme(this.value)" style="display: none;">
+     <option value="dark_pro">
+      Dark Pro
+     </option>
+     <option value="light_corporate">
+      Light Corporate
+     </option>
+     <option value="startup_bold">
+      Startup Bold
+     </option>
+     <option value="minimal_clean">
+      Minimal Clean
+     </option>
+     <option value="tech_neon">
+      Tech Neon
+     </option>
+     <option value="warm_earth">
+      Warm Earth
+     </option>
+     <option value="ocean_calm">
+      Ocean Calm
+     </option>
+     <option value="executive">
+      Executive
+     </option>
+     <option value="playful">
+      Playful
+     </option>
+     <option value="monochrome">
+      Monochrome
+     </option>
+    </select>
+    <select class="font-pairing-select" id="fontPairingSelector" onchange="applyFontPairing(this.value)">
+     <option value="classic">
+      Classic (Inter)
+     </option>
+     <option value="editorial">
+      Editorial (Playfair)
+     </option>
+     <option value="technical">
+      Technical (JetBrains)
+     </option>
+     <option value="humanist">
+      Humanist (Lora)
+     </option>
+    </select>
+    <button class="btn btn-secondary" id="exportBtn" onclick="exportDeck()" style="display: none;">
+     <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
+      </path>
+      <polyline points="7 10 12 15 17 10">
+      </polyline>
+      <line x1="12" x2="12" y1="15" y2="3">
+      </line>
+     </svg>
+     Export
+    </button>
+    <button class="btn btn-primary" id="presentBtn" onclick="startPresent()" style="display: none;">
+     <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16">
+      <polygon points="5 3 19 12 5 21 5 3">
+      </polygon>
+     </svg>
+     Present
+    </button>
+   </div>
+  </header>
+  <!-- HOME VIEW - Deck Grid -->
+  <div class="home-view active" id="homeView">
+   <div class="home-header">
+    <h2>
+     Your Decks
+    </h2>
+    <button class="new-deck-btn-home" onclick="openNewDeckModal()">
+     <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16">
+      <line x1="12" x2="12" y1="5" y2="19">
+      </line>
+      <line x1="5" x2="19" y1="12" y2="12">
+      </line>
+     </svg>
+     New Deck
+    </button>
+   </div>
+   <div class="deck-grid" id="deckGrid">
+   </div>
+  </div>
+  <!-- DECK VIEW - Editor -->
+  <div class="deck-view" id="deckView">
+   <aside class="sidebar">
+    <div class="sidebar-header">
+     <h2>
+      Slides
+     </h2>
+    </div>
+    <div class="slide-list" id="slideList">
+    </div>
+   </aside>
+   <main class="canvas-area">
+    <div class="canvas-toolbar">
+     <div class="zoom-controls">
+      <button class="zoom-btn" onclick="zoomOut()">
+       -
+      </button>
+      <span class="zoom-level" id="zoomLevel">
+       100%
+      </span>
+      <button class="zoom-btn" onclick="zoomIn()">
+       +
+      </button>
+     </div>
+     <span id="slideInfo" style="font-size: 12px; color: var(--text-muted);">
+     </span>
+    </div>
+    <div class="canvas-wrapper">
+     <button class="nav-arrow prev" id="prevSlideBtn" onclick="prevSlide()">
+      <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="24">
+       <polyline points="15 18 9 12 15 6">
+       </polyline>
+      </svg>
+     </button>
+     <div class="slide-canvas" id="slideCanvas">
+      <div class="empty-state" id="emptyState">
+       <div class="empty-state-icon">
+        Slides
+       </div>
+       <div class="empty-state-text">
+        Click + to add your first slide
+       </div>
+      </div>
+      <div id="slideContent" style="display: none;">
+      </div>
+     </div>
+     <button class="nav-arrow next" id="nextSlideBtn" onclick="nextSlide()">
+      <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="24">
+       <polyline points="9 18 15 12 9 6">
+       </polyline>
+      </svg>
+     </button>
+    </div>
+    <button class="fab-add-slide" onclick="openLayoutPicker()" title="Add Slide">
+     <svg fill="none" height="28" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="28">
+      <line x1="12" x2="12" y1="5" y2="19">
+      </line>
+      <line x1="5" x2="19" y1="12" y2="12">
+      </line>
+     </svg>
+    </button>
+   </main>
+  </div>
+  <!-- Layout Picker Modal -->
+  <div class="modal-overlay" id="layoutPickerModal">
+   <div class="modal">
+    <div class="modal-header">
+     <h2>
+      Choose a Layout
+     </h2>
+     <button class="modal-close" onclick="closeLayoutPicker()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="layout-grid" id="layoutGrid">
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- Icon Picker Modal -->
+  <div class="modal-overlay" id="iconPickerModal">
+   <div class="modal">
+    <div class="modal-header">
+     <h2>
+      Choose an Icon
+     </h2>
+     <button class="modal-close" onclick="closeIconPicker()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <input class="icon-search" id="iconSearch" oninput="filterIcons(this.value)" placeholder="Search icons..." type="text"/>
+     <div class="icon-grid" id="iconGrid">
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- New Deck Modal -->
+  <div class="modal-overlay" id="newDeckModal">
+   <div class="deck-modal">
+    <h3>
+     Create New Deck
+    </h3>
+    <input class="deck-modal-input" id="newDeckTitle" onkeydown="if(event.key==='Enter')confirmNewDeck()" placeholder="Deck title..." type="text"/>
+    <div class="deck-modal-actions">
+     <button class="btn btn-secondary" onclick="closeNewDeckModal()">
+      Cancel
+     </button>
+     <button class="btn btn-primary" onclick="confirmNewDeck()">
+      Create
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Present Mode -->
+  <div class="present-mode" id="presentMode">
+   <div class="present-slide" id="presentSlide">
+   </div>
+   <div class="present-nav">
+    <button class="present-nav-btn" onclick="prevSlide()">
+     ←
+    </button>
+    <span class="present-counter" id="presentCounter">
+     1 / 1
+    </span>
+    <button class="present-nav-btn" onclick="nextSlide()">
+     →
+    </button>
+   </div>
+   <button class="present-exit" onclick="exitPresent()">
+    ESC to exit
+   </button>
+  </div>
+  <div class="toast" id="toast">
+   <span id="toastMessage">
+   </span>
+  </div>
+  <!-- Floating Text Toolbar -->
+  <div class="text-toolbar" id="textToolbar">
+   <button class="text-toolbar-btn" onclick="applyTextStyle('heading')" title="Heading">
+    H1
+   </button>
+   <button class="text-toolbar-btn" onclick="applyTextStyle('subheading')" title="Subheading">
+    H2
+   </button>
+   <button class="text-toolbar-btn" onclick="applyTextStyle('body')" title="Body">
+    P
+   </button>
+   <div class="text-toolbar-divider">
+   </div>
+   <button class="text-toolbar-btn" id="boldBtn" onclick="toggleTextStyle('bold')" title="Bold">
+    <b>
+     B
+    </b>
+   </button>
+   <button class="text-toolbar-btn" id="italicBtn" onclick="toggleTextStyle('italic')" title="Italic">
+    <i>
+     I
+    </i>
+   </button>
+   <div class="text-toolbar-divider">
+   </div>
+   <button class="text-toolbar-btn" onclick="openTextColorSwatches()" title="Text Color">
+    A
+   </button>
+  </div>
+  <!-- Color Swatch Popup for Text -->
+  <div class="color-swatch-popup" id="textColorSwatches">
+  </div>
+  <!-- Color Swatch Popup for Icons -->
+  <div class="color-swatch-popup" id="iconColorSwatches">
+  </div>
+  <script src="/semantic_memory/global_nav.js">
+  </script>
+  <script src="/semantic_memory/html/dev_hud_loader.js">
+  </script>
+  <script src="/semantic_memory/global_nav.js">
+  </script>
+  <script src="/semantic_memory/html/dev_hud_loader.js">
+  </script>
+  <script src="./orchestrate_slides.js">
+  </script>
+ </body>
+</html>

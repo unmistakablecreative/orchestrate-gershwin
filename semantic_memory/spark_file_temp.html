@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Spark File - OrchestrateOS
+  </title>
+  <link href="spark_file.css" rel="stylesheet"/>
+  <script>
+   // Config path - can be overridden before load
+        window.CONFIG_PATH = './spark_file_config.json';
+  </script>
+ </head>
+ <body>
+  <div class="container">
+   <header>
+    <h1>
+     Spark File
+    </h1>
+    <p>
+     Zero-friction idea capture. One input. No folders. No tags.
+    </p>
+   </header>
+   <!-- Capture Section -->
+   <div class="capture-section">
+    <textarea class="capture-input" id="captureInput" maxlength="5000" placeholder="Capture a spark... (idea, thought, snippet, anything)"></textarea>
+    <div class="capture-footer">
+     <span class="char-count">
+      <span id="charCount">
+       0
+      </span>
+      / 5000
+     </span>
+     <button class="btn-capture" disabled="" id="captureBtn" onclick="captureEntry()">
+      Capture Spark
+     </button>
+    </div>
+   </div>
+   <!-- Search Section -->
+   <div class="search-section">
+    <div class="search-row">
+     <input class="search-input" id="searchInput" placeholder="Search sparks semantically..." type="text"/>
+     <button class="btn-search" onclick="searchEntries()">
+      Search
+     </button>
+     <button class="btn-clear" onclick="clearSearch()">
+      Clear
+     </button>
+    </div>
+   </div>
+   <!-- Entries Section -->
+   <div class="entries-section">
+    <div class="entries-header">
+     <div class="tabs">
+      <button class="tab active" id="tabRecent" onclick="showTab('recent')">
+       Recent
+      </button>
+      <button class="tab" id="tabResults" onclick="showTab('results')" style="display:none;">
+       Search Results
+      </button>
+     </div>
+     <span class="entries-count" id="entriesCount">
+     </span>
+    </div>
+    <div class="entries-list" id="entriesList">
+     <div class="loading">
+      Loading sparks
+     </div>
+    </div>
+   </div>
+  </div>
+  <button class="refresh-btn" onclick="loadRecent()">
+   ↻ Refresh
+  </button>
+  <div class="toast" id="toast">
+  </div>
+  <script src="./spark_file.js">
+  </script>
+ </body>
+</html>

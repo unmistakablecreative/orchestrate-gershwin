@@ -1,0 +1,130 @@
+{
+  "templates": {
+    "title": {
+      "description": "Centered title slide with title and subtitle",
+      "layout": {
+        "title": {
+          "font": "Montserrat",
+          "size_pt": 80,
+          "bold": true,
+          "position": {"left_pct": 10, "top_pct": 35, "width_pct": 80, "height_pct": 20},
+          "alignment": "center",
+          "color": "#FFFFFF"
+        },
+        "subtitle": {
+          "font": "Montserrat",
+          "size_pt": 40,
+          "bold": false,
+          "position": {"left_pct": 10, "top_pct": 55, "width_pct": 80, "height_pct": 10},
+          "alignment": "center",
+          "color": "#CCCCCC"
+        }
+      },
+      "background_color": "#1a1a2e"
+    },
+    "features_grid": {
+      "description": "2x3 grid with emoji icons and text underneath",
+      "layout": {
+        "title": {
+          "font": "Montserrat",
+          "size_pt": 48,
+          "bold": true,
+          "position": {"left_pct": 10, "top_pct": 5, "width_pct": 80, "height_pct": 12},
+          "alignment": "center",
+          "color": "#FFFFFF"
+        },
+        "grid": {
+          "rows": 2,
+          "cols": 3,
+          "start_top_pct": 22,
+          "start_left_pct": 8,
+          "cell_width_pct": 28,
+          "cell_height_pct": 35,
+          "icon_size_pt": 60,
+          "text_size_pt": 24,
+          "text_color": "#FFFFFF",
+          "icon_color": "#4CC9F0"
+        }
+      },
+      "background_color": "#16213e"
+    },
+    "process_flow": {
+      "description": "Horizontal flow with 3-4 steps (emoji + text)",
+      "layout": {
+        "title": {
+          "font": "Montserrat",
+          "size_pt": 48,
+          "bold": true,
+          "position": {"left_pct": 10, "top_pct": 8, "width_pct": 80, "height_pct": 12},
+          "alignment": "center",
+          "color": "#FFFFFF"
+        },
+        "flow": {
+          "max_steps": 4,
+          "start_top_pct": 35,
+          "start_left_pct": 8,
+          "step_width_pct": 20,
+          "icon_size_pt": 50,
+          "text_size_pt": 22,
+          "arrow_color": "#4CC9F0",
+          "text_color": "#FFFFFF"
+        }
+      },
+      "background_color": "#0f3460"
+    },
+    "content_split": {
+      "description": "Left side big text, right side bullet points",
+      "layout": {
+        "left_text": {
+          "font": "Montserrat",
+          "size_pt": 56,
+          "bold": true,
+          "position": {"left_pct": 5, "top_pct": 20, "width_pct": 40, "height_pct": 60},
+          "alignment": "left",
+          "color": "#FFFFFF"
+        },
+        "right_bullets": {
+          "font": "Montserrat",
+          "size_pt": 28,
+          "bold": false,
+          "position": {"left_pct": 50, "top_pct": 20, "width_pct": 45, "height_pct": 60},
+          "alignment": "left",
+          "color": "#E0E0E0",
+          "bullet_color": "#4CC9F0"
+        }
+      },
+      "background_color": "#1a1a2e"
+    },
+    "quote": {
+      "description": "Large centered quote with attribution",
+      "layout": {
+        "quote_text": {
+          "font": "Montserrat",
+          "size_pt": 44,
+          "bold": false,
+          "italic": true,
+          "position": {"left_pct": 12, "top_pct": 25, "width_pct": 76, "height_pct": 40},
+          "alignment": "center",
+          "color": "#FFFFFF"
+        },
+        "attribution": {
+          "font": "Montserrat",
+          "size_pt": 28,
+          "bold": false,
+          "position": {"left_pct": 12, "top_pct": 70, "width_pct": 76, "height_pct": 10},
+          "alignment": "center",
+          "color": "#888888"
+        }
+      },
+      "background_color": "#16213e"
+    }
+  },
+  "global_rules": {
+    "max_words_per_title": 6,
+    "max_content_width_pct": 60,
+    "one_idea_per_slide": true,
+    "prefer_emoji_over_clipart": true,
+    "slide_width_inches": 13.333,
+    "slide_height_inches": 7.5
+  }
+}

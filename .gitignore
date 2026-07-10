@@ -1,0 +1,52 @@
+# Credentials (NEVER commit)
+tools/credentials.json
+credentials.json
+
+# Legacy installer/testing artifacts
+referral_base/
+system_docs/
+system_settings.ndjson.bak
+test_suite.py
+generate_test_suite.py
+gershwin_test_suite.json
+auth/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.eggs/
+*.egg-info/
+*.egg
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and databases
+*.log
+execution_log.json
+
+# Environment
+.env
+.venv/
+venv/
+ENV/
+
+# Screenshots (local testing)
+screenshots/
+
+# Skill build artifacts
+orchestrate-gershwin-skill/
+*.skill

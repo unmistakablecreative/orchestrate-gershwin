@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "source_file": "bullet_journal.html",
+    "converted_at": "2026-07-08T08:08:18.589693",
+    "version": "1.0"
+  },
+  "columns": [
+    "todo",
+    "in_progress",
+    "done"
+  ],
+  "status_mappings": {
+    "status_map_0": "{\n                    filtered = filtered.filter(e => e.status !== \"done\");\n                }",
+    "status_map_1": "{\n                    // Show only done items\n                    filtered = allEntries.filter(e => e.status === \"done\");\n                }",
+    "status_map_2": "{\n                    // Show type but exclude done\n                    filtered = allEntries.filter(e => e.type === currentFilter && e.status !== \"done\");\n                }",
+    "status_map_3": "{\n                    // \"all\" - exclude done items by default\n                    filtered = allEntries.filter(e => e.status !== \"done\");\n                }",
+    "status_map_4": "{\n                const content = entry.content || \"\";\n                const needsTruncate = content.length > TRUNCATE_THRESHOLD;\n                const date = formatDate(entry.timestamp);\n                const statusClass = entry.status === \"done\" ? \"done\" : \"\";\n\n                return \"<div class=\"card \" + entry.type + \"\">\" +\n                    \"<div class=\"card-type\">\" + entry.type + \"</div>\" +\n                    \"<div class=\"card-content\" + (needsTruncate ? \" truncated\" : \"\") + \"\">\" + escapeHtml(content) + \"</div>\" +\n                    (needsTruncate ? \"<div class=\"show-more\" onclick=\"toggleExpand(this)\">Show more</div>\" : \"\") +\n                    \"<div class=\"card-footer\">\" +\n                        \"<span class=\"card-date\">\" + date + \"</span>\" +\n                        \"<div>\" +\n                            \"<span class=\"card-collection\">\" + (entry.collection || \"uncategorized\") + \"</span>\" +\n                            \"<span class=\"card-status \" + statusClass + \"\">\" + (entry.status || \"raw\") + \"</span>\" +\n                        \"</div>\" +\n                    \"</div>\" +\n                \"</div>\";\n            }"
+  },
+  "api_endpoints": [
+    "/data-nocache/bullet_journal.json",
+    "/execute_task"
+  ],
+  "ui_strings": {
+    "header_0": "No entries found",
+    "header_1": "Could not load entries"
+  },
+  "functions": [
+    "renderCollectionDropdown",
+    "formatDate",
+    "openModal",
+    "escapeHtml",
+    "toggleExpand",
+    "updateStats",
+    "closeModal"
+  ]
+}
