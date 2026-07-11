@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrchestrateOS Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            padding: 48px;
+            text-align: center;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+
+        .question {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 48px;
+            line-height: 1.3;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 20px 24px;
+            font-size: 24px;
+            font-family: inherit;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        input:focus {
+            border-bottom-color: #00d4ff;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #888;
+            margin-top: 16px;
+        }
+
+        .hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .progress-dots {
+            position: fixed;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #00d4ff;
+            transform: scale(1.2);
+        }
+
+        .dot.completed {
+            background: #00d4ff;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+            margin-top: 32px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn.loading .spinner {
+            display: block;
+        }
+
+        .btn.loading span {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+
+        .success-message {
+            font-size: 24px;
+            color: #888;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Name -->
+        <div class="screen active" id="screen1">
+            <div class="logo">🎹</div>
+            <p class="question">What's your name?</p>
+            <div class="input-wrapper">
+                <input type="text" id="name" placeholder="Type your name..." autofocus>
+            </div>
+            <p class="hint">Press <kbd>Enter ↵</kbd> to continue</p>
+            <p class="error" id="error1">Please enter your name</p>
+        </div>
+
+        <!-- Screen 2: Email -->
+        <div class="screen" id="screen2">
+            <div class="logo">✉️</div>
+            <p class="question">What's your email?</p>
+            <div class="input-wrapper">
+                <input type="email" id="email" placeholder="you@example.com">
+            </div>
+            <p class="hint">Press <kbd>Enter ↵</kbd> to continue</p>
+            <p class="error" id="error2">Please enter a valid email</p>
+        </div>
+
+        <!-- Screen 3: Ngrok Authtoken -->
+        <div class="screen" id="screen3">
+            <div class="logo">🔑</div>
+            <p class="question">Enter your ngrok authtoken</p>
+            <div class="input-wrapper">
+                <input type="text" id="ngrok_authtoken" placeholder="Paste your authtoken...">
+            </div>
+            <p class="hint">Press <kbd>Enter ↵</kbd> to continue</p>
+            <p class="error" id="error3">Please enter your ngrok authtoken</p>
+        </div>
+
+        <!-- Screen 4: Ngrok URL -->
+        <div class="screen" id="screen4">
+            <div class="logo">🌐</div>
+            <p class="question">Enter your ngrok reserved URL</p>
+            <div class="input-wrapper">
+                <input type="text" id="ngrok_url" placeholder="your-domain.ngrok-free.app">
+            </div>
+            <p class="hint">Press <kbd>Enter ↵</kbd> to submit</p>
+            <p class="error" id="error4">Please enter your ngrok URL</p>
+            <button class="btn" id="submitBtn" onclick="submitForm()">
+                <div class="spinner"></div>
+                <span>Complete Setup →</span>
+            </button>
+        </div>
+
+        <!-- Success Screen -->
+        <div class="screen" id="screenSuccess">
+            <div class="success-icon">✨</div>
+            <p class="question">Setup Complete!</p>
+            <p class="success-message">OrchestrateOS is now installing...</p>
+        </div>
+    </div>
+
+    <div class="progress-dots" id="progressDots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+
+    <script>
+        let currentScreen = 1;
+        const totalScreens = 4;
+        const formData = {};
+
+        const fields = {
+            1: { id: 'name', key: 'name' },
+            2: { id: 'email', key: 'email' },
+            3: { id: 'ngrok_authtoken', key: 'ngrok_authtoken' },
+            4: { id: 'ngrok_url', key: 'ngrok_url' }
+        };
+
+        function validateField(screen) {
+            const field = fields[screen];
+            const input = document.getElementById(field.id);
+            const value = input.value.trim();
+            const error = document.getElementById(`error${screen}`);
+
+            if (!value) {
+                error.classList.add('show');
+                return false;
+            }
+
+            if (screen === 2 && !value.includes('@')) {
+                error.classList.add('show');
+                return false;
+            }
+
+            error.classList.remove('show');
+            formData[field.key] = value;
+            return true;
+        }
+
+        function goToScreen(screen) {
+            document.getElementById(`screen${currentScreen}`).classList.remove('active');
+            document.getElementById(`screen${screen}`).classList.add('active');
+
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (i < screen - 1) {
+                    dot.classList.add('completed');
+                } else if (i === screen - 1) {
+                    dot.classList.add('active');
+                }
+            });
+
+            currentScreen = screen;
+
+            const nextField = fields[screen];
+            if (nextField) {
+                setTimeout(() => {
+                    document.getElementById(nextField.id).focus();
+                }, 100);
+            }
+        }
+
+        function nextScreen() {
+            if (!validateField(currentScreen)) return;
+
+            if (currentScreen < totalScreens) {
+                goToScreen(currentScreen + 1);
+            }
+        }
+
+        async function submitForm() {
+            if (!validateField(currentScreen)) return;
+
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:8765/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success' || response.ok) {
+                    document.getElementById('progressDots').style.display = 'none';
+                    document.getElementById(`screen${currentScreen}`).classList.remove('active');
+                    document.getElementById('screenSuccess').classList.add('active');
+                } else {
+                    throw new Error(result.message || 'Submission failed');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                const errorEl = document.getElementById('error4');
+                errorEl.textContent = 'Connection failed. Is the installer running?';
+                errorEl.classList.add('show');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
+        // Handle Enter key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentScreen < totalScreens) {
+                    nextScreen();
+                } else if (currentScreen === totalScreens) {
+                    submitForm();
+                }
+            }
+        });
+
+        // Focus first input on load
+        window.onload = () => {
+            document.getElementById('name').focus();
+        };
+    </script>
+</body>
+</html>

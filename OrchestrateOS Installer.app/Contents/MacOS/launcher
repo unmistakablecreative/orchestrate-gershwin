@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Get the directory where this app bundle lives
+APP_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
+
+# Run gershwin_installer.sh from the same directory as the app bundle
+INSTALLER_SCRIPT="$APP_DIR/tools/scripts/gershwin_installer.sh"
+
+if [ -f "$INSTALLER_SCRIPT" ]; then
+    /bin/bash "$INSTALLER_SCRIPT"
+else
+    osascript -e "display dialog \"Installer script not found at: $INSTALLER_SCRIPT\" buttons {\"OK\"} default button \"OK\" with icon stop"
+fi

@@ -1,13 +1,13 @@
 #!/bin/bash
-# Gershwin MacBook Test - Full Client-Server Registration Flow
-# Tests: Bootstrap → Jarvis → /generate_identity → Central accounts.py registration → first_run.html
+# Gershwin Installer - Full Client-Server Registration Flow
+# Installs OrchestrateOS to ~/Library/Application Support/OrchestrateOS
 # Run from orchestrate-gershwin directory
 
 # ========== CONFIG ==========
 PORT=8765
 CONFIG_FILE="$HOME/gershwin_config.json"
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
-GERSHWIN_DIR="$HOME/orchestrate-gershwin"
+GERSHWIN_DIR="$HOME/Library/Application Support/OrchestrateOS"
 CENTRAL_SERVER="https://app.orchestrateos.io/execute_task"
 
 # Dependency checks
@@ -33,6 +33,16 @@ if [ ! -d "$GERSHWIN_DIR" ]; then
     GERSHWIN_PARENT=$(dirname "$GERSHWIN_DIR")
     mkdir -p "$GERSHWIN_PARENT"
     git clone https://github.com/unmistakablecreative/orchestrate-gershwin.git "$GERSHWIN_DIR"
+
+    # Copy LaunchAgent plist files
+    cp "$GERSHWIN_DIR/tools/launchagents/"*.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/io.orchestrateos.jarvis.plist
+    launchctl load ~/Library/LaunchAgents/io.orchestrateos.ngrok.plist
+
+    # Copy skill file to Documents
+    if [ -f "$GERSHWIN_DIR/orchestrate-gershwin.skill" ]; then
+        cp "$GERSHWIN_DIR/orchestrate-gershwin.skill" ~/Documents/
+    fi
 fi
 echo "Installing dependencies..."
 pip3 install -r "$GERSHWIN_DIR/requirements.txt" --quiet
@@ -40,68 +50,15 @@ pip3 install -r "$GERSHWIN_DIR/requirements.txt" --quiet
 # Clean up any previous test
 rm -f "$CONFIG_FILE"
 
-# ========== SECTION 1: Bootstrap Server with Full Form ==========
+# ========== SECTION 1: Bootstrap Server Serving Static HTML ==========
 cat > $HOME/gershwin_bootstrap_server.py << 'PYSERVER'
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
-import urllib.parse
 import os
 
 CONFIG_FILE = os.path.expanduser("~/gershwin_config.json")
-
-HTML_FORM = """<!DOCTYPE html>
-<html>
-<head>
-    <title>Gershwin MacBook Test</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background: #1a1a2e; color: #eee;
-               display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .container { background: #16213e; padding: 40px; border-radius: 12px; width: 500px; max-width: 100%; }
-        h1 { margin-top: 0; color: #a855f7; }
-        p { color: #888; font-size: 14px; margin-bottom: 20px; }
-        input { width: 100%; padding: 14px; margin: 8px 0 16px 0; border: 1px solid #333;
-                border-radius: 6px; background: #0f0f23; color: #fff; box-sizing: border-box; font-size: 16px; }
-        input:focus { border-color: #6366f1; outline: none; }
-        button { width: 100%; padding: 14px; background: linear-gradient(90deg, #6366f1, #a855f7);
-                 border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:hover { opacity: 0.9; }
-        label { display: block; color: #aaa; font-size: 13px; font-weight: 500; }
-        .section { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #333; }
-        .section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        h3 { color: #6366f1; margin: 0 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .hint { color: #666; font-size: 12px; margin-top: -12px; margin-bottom: 16px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🎹 Gershwin MacBook Test</h1>
-        <p>Full client-server registration test. Fill in your details to register with the central OrchestrateOS server.</p>
-        <form method="POST" action="/submit">
-            <div class="section">
-                <h3>Your Info</h3>
-                <label>Name</label>
-                <input type="text" name="name" placeholder="Srini Kadamati" required>
-
-                <label>Email</label>
-                <input type="email" name="email" placeholder="srini@example.com" required>
-            </div>
-
-            <div class="section">
-                <h3>Ngrok Configuration</h3>
-                <label>Ngrok Authtoken</label>
-                <input type="text" name="ngrok_authtoken" placeholder="2up3BdDUd9Var3zdSB0ym2gJv0C_..." required>
-                <p class="hint">Get from dashboard.ngrok.com/get-started/your-authtoken</p>
-
-                <label>Ngrok Tunnel URL</label>
-                <input type="text" name="tunnel_url" placeholder="supposedly-faithful-termite.ngrok-free.app" required>
-                <p class="hint">Your reserved ngrok domain (without https://)</p>
-            </div>
-
-            <button type="submit">Start Installation →</button>
-        </form>
-    </div>
-</body>
-</html>"""
+GERSHWIN_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
+BOOTSTRAP_HTML_PATH = os.path.join(GERSHWIN_DIR, "semantic_memory", "installer_bootstrap.html")
 
 SUCCESS_HTML = """<!DOCTYPE html>
 <html>
@@ -141,35 +98,42 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(HTML_FORM.encode())
+        # Serve static HTML file
+        with open(BOOTSTRAP_HTML_PATH, 'r') as f:
+            self.wfile.write(f.read().encode())
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode()
-        params = urllib.parse.parse_qs(post_data)
 
-        name = params.get("name", [""])[0]
-        email = params.get("email", [""])[0]
-        ngrok_authtoken = params.get("ngrok_authtoken", [""])[0]
-        tunnel_url = params.get("tunnel_url", [""])[0]
+        # Parse JSON payload
+        try:
+            data = json.loads(post_data)
+        except json.JSONDecodeError:
+            data = {}
+
+        name = data.get("name", "")
+        email = data.get("email", "")
+        ngrok_authtoken = data.get("ngrok_authtoken", "")
+        ngrok_url = data.get("ngrok_url", "")
 
         # Strip protocol if provided
-        tunnel_url = tunnel_url.replace("https://", "").replace("http://", "").strip("/")
+        ngrok_url = ngrok_url.replace("https://", "").replace("http://", "").strip("/")
 
         config = {
             "name": name,
             "email": email,
             "ngrok_authtoken": ngrok_authtoken,
-            "tunnel_url": tunnel_url
+            "tunnel_url": ngrok_url
         }
 
         with open(CONFIG_FILE, "w") as f:
             json.dump(config, f, indent=2)
 
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write(SUCCESS_HTML.encode())
+        self.wfile.write(json.dumps({"status": "success"}).encode())
 
     def log_message(self, format, *args):
         pass
@@ -181,7 +145,7 @@ if __name__ == "__main__":
 PYSERVER
 
 echo "=========================================="
-echo "  GERSHWIN MACBOOK TEST"
+echo "  ORCHESTRATEOS INSTALLER"
 echo "  Full Client-Server Registration Flow"
 echo "=========================================="
 echo ""
@@ -276,7 +240,7 @@ open "$FIRST_RUN_URL"
 
 echo ""
 echo "=========================================="
-echo "  TEST COMPLETE"
+echo "  INSTALLATION COMPLETE"
 echo "=========================================="
 echo ""
 echo "Jarvis PID: $JARVIS_PID"

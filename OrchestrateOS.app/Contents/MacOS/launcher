@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# OrchestrateOS Launcher
+# Reads ngrok URL from system_identity.json and opens the web UI
+
+IDENTITY_FILE="$HOME/Library/Application Support/OrchestrateOS/data/system_identity.json"
+
+# Extract ngrok_url using python3
+NGROK_URL=$(python3 -c "
+import json
+import sys
+try:
+    with open('$IDENTITY_FILE', 'r') as f:
+        data = json.load(f)
+    print(data.get('ngrok_url', ''))
+except Exception as e:
+    sys.exit(1)
+")
+
+if [ -z "$NGROK_URL" ]; then
+    osascript -e 'display dialog "Could not read ngrok URL from system_identity.json. Please ensure OrchestrateOS is properly installed." buttons {"OK"} default button "OK" with icon stop with title "OrchestrateOS"'
+    exit 1
+fi
+
+# Open the web UI in default browser
+open "https://${NGROK_URL}/semantic_memory/orchestrate_home.html"
