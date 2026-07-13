@@ -10,6 +10,9 @@ SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 GERSHWIN_DIR="$HOME/Library/Application Support/OrchestrateOS"
 CENTRAL_SERVER="https://app.orchestrateos.io/execute_task"
 
+# Add user Python bin to PATH so pip-installed binaries are found
+export PATH="$HOME/Library/Python/3.9/bin:$HOME/Library/Python/3.10/bin:$HOME/Library/Python/3.11/bin:$HOME/.local/bin:$PATH"
+
 # Dependency checks
 # Auto-install ngrok if missing (no sudo, no brew, silent)
 if ! command -v ngrok &>/dev/null; then
@@ -205,7 +208,7 @@ sleep 3
 # ========== SECTION 5: Start Ngrok Tunnel ==========
 echo ""
 echo "Starting ngrok tunnel to port 5004..."
-ngrok http --url=$TUNNEL_URL 5004 &
+ngrok http --domain=$TUNNEL_URL 5004 &
 NGROK_PID=$!
 
 echo "Waiting for ngrok tunnel to connect..."
