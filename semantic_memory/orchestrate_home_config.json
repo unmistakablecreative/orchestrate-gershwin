@@ -14,7 +14,7 @@
     },
     {
       "id": "tasks",
-      "label": "Tasks",
+      "label": "Claude Assistant",
       "icon": "check-square",
       "src": "task_board.html",
       "shortcut": "T",
@@ -90,12 +90,48 @@
     "unlocked": {
       "type": "action_cards",
       "cards": [
-        { "id": "create_doc", "label": "Create Doc", "icon": "file-text", "action": "navigateTo", "target": "docs" },
-        { "id": "create_slides", "label": "Create Slides", "icon": "monitor", "action": "navigateTo", "target": "slides" },
-        { "id": "view_tasks", "label": "Tasks", "icon": "check-square", "action": "navigateTo", "target": "tasks" },
-        { "id": "view_todo", "label": "Todo", "icon": "list", "action": "navigateTo", "target": "todo" },
-        { "id": "view_spark", "label": "Spark", "icon": "zap", "action": "navigateTo", "target": "spark" },
-        { "id": "view_media", "label": "Media", "icon": "image", "action": "navigateTo", "target": "media" }
+        {
+          "id": "create_doc",
+          "label": "Create Doc",
+          "icon": "file-text",
+          "action": "navigateTo",
+          "target": "docs"
+        },
+        {
+          "id": "create_slides",
+          "label": "Create Slides",
+          "icon": "monitor",
+          "action": "navigateTo",
+          "target": "slides"
+        },
+        {
+          "id": "view_tasks",
+          "label": "Tasks",
+          "icon": "check-square",
+          "action": "navigateTo",
+          "target": "tasks"
+        },
+        {
+          "id": "view_todo",
+          "label": "Todo",
+          "icon": "list",
+          "action": "navigateTo",
+          "target": "todo"
+        },
+        {
+          "id": "view_spark",
+          "label": "Spark",
+          "icon": "zap",
+          "action": "navigateTo",
+          "target": "spark"
+        },
+        {
+          "id": "view_media",
+          "label": "Media",
+          "icon": "image",
+          "action": "navigateTo",
+          "target": "media"
+        }
       ]
     }
   },

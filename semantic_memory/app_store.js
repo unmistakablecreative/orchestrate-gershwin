@@ -7,12 +7,14 @@ let TOOL_CONFIG = {
 
 let toolsData = [];
 let accountData = { credits: 0, credits_earned: 0 };
+let profileData = { name: "User", initials: "--" };
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     await loadConfig();
     loadTools();
     loadAccountData();
+    loadProfileData();
     setupEventListeners();
 });
 
@@ -174,6 +176,68 @@ async function loadAccountData() {
     }
 }
 
+async function loadProfileData() {
+    try {
+        const response = await fetch('../data/system_identity.json');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.name) {
+                profileData.name = data.name;
+                const words = data.name.trim().split(/\s+/);
+                if (words.length >= 2) {
+                    profileData.initials = (words[0][0] + words[words.length - 1][0]).toUpperCase();
+                } else if (words.length === 1 && words[0].length >= 2) {
+                    profileData.initials = words[0].substring(0, 2).toUpperCase();
+                } else {
+                    profileData.initials = words[0][0].toUpperCase();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error loading profile data:', error);
+    }
+    updateProfileUI();
+}
+
+function updateProfileUI() {
+    const icon = document.getElementById('profile-icon');
+    if (icon) icon.textContent = profileData.initials;
+    const avatar = document.getElementById('profile-modal-avatar');
+    if (avatar) avatar.textContent = profileData.initials;
+    const name = document.getElementById('profile-modal-name');
+    if (name) name.textContent = profileData.name;
+    const credits = document.getElementById('profile-credits-value');
+    if (credits) credits.textContent = accountData.credits;
+}
+
+function openProfileModal() {
+    document.getElementById('profile-credits-value').textContent = accountData.credits;
+    document.getElementById('profile-modal').style.display = 'flex';
+}
+
+function closeProfileModal() {
+    document.getElementById('profile-modal').style.display = 'none';
+}
+
+async function purchaseCredits(amount) {
+    const result = await executeTask('account', 'purchase_credits', { amount: amount });
+    if (result.status === 'success') {
+        await loadAccountData();
+        updateProfileUI();
+    } else {
+        showToast(result.message || 'Failed to purchase credits', 'error');
+    }
+}
+
+async function updateBilling() {
+    const result = await executeTask('account', 'get_billing_portal', {});
+    if (result.status === 'success' && result.url) {
+        window.open(result.url, '_blank');
+    } else {
+        showToast(result.message || 'Unable to open billing portal', 'error');
+    }
+}
+
 async function unlockTool(toolName, cost) {
     if (accountData.credits < cost) {
         showToast('Not enough credits to unlock this tool', 'error');
@@ -233,7 +297,7 @@ async function proceedWithUnlock(toolName) {
     const result = await executeTask('account', 'unlock', { tool_id: toolName });
 
     if (result.status === 'success') {
-        showToast(result.message || `${toolName} unlocked successfully!`, 'success');
+        // Toast removed - card flip provides visual feedback
 
         // Post message to parent for dynamic sidebar unlock
         if (window.parent !== window) {
@@ -288,6 +352,13 @@ async function sendReferral() {
         showToast(result.message || 'Failed to send referral', 'error');
     }
 }
+
+// Listen for profile modal trigger from parent sidebar
+window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'open_profile_modal') {
+        openProfileModal();
+    }
+});
 
 function setupEventListeners() {
     document.querySelectorAll('.filter-tab').forEach(tab => {

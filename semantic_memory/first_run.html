@@ -12,16 +12,18 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #fff;
         }
 
         .container {
+            width: 100%;
             max-width: 640px;
             padding: 48px;
             text-align: center;
@@ -29,7 +31,7 @@
 
         .screen {
             display: none;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.4s ease;
         }
 
         .screen.active {
@@ -37,69 +39,95 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .logo {
-            font-size: 48px;
-            margin-bottom: 8px;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #fff;
-        }
-
-        .step-indicator {
-            font-size: 14px;
-            color: #888;
-            margin-bottom: 32px;
-        }
-
-        .instructions {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 24px;
+            font-size: 64px;
             margin-bottom: 24px;
+        }
+
+        .question {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            line-height: 1.3;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
             text-align: left;
         }
 
-        .instructions h2 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #00d4ff;
+        .step-list {
+            list-style: none;
+            counter-reset: steps;
         }
 
-        .instructions ol {
-            padding-left: 20px;
-        }
-
-        .instructions li {
-            margin-bottom: 12px;
-            line-height: 1.6;
+        .step-list li {
+            counter-increment: steps;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.5;
             color: #ccc;
         }
 
-        .instructions code {
+        .step-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-list li::before {
+            content: counter(steps);
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .step-list code {
             background: rgba(0, 212, 255, 0.15);
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 4px;
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 13px;
+            font-family: "SF Mono", Monaco, monospace;
+            font-size: 15px;
             color: #00d4ff;
+        }
+
+        .command-box {
+            background: #0d1117;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin: 24px 0 32px;
+            font-family: "SF Mono", Monaco, monospace;
+            font-size: 22px;
+            color: #00d4ff;
+            letter-spacing: 0.5px;
+            text-align: center;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 14px 28px;
+            padding: 16px 32px;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 500;
             cursor: pointer;
             border: none;
@@ -116,81 +144,115 @@
             box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
         }
 
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-secondary {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            margin-right: 12px;
         }
 
         .btn-secondary:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        .buttons {
+        .button-row {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
             margin-top: 24px;
         }
 
-        .screenshot-container {
-            margin: 24px 0;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .screenshot-container img {
-            width: 100%;
-            display: block;
-        }
-
-        .screenshot-caption {
-            font-size: 13px;
+        .hint {
+            font-size: 14px;
             color: #888;
-            margin-top: 8px;
+            margin-top: 24px;
         }
 
-        .command-box {
-            background: #0d1117;
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 8px;
-            padding: 20px 24px;
-            margin: 24px 0;
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 18px;
-            color: #00d4ff;
-            letter-spacing: 0.5px;
+        .hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .progress-dots {
+            position: fixed;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #00d4ff;
+            transform: scale(1.2);
+        }
+
+        .dot.completed {
+            background: #00d4ff;
         }
 
         .success-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
+            font-size: 80px;
+            margin-bottom: 24px;
         }
 
-        .loading {
-            display: none;
-            align-items: center;
-            gap: 8px;
+        .success-message {
+            font-size: 24px;
             color: #888;
             margin-top: 16px;
         }
 
-        .loading.show {
-            display: inline-flex;
-        }
-
         .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-top-color: #00d4ff;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-top-color: #000;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn.loading .spinner {
+            display: block;
+        }
+
+        .btn.loading span {
+            display: none;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .screenshot-link {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #00d4ff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .screenshot-link:hover {
+            opacity: 1;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -199,15 +261,13 @@
         <!-- Screen 1: Install Skill File -->
         <div class="screen active" id="screen1">
             <div class="logo">🎹</div>
-            <h1>Welcome to OrchestrateOS</h1>
-            <p class="step-indicator">Step 1 of 2</p>
+            <p class="question">Install the Skill File</p>
 
-            <div class="instructions">
-                <h2>Install the Skill File</h2>
-                <ol>
+            <div class="card">
+                <ol class="step-list">
                     <li>Click the button below to open Finder with the <code>.skill</code> file</li>
                     <li>Double-click the file to install it in Claude</li>
-                    <li>Open Claude Settings → Customize Skills to verify it's installed</li>
+                    <li>Verify in Claude Settings → Customize Skills</li>
                 </ol>
             </div>
 
@@ -215,33 +275,23 @@
                 📂 Open Skill File in Finder
             </button>
 
-            <div class="screenshot-container">
-                <img src="../screenshots/claudsettings.png" alt="Claude Settings - Skills" onerror="this.parentElement.innerHTML='<p style=\'padding:40px;color:#666;\'>Screenshot: Claude Settings - Skills</p>'">
-            </div>
-            <p class="screenshot-caption">Claude Settings → Customize Skills</p>
+            <a href="https://claude.ai/new#settings/customize-skills" target="_blank" class="screenshot-link">
+                ⚙️ Open Claude Settings directly
+            </a>
 
-            <div class="buttons">
-                <a href="https://claude.ai/new#settings/customize-skills" target="_blank" class="btn btn-secondary">
-                    ⚙️ Open Claude Settings
-                </a>
-                <button class="btn btn-primary" onclick="nextScreen()">
-                    Next →
-                </button>
-            </div>
+            <p class="hint">Press <kbd>Enter ↵</kbd> to continue</p>
         </div>
 
         <!-- Screen 2: Load OrchestrateOS -->
         <div class="screen" id="screen2">
             <div class="logo">✨</div>
-            <h1>Almost There!</h1>
-            <p class="step-indicator">Step 2 of 2</p>
+            <p class="question">Activate OrchestrateOS</p>
 
-            <div class="instructions">
-                <h2>Activate OrchestrateOS</h2>
-                <ol>
+            <div class="card">
+                <ol class="step-list">
                     <li>Open a new chat in Claude</li>
                     <li>Type the command below</li>
-                    <li>Claude will load OrchestrateOS and you're ready to go!</li>
+                    <li>Claude will load OrchestrateOS and you are ready!</li>
                 </ol>
             </div>
 
@@ -249,81 +299,119 @@
                 Load OrchestrateOS
             </div>
 
-            <div class="buttons">
-                <button class="btn btn-secondary" onclick="prevScreen()">
+            <div class="button-row">
+                <button class="btn btn-secondary" onclick="goToScreen(1)">
                     ← Back
                 </button>
                 <button class="btn btn-primary" id="completeBtn" onclick="completeSetup()">
-                    ✓ Complete Setup
+                    <div class="spinner"></div>
+                    <span>Complete Setup ✓</span>
                 </button>
             </div>
+        </div>
 
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <span>Completing setup...</span>
-            </div>
+        <!-- Success Screen -->
+        <div class="screen" id="screenSuccess">
+            <div class="success-icon">🎉</div>
+            <p class="question">Setup Complete!</p>
+            <p class="success-message">Welcome to OrchestrateOS</p>
         </div>
     </div>
 
-    <script>
-        function openSkillFile() {
-            // Open Finder to reveal the .skill file
-            const skillPath = '/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin.skill';
+    <div class="progress-dots" id="progressDots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+    </div>
 
-            fetch('/execute_task', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+    <script>
+        let currentScreen = 1;
+        const totalScreens = 2;
+
+        function openSkillFile() {
+            // skill path resolved via HOME
+
+            fetch("/execute_task", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    tool_name: 'terminal_tool',
-                    action: 'run_terminal_command',
-                    params: { command: `open -R "${skillPath}"` }
+                    tool_name: "terminal_tool",
+                    action: "run_terminal_command",
+                    params: { command: `open -R "$HOME/Library/Application Support/OrchestrateOS/orchestrate-gershwin.skill"` }
                 })
             }).then(res => res.json()).then(result => {
-                if (result.status !== 'success') {
-                    console.error('Failed to open Finder:', result);
-                    alert('Could not open Finder. Please manually navigate to:\n' + skillPath);
+                if (result.status !== "success") {
+                    console.error("Failed to open Finder:", result);
+                    alert("Could not open Finder. Please manually navigate to:\n" + skillPath);
                 }
             }).catch(err => {
-                console.error('Error opening skill file:', err);
-                alert('Could not open Finder. Please manually navigate to:\n' + skillPath);
+                console.error("Error opening skill file:", err);
+                alert("Could not open Finder. Please manually navigate to:\n" + skillPath);
             });
         }
 
-        function nextScreen() {
-            document.getElementById('screen1').classList.remove('active');
-            document.getElementById('screen2').classList.add('active');
+        function goToScreen(screen) {
+            document.getElementById(`screen${currentScreen}`).classList.remove("active");
+            document.getElementById(`screen${screen}`).classList.add("active");
+
+            const dots = document.querySelectorAll(".dot");
+            dots.forEach((dot, i) => {
+                dot.classList.remove("active", "completed");
+                if (i < screen - 1) {
+                    dot.classList.add("completed");
+                } else if (i === screen - 1) {
+                    dot.classList.add("active");
+                }
+            });
+
+            currentScreen = screen;
         }
 
-        function prevScreen() {
-            document.getElementById('screen2').classList.remove('active');
-            document.getElementById('screen1').classList.add('active');
+        function nextScreen() {
+            if (currentScreen < totalScreens) {
+                goToScreen(currentScreen + 1);
+            }
         }
 
         async function completeSetup() {
-            const btn = document.getElementById('completeBtn');
-            const loading = document.getElementById('loading');
-
+            const btn = document.getElementById("completeBtn");
+            btn.classList.add("loading");
             btn.disabled = true;
-            btn.style.opacity = '0.5';
-            loading.classList.add('show');
 
             try {
-                const response = await fetch('/complete_setup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
+                const response = await fetch("/complete_setup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
                 });
                 const result = await response.json();
 
-                if (result.status !== 'success') {
-                    console.error('Error completing setup:', result.message);
+                if (result.status !== "success") {
+                    console.error("Error completing setup:", result.message);
                 }
 
-                window.location.href = 'orchestrate_home.html';
+                document.getElementById("progressDots").style.display = "none";
+                document.getElementById(`screen${currentScreen}`).classList.remove("active");
+                document.getElementById("screenSuccess").classList.add("active");
+
+                setTimeout(() => {
+                    window.location.href = "orchestrate_home.html";
+                }, 2000);
             } catch (error) {
-                console.error('Error completing setup:', error);
-                window.location.href = 'orchestrate_home.html';
+                console.error("Error completing setup:", error);
+                window.location.href = "orchestrate_home.html";
             }
         }
+
+        // Handle Enter key
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                if (currentScreen < totalScreens) {
+                    nextScreen();
+                } else if (currentScreen === totalScreens) {
+                    completeSetup();
+                }
+            }
+        });
     </script>
 </body>
 </html>

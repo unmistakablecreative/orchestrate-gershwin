@@ -376,6 +376,9 @@ function navigateTo(view) {
 
 // Add nav item dynamically when a tool is unlocked
 function addNavItem(toolData) {
+    // Claude Assistant is already in the sidebar as Tasks — never add a second icon
+    if (toolData.tool_name === 'claude_assistant') return;
+
     const navSection = document.querySelector('.nav-section');
     if (!navSection) return;
 

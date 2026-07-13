@@ -609,6 +609,10 @@
 <div class="nav-section">
 <!-- Sidebar items will be dynamically rendered from config -->
 </div>
+<!-- Profile icon bottom of sidebar -->
+<div id="sidebar-profile-icon" style="padding:16px 10px;margin-top:auto;">
+    <div onclick="openSidebarProfile()" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#9333EA);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:transform 0.2s ease;border:2px solid rgba(255,255,255,0.15);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" id="profile-circle" title="Account">SR</div>
+</div>
 </nav>
 <!-- Main Content -->
 <main class="main-content">
@@ -981,6 +985,36 @@
             addNavItem(e.data);
         }
     });
+
+    // Profile modal in sidebar
+    function openSidebarProfile() {
+        const frame = document.getElementById('content-frame');
+        if (frame && frame.style.display !== 'none') {
+            frame.contentWindow.postMessage({ type: 'open_profile_modal' }, '*');
+        }
+    }
+    window.openSidebarProfile = openSidebarProfile;
+
+    // Listen for profile modal trigger from sidebar
+    window.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'open_profile_modal') {
+            if (typeof openProfileModal === 'function') openProfileModal();
+        }
+    });
+
+    // Load profile initials from system_identity.json
+    fetch('/data/system_identity.json')
+        .then(r => r.json())
+        .then(data => {
+            if (data.name) {
+                const words = data.name.trim().split(/\s+/);
+                const initials = words.length >= 2
+                    ? (words[0][0] + words[words.length-1][0]).toUpperCase()
+                    : words[0].substring(0,2).toUpperCase();
+                const el = document.getElementById('profile-circle');
+                if (el) el.textContent = initials;
+            }
+        }).catch(() => {});
     </script>
 </body>
 </html>

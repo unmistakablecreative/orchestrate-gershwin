@@ -141,12 +141,9 @@ def get_user_id():
 
 
 def _get_turso_config():
-    """Load Turso HTTP API config from credentials.json"""
-    creds_path = os.path.join(BASE_DIR, "credentials.json")
-    with open(creds_path, "r") as f:
-        creds = json.load(f)
-    turso_url = creds["turso_url"].replace("libsql://", "https://") + "/v2/pipeline"
-    turso_token = creds["turso_token"]
+    """Hardcoded Turso HTTP API config"""
+    turso_url = "https://orchestrateos-accounts-unmistakableceo.aws-us-west-2.turso.io/v2/pipeline"
+    turso_token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODM4NzczMTQsImlkIjoiMDE5ZjU3NWYtNjUwMS03MTljLWJhMmYtZjYxOWExOGU0YTMwIiwia2lkIjoiTElEcXI5MVJ3OENKcmdqRjVYWWRxOWhMc3lIbWU5eHJWRkxsLUN6SnZ6USIsInJpZCI6ImM1YTYyZmM2LWI2ZWItNDM5NC05NTliLTU0ODJmNjVhODE0YSJ9.MVqnnK5M6N-gB6J4_VWVYlLuG1-XhJnlAEk6uXxk9HEXybWHGyJqznhX2nYL00I4NsOy7d-oVZyNGd2oECflAw"
     return turso_url, turso_token
 
 
@@ -166,7 +163,7 @@ def get_or_create_user(user_id, email=None):
     turso_url, turso_token = _get_turso_config()
 
     check_result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT user_id, email, credits, created_at, last_active FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
+        {"type": "execute", "stmt": {"sql": "SELECT user_id, email, credits, created_at FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
         {"type": "close"}
     ])
 
@@ -176,10 +173,9 @@ def get_or_create_user(user_id, email=None):
             row = rows[0]
             return {
                 "user_id": row[0]["value"],
-                "email": row[1]["value"] if row[1]["type"] != "null" else None,
+                "email": row[1].get("value") if row[1].get("type") != "null" else None,
                 "credits": int(row[2]["value"]),
-                "created_at": row[3]["value"],
-                "last_active": row[4]["value"]
+                "created_at": row[3].get("value"),
             }
     except (KeyError, IndexError):
         pass
@@ -192,7 +188,7 @@ def get_or_create_user(user_id, email=None):
     ])
 
     result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT user_id, email, credits, created_at, last_active FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
+        {"type": "execute", "stmt": {"sql": "SELECT user_id, email, credits, created_at FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
         {"type": "close"}
     ])
 
@@ -200,10 +196,10 @@ def get_or_create_user(user_id, email=None):
         row = result["results"][0]["response"]["result"]["rows"][0]
         return {
             "user_id": row[0]["value"],
-            "email": row[1]["value"] if row[1]["type"] != "null" else None,
+            "email": row[1].get("value") if row[1].get("type") != "null" else None,
             "credits": int(row[2]["value"]),
             "created_at": row[3]["value"],
-            "last_active": row[4]["value"]
+            "last_active": None
         }
     except (KeyError, IndexError):
         return {"user_id": user_id, "email": email, "credits": 3, "created_at": None, "last_active": None}
@@ -314,6 +310,7 @@ def action_check(params):
         return get_error_message("No user ID found. Run system setup first.")
 
     user = get_or_create_user(user_id)
+    user['credits'] = get_user_credits(user_id)
     unlocked = get_unlocked_tools(user_id)
 
     tools_data = []
