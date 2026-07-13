@@ -2,7 +2,7 @@
 // Queues tasks via claude_assistant.assign_task to localhost:5004
 // Modal system: click action card -> modal -> submit -> task queued
 
-const GERSHWIN_API = 'http://localhost:5004/execute_task';
+const GERSHWIN_API = '/execute_task';
 
 const GERSHWIN_ACTIONS = [
     {
