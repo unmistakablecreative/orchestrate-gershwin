@@ -214,6 +214,7 @@ sleep 3
 # ========== SECTION 6: Generate Identity ==========
 echo ""
 echo "Calling /generate_identity to create system_identity.json..."
+rm -f "$GERSHWIN_DIR/data/system_identity.json"
 curl -s -X POST "http://localhost:5004/generate_identity" -H "Content-Type: application/json" -d "{\"name\": \"$NAME\", \"email\": \"$EMAIL\"}"
 
 sleep 1

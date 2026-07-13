@@ -2,11 +2,9 @@
 """Reset Gershwin to clean slate for testing unlock flow."""
 import os
 import json
-import sqlite3
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
-ACCOUNTS_DB = os.path.join(DATA_DIR, "accounts.db")
 SYSTEM_IDENTITY = os.path.join(DATA_DIR, "system_identity.json")
 SETTINGS = os.path.join(BASE_DIR, "system_settings.ndjson")
 
@@ -27,31 +25,28 @@ def get_system_user():
 
 def reset_accounts_db():
     user_id = get_system_user()
-    conn = sqlite3.connect(ACCOUNTS_DB)
+    import urllib.request
 
-    # Clear all unlocked tools
-    conn.execute("DELETE FROM unlocked_tools")
+    # Reset via Turso HTTP API directly - SET to 50, wipe unlocked_tools
+    try:
+        creds_path = os.path.join(BASE_DIR, "tools", "credentials.json")
+        with open(creds_path) as f:
+            creds = json.load(f)
+        turso_url = creds["turso_url"].replace("libsql://", "https://") + "/v2/pipeline"
+        turso_token = creds["turso_token"]
 
-    # Reset credits for system user to 50
-    conn.execute("UPDATE users SET credits = 50 WHERE user_id = ?", (user_id,))
+        payload = json.dumps({"requests": [
+            {"type": "execute", "stmt": {"sql": "UPDATE users SET credits = 50 WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
+            {"type": "execute", "stmt": {"sql": "DELETE FROM unlocked_tools WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
+            {"type": "close"}
+        ]}).encode()
 
-    # If system user doesn't exist, create them
-    cursor = conn.execute("SELECT user_id FROM users WHERE user_id = ?", (user_id,))
-    if not cursor.fetchone():
-        conn.execute("INSERT INTO users (user_id, email, credits, created_at, updated_at) VALUES (?, ?, 50, datetime('now'), datetime('now'))", (user_id, "test@orchestrateos.io"))
-
-    conn.commit()
-
-    # Verify
-    cursor = conn.execute("SELECT credits FROM users WHERE user_id = ?", (user_id,))
-    row = cursor.fetchone()
-    credits = row[0] if row else "NOT FOUND"
-
-    cursor = conn.execute("SELECT COUNT(*) FROM unlocked_tools")
-    unlocked_count = cursor.fetchone()[0]
-
-    conn.close()
-    print(f"[OK] accounts.db reset - user '{user_id}' has {credits} credits, {unlocked_count} unlocked tools")
+        req = urllib.request.Request(turso_url, data=payload, headers={"Content-Type": "application/json", "Authorization": f"Bearer {turso_token}"}, method="POST")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read())
+        print(f"[OK] Turso reset - user '{user_id}' set to 50 credits, unlocked_tools cleared")
+    except Exception as e:
+        print(f"[WARN] Turso reset failed: {e}")
 
 def reset_system_settings():
     lines = []

@@ -20,6 +20,7 @@ import sys
 import json
 import argparse
 import uuid
+import libsql_experimental as libsql
 import subprocess
 from datetime import datetime
 
@@ -58,6 +59,7 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    # Users table - main account info
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             user_id TEXT PRIMARY KEY,
@@ -68,6 +70,7 @@ def init_db():
         )
     """)
 
+    # Unlocked tools table - tracks which tools each user has unlocked
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS unlocked_tools (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,6 +82,7 @@ def init_db():
         )
     """)
 
+    # Referrals table - tracks referral submissions
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS referrals (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,6 +96,7 @@ def init_db():
         )
     """)
 
+    # Credit transactions table - audit log for credit changes
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS credit_transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -113,13 +118,13 @@ def get_db_connection():
     creds_path = os.path.join(BASE_DIR, "credentials.json")
     with open(creds_path, "r") as f:
         creds = json.load(f)
-
+    
     turso_url = creds.get("turso_url")
     turso_token = creds.get("turso_token")
-
+    
     if not turso_url or not turso_token:
         raise Exception("Turso credentials not found in credentials.json")
-
+    
     conn = libsql.connect("/tmp/gershwin_accounts.db", sync_url=turso_url, auth_token=turso_token)
     conn.sync()
     return conn
@@ -130,7 +135,7 @@ def get_db_connection():
 # =============================================================================
 
 def get_user_id():
-    """Get user unique ID from system identity"""
+    """Get user's unique ID from system identity"""
     try:
         if not os.path.exists(IDENTITY_PATH):
             return None
@@ -140,166 +145,117 @@ def get_user_id():
         return None
 
 
-def _get_turso_config():
-    """Load Turso HTTP API config from credentials.json"""
-    creds_path = os.path.join(BASE_DIR, "credentials.json")
-    with open(creds_path, "r") as f:
-        creds = json.load(f)
-    turso_url = creds["turso_url"].replace("libsql://", "https://") + "/v2/pipeline"
-    turso_token = creds["turso_token"]
-    return turso_url, turso_token
-
-
-def _turso_exec(turso_url, turso_token, requests_list):
-    """Execute a Turso HTTP API pipeline request"""
-    import urllib.request
-    payload = json.dumps({"requests": requests_list}).encode()
-    req = urllib.request.Request(turso_url, data=payload, headers={"Content-Type": "application/json", "Authorization": f"Bearer {turso_token}"}, method="POST")
-    with urllib.request.urlopen(req, timeout=10) as resp:
-        return json.loads(resp.read())
-
-
 def get_or_create_user(user_id, email=None):
-    """Get existing user or create new one via Turso HTTP API"""
-    import urllib.request
+    """Get existing user or create new one"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-    turso_url, turso_token = _get_turso_config()
+    cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+    user = cursor.fetchone()
 
-    check_result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT user_id, email, credits, created_at, last_active FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
+    if not user:
+        cursor.execute(
+            "INSERT INTO users (user_id, email, credits) VALUES (?, ?, 3)",
+            (user_id, email)
+        )
+        conn.commit()
+        conn.sync()
+        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        user = cursor.fetchone()
 
-    try:
-        rows = check_result["results"][0]["response"]["result"]["rows"]
-        if rows:
-            row = rows[0]
-            return {
-                "user_id": row[0]["value"],
-                "email": row[1]["value"] if row[1]["type"] != "null" else None,
-                "credits": int(row[2]["value"]),
-                "created_at": row[3]["value"],
-                "last_active": row[4]["value"]
-            }
-    except (KeyError, IndexError):
-        pass
+        # Log initial credits
+        cursor.execute(
+            "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, 3, 'initial_signup')",
+            (user_id,)
+        )
+        conn.commit()
+        conn.sync()
 
-    email_arg = {"type": "text", "value": email} if email else {"type": "null"}
-    _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "INSERT INTO users (user_id, email, credits) VALUES (?, ?, 3)", "args": [{"type": "text", "value": user_id}, email_arg]}},
-        {"type": "execute", "stmt": {"sql": "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, 3, 'initial_signup')", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
-
-    result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT user_id, email, credits, created_at, last_active FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
-
-    try:
-        row = result["results"][0]["response"]["result"]["rows"][0]
-        return {
-            "user_id": row[0]["value"],
-            "email": row[1]["value"] if row[1]["type"] != "null" else None,
-            "credits": int(row[2]["value"]),
-            "created_at": row[3]["value"],
-            "last_active": row[4]["value"]
-        }
-    except (KeyError, IndexError):
-        return {"user_id": user_id, "email": email, "credits": 3, "created_at": None, "last_active": None}
+    conn.close()
+    # Convert tuple to dict
+    columns = ['user_id', 'email', 'credits', 'created_at', 'last_active']
+    return dict(zip(columns, user))
 
 
 def get_user_credits(user_id):
-    """Get current credits for a user via Turso HTTP API"""
-    import urllib.request
-
-    turso_url, turso_token = _get_turso_config()
-
-    result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT credits FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
-
-    try:
-        rows = result["results"][0]["response"]["result"]["rows"]
-        if rows:
-            return int(rows[0][0]["value"])
-    except (KeyError, IndexError):
-        pass
-    return 0
+    """Get current credits for a user"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT credits FROM users WHERE user_id = ?", (user_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return row[0] if row else 0
 
 
 def get_unlocked_tools(user_id):
-    """Get list of unlocked tool IDs for a user via Turso HTTP API"""
-    import urllib.request
-
-    turso_url, turso_token = _get_turso_config()
-
-    result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT tool_id FROM unlocked_tools WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
-
-    try:
-        rows = result["results"][0]["response"]["result"]["rows"]
-        return [row[0]["value"] for row in rows]
-    except (KeyError, IndexError):
-        return []
+    """Get list of unlocked tool IDs for a user"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT tool_id FROM unlocked_tools WHERE user_id = ?", (user_id,))
+    tools = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return tools
 
 
 def add_credits_to_user(user_id, amount, reason):
     """Add credits to a user account via Turso HTTP API"""
     import urllib.request
 
-    turso_url, turso_token = _get_turso_config()
+    creds_path = os.path.join(BASE_DIR, "credentials.json")
+    with open(creds_path, "r") as f:
+        creds = json.load(f)
 
-    result = _turso_exec(turso_url, turso_token, [
+    turso_url = creds["turso_url"].replace("libsql://", "https://") + "/v2/pipeline"
+    turso_token = creds["turso_token"]
+
+    requests_list = [
         {"type": "execute", "stmt": {"sql": "UPDATE users SET credits = credits + ? WHERE user_id = ?", "args": [{"type": "integer", "value": str(amount)}, {"type": "text", "value": user_id}]}},
         {"type": "execute", "stmt": {"sql": "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, ?, ?)", "args": [{"type": "text", "value": user_id}, {"type": "integer", "value": str(amount)}, {"type": "text", "value": reason}]}},
         {"type": "execute", "stmt": {"sql": "SELECT credits FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
         {"type": "close"}
-    ])
+    ]
+
+    payload = json.dumps({"requests": requests_list}).encode()
+    req = urllib.request.Request(turso_url, data=payload, headers={"Content-Type": "application/json", "Authorization": f"Bearer {turso_token}"}, method="POST")
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        result = json.loads(resp.read())
 
     try:
         new_balance = result["results"][2]["response"]["result"]["rows"][0][0]["value"]
         return int(new_balance)
     except (KeyError, IndexError):
         return None
+
 
 
 def deduct_credits_from_user(user_id, amount, reason):
-    """Deduct credits from a user account via Turso HTTP API"""
-    import urllib.request
+    """Deduct credits from a user account"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-    turso_url, turso_token = _get_turso_config()
+    cursor.execute("SELECT credits FROM users WHERE user_id = ?", (user_id,))
+    current = cursor.fetchone()
 
-    check_result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "SELECT credits FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
+    if not current or current[0] < amount:
+        conn.close()
+        return None  # Insufficient credits
 
-    try:
-        rows = check_result["results"][0]["response"]["result"]["rows"]
-        if not rows:
-            return None
-        current = int(rows[0][0]["value"])
-        if current < amount:
-            return None
-    except (KeyError, IndexError):
-        return None
+    cursor.execute(
+        "UPDATE users SET credits = credits - ? WHERE user_id = ?",
+        (amount, user_id)
+    )
+    cursor.execute(
+        "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, ?, ?)",
+        (user_id, -amount, reason)
+    )
 
-    result = _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "UPDATE users SET credits = credits - ? WHERE user_id = ?", "args": [{"type": "integer", "value": str(amount)}, {"type": "text", "value": user_id}]}},
-        {"type": "execute", "stmt": {"sql": "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, ?, ?)", "args": [{"type": "text", "value": user_id}, {"type": "integer", "value": str(-amount)}, {"type": "text", "value": reason}]}},
-        {"type": "execute", "stmt": {"sql": "SELECT credits FROM users WHERE user_id = ?", "args": [{"type": "text", "value": user_id}]}},
-        {"type": "close"}
-    ])
+    conn.commit()
+    conn.sync()
+    cursor.execute("SELECT credits FROM users WHERE user_id = ?", (user_id,))
+    new_balance = cursor.fetchone()[0]
+    conn.close()
 
-    try:
-        new_balance = result["results"][2]["response"]["result"]["rows"][0][0]["value"]
-        return int(new_balance)
-    except (KeyError, IndexError):
-        return None
+    return new_balance
 
 
 # =============================================================================
@@ -316,6 +272,7 @@ def action_check(params):
     user = get_or_create_user(user_id)
     unlocked = get_unlocked_tools(user_id)
 
+    # Load tools from system_settings.ndjson
     tools_data = []
     if os.path.exists(SYSTEM_REGISTRY):
         with open(SYSTEM_REGISTRY, 'r') as f:
@@ -363,9 +320,21 @@ def action_refer(params):
     if isinstance(emails, str):
         emails = [e.strip() for e in emails.split(",")]
 
+    # Ensure user exists
     get_or_create_user(user_id)
 
-    turso_url, turso_token = _get_turso_config()
+    # Load Turso HTTP config
+    creds_path = os.path.join(BASE_DIR, "credentials.json")
+    with open(creds_path, "r") as f:
+        creds = json.load(f)
+    turso_url = creds["turso_url"].replace("libsql://", "https://") + "/v2/pipeline"
+    turso_token = creds["turso_token"]
+
+    def turso_exec(requests_list):
+        payload = json.dumps({"requests": requests_list}).encode()
+        req = urllib.request.Request(turso_url, data=payload, headers={"Content-Type": "application/json", "Authorization": f"Bearer {turso_token}"}, method="POST")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return json.loads(resp.read())
 
     submitted = []
     already_referred = []
@@ -375,7 +344,8 @@ def action_refer(params):
         if not email:
             continue
 
-        check_result = _turso_exec(turso_url, turso_token, [
+        # Check if already referred via HTTP API
+        check_result = turso_exec([
             {"type": "execute", "stmt": {"sql": "SELECT id FROM referrals WHERE referrer_id = ? AND referee_email = ?", "args": [{"type": "text", "value": user_id}, {"type": "text", "value": email}]}},
             {"type": "close"}
         ])
@@ -388,12 +358,14 @@ def action_refer(params):
         except (KeyError, IndexError):
             pass
 
-        _turso_exec(turso_url, turso_token, [
+        # Add new referral via HTTP API
+        turso_exec([
             {"type": "execute", "stmt": {"sql": "INSERT INTO referrals (referrer_id, referee_email, status) VALUES (?, ?, 'pending')", "args": [{"type": "text", "value": user_id}, {"type": "text", "value": email}]}},
             {"type": "close"}
         ])
         submitted.append(email)
 
+    # Award credits for new referrals (1 credit per referral in test mode)
     if submitted:
         new_balance = add_credits_to_user(user_id, len(submitted), f"referrals:{','.join(submitted)}")
         msg = f"Submitted {len(submitted)} referral(s). +{len(submitted)} credits. Balance: {new_balance}"
@@ -408,6 +380,7 @@ def action_refer(params):
         "already_referred": already_referred,
         "credits": get_user_credits(user_id)
     })
+
 
 
 def update_system_settings_lock(tool_id, locked=False):
@@ -425,6 +398,7 @@ def update_system_settings_lock(tool_id, locked=False):
                     continue
                 try:
                     entry = json.loads(line)
+                    # Match tool by name and check if it's a __tool__ entry
                     if entry.get("tool") == tool_id and entry.get("action") == "__tool__":
                         entry["locked"] = locked
                         entry["unlocked"] = not locked
@@ -445,8 +419,6 @@ def update_system_settings_lock(tool_id, locked=False):
 
 def action_unlock(params):
     """Unlock a tool using credits"""
-    import urllib.request
-
     user_id = params.get("user_id") or get_user_id()
     tool_id = params.get("tool_id")
 
@@ -456,6 +428,7 @@ def action_unlock(params):
     if not tool_id:
         return get_error_message("No tool_id specified.")
 
+    # Get tool cost from system_settings.ndjson (referral_unlock_cost)
     tool_cost = 1
     tool_name = tool_id
     tool_locked = False
@@ -476,22 +449,27 @@ def action_unlock(params):
                 except json.JSONDecodeError:
                     continue
 
+    # Check if already unlocked in system_settings
     if not tool_locked:
+        # Also check the database
         unlocked = get_unlocked_tools(user_id)
         if tool_id in unlocked:
             return get_error_message(f"{tool_name} is already unlocked.")
 
+    # Check credits
     user = get_or_create_user(user_id)
     if user['credits'] < tool_cost:
         return get_error_message(
             f"Insufficient credits. Need {tool_cost}, have {user['credits']}."
         )
 
+    # Deduct credits and unlock
     new_balance = deduct_credits_from_user(user_id, tool_cost, f"unlock:{tool_id}")
 
     if new_balance is None:
         return get_error_message("Failed to deduct credits.")
 
+    # For claude_assistant tool, trigger browser OAuth login (fire and forget)
     if tool_id == "claude_assistant":
         try:
             claude_bin = os.path.expanduser("~/.local/bin/claude")
@@ -500,15 +478,21 @@ def action_unlock(params):
         except Exception:
             pass
 
-    turso_url, turso_token = _get_turso_config()
+    # Add to unlocked tools in database
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        _turso_exec(turso_url, turso_token, [
-            {"type": "execute", "stmt": {"sql": "INSERT INTO unlocked_tools (user_id, tool_id) VALUES (?, ?)", "args": [{"type": "text", "value": user_id}, {"type": "text", "value": tool_id}]}},
-            {"type": "close"}
-        ])
+        cursor.execute(
+            "INSERT INTO unlocked_tools (user_id, tool_id) VALUES (?, ?)",
+            (user_id, tool_id)
+        )
+        conn.commit()
+        conn.sync()
     except Exception:
-        pass
+        pass  # Already unlocked in DB
+    conn.close()
 
+    # Update system_settings.ndjson - set locked: false
     settings_updated = update_system_settings_lock(tool_id, locked=False)
 
     return get_success_message(
@@ -532,11 +516,13 @@ def action_add_user(params):
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    # Check if user exists
     cursor.execute("SELECT user_id FROM users WHERE user_id = ?", (user_id,))
     if cursor.fetchone():
         conn.close()
         return get_error_message(f"User {user_id} already exists.")
 
+    # Create user
     cursor.execute(
         "INSERT INTO users (user_id, email, credits) VALUES (?, ?, ?)",
         (user_id, email, initial_credits)
@@ -574,7 +560,7 @@ def action_list_users(params):
         users.append({
             "user_id": row[0],
             "email": row[1],
-            "credits": row[2],
+            "credits": row[0],
             "created_at": row[3],
             "unlocked_count": row[4]
         })
@@ -596,6 +582,7 @@ def action_add_credits(params):
     if not user_id:
         return get_error_message("user_id required")
 
+    # Ensure user exists
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT user_id FROM users WHERE user_id = ?", (user_id,))

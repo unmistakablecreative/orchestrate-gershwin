@@ -73,7 +73,7 @@
 {"tool": "github_tool_universal", "action": "list_repos", "script_path": "tools/github_tool_universal.py", "params": ["root"]}
 {"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true, "referral_unlock_cost": 10, "description": "Generate beautiful AI-driven images for documents or social posts."}
 {"tool": "ideogram_tool", "action": "generate_image", "script_path": "tools/ideogram_tool.py", "params": ["input", "options"]}
-{"tool": "claude_assistant", "action": "__tool__", "script_path": "tools/claude_assistant.py", "locked": false, "referral_unlock_cost": 25, "description": "Task queue for Claude Code autonomous execution.", "unlocked": true}
+{"tool": "claude_assistant", "action": "__tool__", "script_path": "tools/claude_assistant.py", "locked": true, "referral_unlock_cost": 25, "description": "Task queue for Claude Code autonomous execution."}
 {"tool": "claude_assistant", "action": "assign_task", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "auto_execute", "batch_id", "campaign_id", "cascade_type", "context", "create_output_doc", "description", "doc_id", "priority", "task_id"]}
 {"tool": "claude_assistant", "action": "check_task_status", "script_path": "tools/claude_assistant.py", "params": ["task_id"]}
 {"tool": "claude_assistant", "action": "process_queue", "script_path": "tools/claude_assistant.py", "params": ["agent_id", "peek"]}
@@ -156,3 +156,10 @@
 {"tool": "gershwin_tester", "action": "__tool__", "script_path": "tools/gershwin_tester.py", "locked": false, "referral_unlock_cost": 0, "description": "Automated tool validation for Gershwin installer readiness."}
 {"tool": "gershwin_tester", "action": "run_all_tests", "script_path": "tools/gershwin_tester.py", "params": []}
 {"tool": "gershwin_tester", "action": "run_single_test", "script_path": "tools/gershwin_tester.py", "params": ["tool_name", "action", "params", "expected_status"]}
+{"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true}
+{"tool": "ideogram_tool", "action": "__tool__", "script_path": "tools/ideogram_tool.py", "locked": true}
+{"tool": "ideogram_tool", "action": "load_api_key", "script_path": "tools/ideogram_tool.py", "params": [], "example": {"tool_name": "ideogram_tool", "action": "load_api_key", "params": {}}}
+{"tool": "ideogram_tool", "action": "slugify", "script_path": "tools/ideogram_tool.py", "params": [], "example": {"tool_name": "ideogram_tool", "action": "slugify", "params": {}}}
+{"tool": "ideogram_tool", "action": "generate_image_shell", "script_path": "tools/ideogram_tool.py", "params": [], "example": {"tool_name": "ideogram_tool", "action": "generate_image_shell", "params": {}}}
+{"tool": "ideogram_tool", "action": "generate", "script_path": "tools/ideogram_tool.py", "params": ["filename", "input", "output_path", "prompt", "save_dir"], "example": {"tool_name": "ideogram_tool", "action": "generate", "params": {"filename": "<filename>", "input": "<input>", "output_path": "<output_path>", "prompt": "<prompt>", "save_dir": "<save_dir>"}}}
+{"tool": "ideogram_tool", "action": "generate_batch", "script_path": "tools/ideogram_tool.py", "params": ["campaign_id", "filename", "prompts"], "example": {"tool_name": "ideogram_tool", "action": "generate_batch", "params": {"campaign_id": "<campaign_id>", "filename": "<filename>", "prompts": "<prompts>"}}}

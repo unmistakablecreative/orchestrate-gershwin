@@ -403,7 +403,55 @@
         .icon-teal { background: linear-gradient(135deg, #5ac8fa 0%, #4ab3e5 100%); }
         .icon-pink { background: linear-gradient(135deg, #ff375f 0%, #cc2c4c 100%); }
         .icon-gray { background: linear-gradient(135deg, #636366 0%, #48484a 100%); }
-    </style>
+    
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .modal-content {
+            background: var(--bg-secondary, #1a1a2e);
+            border: 1px solid var(--border, #333);
+            border-radius: 16px;
+            padding: 32px;
+            min-width: 400px;
+            max-width: 500px;
+        }
+        .modal-input {
+            width: 100%;
+            background: var(--bg-primary, #0d0d1a);
+            border: 1px solid var(--border, #333);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary, #fff);
+            font-size: 14px;
+            margin: 16px 0;
+            box-sizing: border-box;
+        }
+
+        .modal-buttons { display: flex; gap: 12px; margin-top: 8px; }
+        .modal-btn {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid var(--border, #333);
+            background: transparent;
+        }
+        .modal-btn.cancel { color: var(--text-secondary, #888); }
+        .modal-btn.cancel:hover { background: var(--bg-hover, #222); }
+        .modal-btn.confirm { 
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: white;
+            border: none;
+        }
+        .modal-btn.confirm:hover { opacity: 0.9; }
+</style>
 </head>
 <body>
 <div class="container">
@@ -428,7 +476,7 @@
 <p>Loading tools...</p>
 </div>
 </div>
-<section class="referral-section">
+<section class="referral-section"><section class="referral-section">
 <div class="referral-header">
 <div>
 <h2 class="referral-title">Earn Credits with Referrals</h2>
@@ -436,12 +484,22 @@
 </div>
 </div>
 <div class="referral-form">
+<input class="referral-input" id="referral-name" placeholder="Friend's name" type="text"/>
 <input class="referral-input" id="referral-email" placeholder="Enter friend's email address" type="email"/>
 <button class="referral-btn" id="send-referral">Send Invite</button>
 </div>
-</section>
+</section></section>
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div><div class="modal-overlay" id="api-key-modal" style="display:none">
+<div class="modal-content">
+<h3>Enter API Key for <span id="api-key-tool-name"></span></h3>
+<input class="modal-input" id="api-key-input" placeholder="API Key" type="password"/>
+<div class="modal-buttons">
+<button class="modal-btn cancel" onclick="closeApiKeyModal()">Cancel</button>
+<button class="modal-btn confirm" id="api-key-confirm" onclick="confirmApiKey()">Confirm</button>
+</div>
+</div>
+</div>
 <script src="app_store.js"></script>
 </body>
 </html>

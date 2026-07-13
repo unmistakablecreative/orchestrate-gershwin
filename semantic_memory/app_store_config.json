@@ -83,7 +83,9 @@
     "readwise_tool": {
       "name": "Readwise",
       "icon": "📚",
-      "iconClass": "icon-orange"
+      "iconClass": "icon-orange",
+      "requires_api_key": true,
+      "api_key_field": "readwise_api_key"
     },
     "buffer_engine": {
       "name": "Buffer Engine",
@@ -98,7 +100,10 @@
     "ideogram_tool": {
       "name": "Ideogram",
       "icon": "🎨",
-      "iconClass": "icon-purple"
+      "iconClass": "icon-purple",
+      "open_url": "/semantic_memory/ideogram.html",
+      "requires_api_key": true,
+      "api_key_field": "ideogram_api_key"
     },
     "claude_assistant": {
       "name": "Claude Assistant",

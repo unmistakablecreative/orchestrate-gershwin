@@ -180,88 +180,25 @@ async function unlockTool(toolName, cost) {
         return;
     }
 
-    // Check if this tool requires an API key
-    const displayInfo = TOOL_CONFIG.displayInfo[toolName] || {};
-    if (displayInfo.requires_api_key) {
-        showApiKeyModal(toolName, displayInfo.api_key_field, cost);
-        return;
-    }
-
-    await proceedWithUnlock(toolName);
-}
-
-async function showApiKeyModal(toolName, apiKeyField, cost) {
-    const modal = document.getElementById('api-key-modal');
-    const toolNameEl = document.getElementById('api-key-tool-name');
-    const input = document.getElementById('api-key-input');
-    const confirmBtn = document.getElementById('api-key-confirm');
-    
-    toolNameEl.textContent = TOOL_CONFIG.displayInfo[toolName]?.name || toolName;
-    input.value = '';
-    modal.style.display = 'flex';
-    input.focus();
-    
-    // Store context for confirm handler
-    modal.dataset.toolName = toolName;
-    modal.dataset.apiKeyField = apiKeyField;
-}
-
-async function confirmApiKey() {
-    const modal = document.getElementById('api-key-modal');
-    const input = document.getElementById('api-key-input');
-    const apiKey = input.value.trim();
-    
-    if (!apiKey) {
-        showToast('Please enter an API key', 'error');
-        return;
-    }
-    
-    const toolName = modal.dataset.toolName;
-    const apiKeyField = modal.dataset.apiKeyField;
-    
-    await executeTask("system_settings", "set_credential", { tool_name: toolName, value: apiKey });
-
-    closeApiKeyModal();
-    await proceedWithUnlock(toolName);
-}
-
-function closeApiKeyModal() {
-    document.getElementById('api-key-modal').style.display = 'none';
-}
-
-async function proceedWithUnlock(toolName) {
     const result = await executeTask('account', 'unlock', { tool_id: toolName });
 
     if (result.status === 'success') {
         showToast(result.message || `${toolName} unlocked successfully!`, 'success');
 
-        // Post message to parent for dynamic sidebar unlock
-        if (window.parent !== window) {
-            const displayInfo = TOOL_CONFIG.displayInfo[toolName] || {};
-            const payload = {
-                type: 'tool_unlocked',
-                tool_name: toolName,
-                display_name: displayInfo.name || toolName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                icon: displayInfo.icon || '🔧',
-                icon_class: displayInfo.iconClass || 'icon-gray',
-                open_url: displayInfo.open_url || null
-            };
-            window.parent.postMessage(payload, '*');
-
-            // Special case: claude_assistant gets additional message type
-            if (toolName === 'claude_assistant') {
-                window.parent.postMessage({ type: 'claude_assistant_unlocked' }, '*');
-            }
-        }
-
         if (toolName === 'claude_assistant' && window.parent !== window) {
             window.parent.claudeAssistantUnlocked = true;
+            localStorage.setItem('claudeAssistantUnlocked', 'true');
+            try { window.parent.localStorage.setItem('claudeAssistantUnlocked', 'true'); } catch(e) {}
 
             // Trigger claude login via shell execution
             executeTask('shell', 'run', {
                 command: 'CLAUDE_BIN=$(which claude 2>/dev/null || find ~/Library -name claude -type f 2>/dev/null | head -1) && [ -n "$CLAUDE_BIN" ] && "$CLAUDE_BIN" login'
             });
-            // postMessage already handled the home transition - no redirect needed
+
+            // Redirect to orchestrate_homev2.html after brief delay
+            setTimeout(() => {
+                window.parent.location.href = 'orchestrate_homev2.html';
+            }, 1500);
         }
 
         await Promise.all([loadTools(), loadAccountData()]);

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ideogram - AI Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #121212; color: #fff; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #7C3AED, #6366F1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+        header p { color: #888; font-size: 1rem; }
+        .generator-section { background: #1a1a1a; border-radius: 16px; padding: 2rem; margin-bottom: 2rem; border: 1px solid #2a2a2a; }
+        .prompt-container { margin-bottom: 1.5rem; }
+        .prompt-container label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #ccc; }
+        .prompt-textarea { width: 100%; min-height: 120px; background: #0d0d0d; border: 1px solid #333; border-radius: 12px; padding: 1rem; color: #fff; font-family: inherit; font-size: 1rem; resize: vertical; transition: border-color 0.2s; }
+        .prompt-textarea:focus { outline: none; border-color: #7C3AED; }
+        .options-row { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .option-group { flex: 1; min-width: 200px; }
+        .option-group label { display: block; font-weight: 500; margin-bottom: 0.75rem; color: #ccc; }
+        .pill-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .pill-btn { padding: 0.5rem 1rem; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 20px; color: #aaa; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
+        .pill-btn:hover { background: #3a3a3a; color: #fff; }
+        .pill-btn.active { background: linear-gradient(135deg, #7C3AED, #6366F1); border-color: transparent; color: #fff; }
+        .generate-btn { width: 100%; padding: 1rem 2rem; background: linear-gradient(135deg, #7C3AED, #6366F1); border: none; border-radius: 12px; color: #fff; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4); }
+        .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .generate-btn.loading { position: relative; color: transparent; }
+        .generate-btn.loading::after { content: ''; position: absolute; width: 24px; height: 24px; top: 50%; left: 50%; margin: -12px 0 0 -12px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .gallery-section { margin-top: 2rem; }
+        .gallery-section h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #fff; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        @media (max-width: 1024px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .gallery-grid { grid-template-columns: 1fr; } }
+        .gallery-card { position: relative; border-radius: 12px; overflow: hidden; background: #1a1a1a; border: 1px solid #2a2a2a; transition: transform 0.2s; cursor: pointer; }
+        .gallery-card:hover { transform: scale(1.02); }
+        .gallery-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+        .gallery-card .overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%); opacity: 0; transition: opacity 0.2s; display: flex; flex-direction: column; justify-content: flex-end; padding: 1rem; }
+        .gallery-card:hover .overlay { opacity: 1; }
+        .overlay .prompt-text { font-size: 0.875rem; color: #ccc; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .overlay .download-btn { padding: 0.5rem 1rem; background: linear-gradient(135deg, #7C3AED, #6366F1); border: none; border-radius: 8px; color: #fff; font-size: 0.875rem; font-weight: 500; cursor: pointer; align-self: flex-start; }
+        .empty-state { text-align: center; padding: 4rem 2rem; color: #666; }
+        .empty-state svg { width: 64px; height: 64px; margin-bottom: 1rem; opacity: 0.5; }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; color: #fff; font-size: 0.875rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1000; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { border-color: #ef4444; background: #1f1010; }
+        .toast.success { border-color: #22c55e; background: #101f10; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ideogram</h1>
+            <p>AI-powered image generation</p>
+        </header>
+
+        <div class="generator-section">
+            <div class="prompt-container">
+                <label for="prompt">Prompt</label>
+                <textarea id="prompt" class="prompt-textarea" placeholder="Describe the image you want to create..."></textarea>
+            </div>
+
+            <div class="options-row">
+                <div class="option-group">
+                    <label>Style</label>
+                    <div class="pill-buttons" id="style-buttons">
+                        <button class="pill-btn active" data-style="">Realistic</button>
+                        <button class="pill-btn" data-style=", anime style">Anime</button>
+                        <button class="pill-btn" data-style=", 3D render">3D Render</button>
+                        <button class="pill-btn" data-style=", typography art">Typography</button>
+                        <button class="pill-btn" data-style=", illustration">Illustration</button>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <label>Aspect Ratio</label>
+                    <div class="pill-buttons" id="aspect-buttons">
+                        <button class="pill-btn" data-aspect="ASPECT_1_1">1:1</button>
+                        <button class="pill-btn active" data-aspect="ASPECT_16_9">16:9</button>
+                        <button class="pill-btn" data-aspect="ASPECT_9_16">9:16</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="generate-btn" class="generate-btn">Generate Image</button>
+        </div>
+
+        <div class="gallery-section">
+            <h2>Gallery</h2>
+            <div id="gallery" class="gallery-grid">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    <p>No images yet. Generate your first one!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_URL = '/execute_task';
+        let selectedStyle = '';
+        let selectedAspect = 'ASPECT_16_9';
+        let eventSource = null;
+
+        // SSE connection for real-time image updates
+        function connectSSE() {
+            if (eventSource) eventSource.close();
+            eventSource = new EventSource('/api/image-updates');
+            eventSource.onopen = () => console.log('SSE connected');
+            eventSource.onerror = () => setTimeout(connectSSE, 5000);
+            eventSource.addEventListener('image_ready', (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    const filename = data.filename;
+                    const thumbFilename = filename.replace(/\.(\w+)$/, '_thumb.$1');
+                    prependImageCard({
+                        id: data.id || `img_${Date.now()}`,
+                        prompt: data.prompt || '',
+                        style: data.style || '',
+                        thumb_path: `/semantic_memory/images/ideogram/${thumbFilename}`,
+                        image_path: `/semantic_memory/images/ideogram/${filename}`,
+                        created_at: new Date().toISOString()
+                    });
+                    showToast('Image ready!', 'success');
+                } catch (e) { console.error('SSE parse error', e); }
+            });
+        }
+
+        document.querySelectorAll('#style-buttons .pill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#style-buttons .pill-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedStyle = btn.dataset.style;
+            });
+        });
+
+        document.querySelectorAll('#aspect-buttons .pill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#aspect-buttons .pill-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedAspect = btn.dataset.aspect;
+            });
+        });
+
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const promptEl = document.getElementById('prompt');
+            const prompt = promptEl.value.trim();
+            if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
+            const btn = document.getElementById('generate-btn');
+            btn.classList.add('loading'); btn.disabled = true;
+            const timestamp = Date.now();
+            const outputPath = `semantic_memory/images/ideogram/ideogram_${timestamp}.png`;
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tool_name: 'ideogram_tool', action: 'generate', params: { prompt: prompt + selectedStyle, aspect_ratio: selectedAspect, output_path: outputPath } })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    const id = `img_${timestamp}`;
+                    await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tool_name: 'files', action: 'run_terminal_command', params: { command: `sqlite3 data/ideogram.db "INSERT INTO images (id, prompt, style, aspect_ratio, image_path, created_at) VALUES ('${id}', '${prompt.replace(/'/g, "''")}', '${selectedStyle.replace(/'/g, "''")}', '${selectedAspect}', '${result.saved_to}', '${new Date().toISOString()}');"` } }) });
+                    prependImageCard({ id, prompt, style: selectedStyle, thumb_path: result.thumb_path, image_path: result.saved_to, created_at: new Date().toISOString() });
+                    showToast('Image generated!', 'success'); promptEl.value = '';
+                } else { showToast(result.message || 'Generation failed', 'error'); }
+            } catch (e) { console.error(e); showToast('Failed', 'error'); }
+            finally { btn.classList.remove('loading'); btn.disabled = false; }
+        });
+
+        function prependImageCard(image) {
+            const gallery = document.getElementById('gallery');
+            const emptyState = gallery.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+            const card = document.createElement('div');
+            card.className = 'gallery-card';
+            let thumbSrc = image.thumb_path || image.image_path;
+            let fullSrc = image.image_path;
+            if (thumbSrc && thumbSrc.includes('semantic_memory')) thumbSrc = thumbSrc.replace(/.*semantic_memory\//, '/semantic_memory/');
+            if (fullSrc && fullSrc.includes('semantic_memory')) fullSrc = fullSrc.replace(/.*semantic_memory\//, '/semantic_memory/');
+            card.innerHTML = `<img src="${thumbSrc}" alt="${image.prompt}" onclick="openLightbox('${fullSrc}')" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%231a1a1a%22 width=%22100%22 height=%22100%22/></svg>'"><div class="overlay"><p class="prompt-text">${image.prompt}${image.style || ''}</p><button class="download-btn" onclick="event.stopPropagation(); downloadImage('${fullSrc}', '${image.id}.png')">Download</button></div>`;
+            gallery.insertBefore(card, gallery.firstChild);
+        }
+
+        function openLightbox(src) {
+            let lb = document.getElementById('lightbox');
+            if (!lb) { lb = document.createElement('div'); lb.id = 'lightbox'; lb.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:2000;justify-content:center;align-items:center;cursor:pointer'; lb.innerHTML = '<img id="lightbox-img" style="max-width:90vw;max-height:90vh;object-fit:contain">'; lb.onclick = () => lb.style.display = 'none'; document.body.appendChild(lb); }
+            document.getElementById('lightbox-img').src = src; lb.style.display = 'flex';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { const lb = document.getElementById('lightbox'); if (lb) lb.style.display = 'none'; } });
+
+        function downloadImage(src, filename) { const a = document.createElement('a'); a.href = src; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+        function showToast(message, type = 'info') { const toast = document.getElementById('toast'); toast.textContent = message; toast.className = `toast ${type} show`; setTimeout(() => toast.classList.remove('show'), 3000); }
+
+        async function loadGallery() {
+            try {
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tool_name: 'files', action: 'run_terminal_command', params: { command: 'sqlite3 -json data/ideogram.db "SELECT * FROM images ORDER BY created_at DESC"' } }) });
+                const result = await response.json();
+                if (result.status === 'success' && result.output) {
+                    try {
+                        const rows = JSON.parse(result.output);
+                        if (rows && rows.length > 0) {
+                            document.getElementById('gallery').innerHTML = '';
+                            rows.forEach(row => {
+                                const thumbPath = row.image_path ? row.image_path.replace(/\.(\w+)$/, '_thumb.$1') : null;
+                                prependImageCard({ id: row.id, prompt: row.prompt, style: row.style, thumb_path: thumbPath, image_path: row.image_path, created_at: row.created_at });
+                            });
+                        }
+                    } catch (e) { console.log('No images yet'); }
+                }
+            } catch (e) { console.error('Failed to load gallery', e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { loadGallery(); connectSSE(); });
+    </script>
+</body>
+</html>

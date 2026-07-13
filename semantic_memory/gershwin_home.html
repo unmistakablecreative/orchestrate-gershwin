@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/semantic_memory/">
+    <title>OrchestrateOS</title>
+    <link rel="stylesheet" href="orchestrate_homev2.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="logo">
+<div class="logo-icon">G</div>
+<span>Gershwin</span>
+</div>
+<button class="collapse-btn" id="collapse-btn" title="Toggle sidebar">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+</button>
+</div>
+<!-- Nav section - rendered from orchestrate_home_config.json by orchestrate_home.js -->
+<div class="nav-section">
+<!-- Sidebar items will be dynamically rendered from config -->
+</div>
+</nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Home View -->
+            <div id="homeView" class="view active">
+                <div class="container">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1>OrchestrateOS</h1>
+                        <p>What do you want to create?</p>
+                    </div>
+
+                    <!-- Action Icons Grid -->
+                    <div id="actionGrid" class="action-grid">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Output Cards Section -->
+                    <div class="output-section">
+                        <div class="output-header">
+                            <span class="output-title">Recent Outputs</span>
+                            <button class="output-clear" onclick="clearOutputs()">Clear</button>
+                        </div>
+                        <div id="outputGrid" class="output-grid">
+                            <div id="emptyState" class="empty-state">
+                                <div class="empty-state-icon">✨</div>
+                                <p>Your outputs will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Iframe for sub-views -->
+            <iframe id="viewFrame" class="view-frame"></iframe>
+        </main>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-section">
+        <div class="progress-container">
+            <div class="progress-header">
+                <span class="progress-label">Task Progress</span>
+                <span id="progressCount" class="progress-count">0 / 0 tasks</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div id="modalIcon" class="modal-icon">📄</div>
+                <div id="modalTitle" class="modal-title">Create Doc</div>
+            </div>
+            <textarea id="modalInput" class="modal-input" placeholder="Describe what you want..."></textarea>
+            <div id="variationsField" class="form-group" style="display: none;">
+                <label class="form-label">Variations</label>
+                <input id="variationsInput" type="number" class="form-input" min="1" max="10" value="3" placeholder="Number of variations (1-10)">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button id="submitBtn" class="btn btn-primary" onclick="executeAction()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Action Modal -->
+    <div id="customActionOverlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">⚙️</div>
+                <div class="modal-title">Add Custom Action</div>
+            </div>
+            <div class="custom-action-form">
+                <div class="form-group">
+                    <label class="form-label">Label</label>
+                    <input id="customLabel" class="form-input" placeholder="e.g., Send Email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tool Name</label>
+                    <input id="customTool" class="form-input" placeholder="e.g., nylas_inbox">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Action</label>
+                    <input id="customAction" class="form-input" placeholder="e.g., send_email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Input Placeholder</label>
+                    <input id="customPlaceholder" class="form-input" placeholder="e.g., Who to email?">
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="closeCustomActionModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCustomAction()">Save Action</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="orchestrate_homev2.js"></script>
+</body>
+</html>

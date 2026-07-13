@@ -322,11 +322,7 @@ function navigateTo(view) {
     }
 
     // Gate Tasks - require claude_assistant to be unlocked
-    // Check localStorage first for persisted unlock state
-    if (localStorage.getItem('claudeAssistantUnlocked') === 'true') {
-        window.claudeAssistantUnlocked = true;
-    }
-    if (view === 'tasks' && window.claudeAssistantUnlocked === false) {
+    if (view === 'tasks' && window.claudeAssistantUnlocked !== true) {
         showTasksLockedModal();
         return;
     }
@@ -341,24 +337,24 @@ function navigateTo(view) {
 
     // Show appropriate content
     if (view === 'home') {
-        // Check user state and gate home view based on unlock status
-        // checkUserState is defined in HTML script tag and sets window.claudeAssistantUnlocked
-        if (typeof checkUserState === 'function') {
+        // If claude_assistant was just unlocked this session, go straight to home
+        if (window.claudeAssistantJustUnlocked || window.claudeAssistantUnlocked === true) {
+            homeView.style.display = 'flex';
+            contentFrame.style.display = 'none';
+            statusText.textContent = 'Home';
+        } else if (typeof checkUserState === 'function') {
             checkUserState().then(() => {
                 if (window.claudeAssistantUnlocked === false) {
-                    // Show app store instead of home when locked
                     if (typeof showAppStoreAsHome === 'function') {
                         showAppStoreAsHome();
                     }
                 } else {
-                    // Show normal home view
                     homeView.style.display = 'flex';
                     contentFrame.style.display = 'none';
                     statusText.textContent = 'Home';
                 }
             });
         } else {
-            // Fallback if checkUserState not available
             homeView.style.display = 'flex';
             contentFrame.style.display = 'none';
             statusText.textContent = 'Home';
@@ -377,6 +373,38 @@ function navigateTo(view) {
         }
     }
 }
+
+// Add nav item dynamically when a tool is unlocked
+function addNavItem(toolData) {
+    const navSection = document.querySelector('.nav-section');
+    if (!navSection) return;
+
+    // Don't add duplicate
+    if (navSection.querySelector(`[data-view="${toolData.tool_name}"]`)) return;
+
+    // Find the first nav-divider to insert before
+    const dividers = navSection.querySelectorAll('.nav-divider');
+    const insertBefore = dividers.length > 0 ? dividers[0] : null;
+
+    const item = document.createElement('div');
+    item.className = 'nav-item';
+    item.dataset.view = toolData.tool_name;
+    if (toolData.open_url) item.dataset.src = toolData.open_url;
+
+    item.innerHTML = `
+        <span style="font-size:18px; width:22px; text-align:center; flex-shrink:0;">${toolData.icon || '🔧'}</span>
+        <span>${toolData.display_name || toolData.tool_name}</span>
+    `;
+
+    item.addEventListener('click', () => navigateTo(toolData.tool_name));
+
+    if (insertBefore) {
+        navSection.insertBefore(item, insertBefore);
+    } else {
+        navSection.appendChild(item);
+    }
+}
+window.addNavItem = addNavItem;
 
 // Make navigateTo globally accessible
 window.navigateTo = navigateTo;

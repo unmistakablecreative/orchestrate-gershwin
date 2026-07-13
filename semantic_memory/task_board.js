@@ -317,48 +317,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Polling
+        let cachedRecentResults = [];
+
         async function pollActiveTasks() {
-            const allTasks = [];
+            let statusData;
+            try {
+                const resp = await fetch('/task_status');
+                if (!resp.ok) return;
+                statusData = await resp.json();
+            } catch (e) { return; }
 
-            // Fetch results FIRST so we can skip tasks that are already done
-            const resultsData = await fetchJson('/data-nocache/' + RESULTS_FILE);
+            if (!statusData || statusData.status === 'error') return;
 
-            for (const qf of QUEUE_FILES) {
-                const data = await fetchJson('/data-nocache/' + qf);
-                if (data && data.tasks) {
-                    for (const [taskId, taskData] of Object.entries(data.tasks)) {
-                        const status = taskData.status || 'queued';
-                        if (status === 'queued' || status === 'in_progress') {
-                            // Skip if results already shows this task as done/error/cancelled
-                            if (resultsData && resultsData.results && resultsData.results[taskId]) {
-                                const resultStatus = resultsData.results[taskId].status;
-                                if (resultStatus === 'done' || resultStatus === 'error') continue;
-                            }
-                            allTasks.push({
-                                id: taskId,
-                                status: status,
-                                description: taskData.description || '',
-                                card_title: taskData.card_title || generateCardTitle(taskData.description || taskId),
-                                created_at: taskData.created_at,
-                                started_at: taskData.started_at,
-                                processing_started_at: taskData.processing_started_at,
-                                spawned_via: taskData.spawned_via || null
-                            });
-                        }
-                    }
-                }
-            }
+            cachedRecentResults = statusData.recent_results || [];
 
-            // Check for tasks that just disappeared (completed)
+            const allTasks = (statusData.active_tasks || []).map(t => ({
+                id: t.task_id,
+                status: t.status,
+                description: t.description || '',
+                card_title: t.card_title || generateCardTitle(t.description || t.task_id),
+                created_at: t.created_at,
+                started_at: t.started_at,
+                processing_started_at: t.processing_started_at,
+                spawned_via: t.spawned_via || null
+            }));
+
             const currentIds = new Set(allTasks.map(t => t.id));
             const completingIds = new Set(completingTasks.map(t => t.id));
 
             for (const prevId of previousActiveIds) {
                 if (!currentIds.has(prevId) && !completingIds.has(prevId)) {
-                    // Task vanished - check if it completed (resultsData already fetched above)
-                    if (resultsData && resultsData.results && resultsData.results[prevId]) {
-                        const result = resultsData.results[prevId];
-                        // Add to completing tasks with card info
+                    const result = cachedRecentResults.find(r => r.task_id === prevId);
+                    if (result) {
                         completingTasks.push({
                             id: prevId,
                             status: 'completing',
@@ -366,64 +356,57 @@ document.addEventListener('DOMContentLoaded', async () => {
                             card_stat: result.card_stat || 'done',
                             execution_time: result.execution_time_seconds
                         });
-                        // Remove after 2.5 seconds (shows completion animation)
                         setTimeout(() => {
                             completingTasks = completingTasks.filter(t => t.id !== prevId);
                             renderActive();
-                            pollRecentTasks();  // Refresh recent to show the completed task
+                            pollRecentTasks();
                         }, 2500);
                     }
                 }
             }
 
-            // Update previous IDs for next poll
             previousActiveIds = currentIds;
 
-            // Sort: running first, then by created_at
             allTasks.sort((a, b) => {
                 if (a.status === 'in_progress' && b.status !== 'in_progress') return -1;
                 if (b.status === 'in_progress' && a.status !== 'in_progress') return 1;
                 return (a.created_at || '') > (b.created_at || '') ? 1 : -1;
             });
 
-            // Only re-render if data changed (include completing tasks in hash)
             const newHash = JSON.stringify(allTasks.map(t => t.id + t.status)) + JSON.stringify(completingTasks.map(t => t.id));
             if (newHash !== lastActiveHash) {
                 lastActiveHash = newHash;
                 activeTasks = allTasks;
                 renderActive();
             } else {
-                // Just update timers without full re-render
                 activeTasks = allTasks;
                 startTimers();
             }
         }
 
         async function pollRecentTasks() {
-            const data = await fetchJson('/data-nocache/' + RESULTS_FILE);
-            if (!data || !data.results) {
-                recentTasks = [];
-                renderRecent();
-                return;
-            }
+            let statusData;
+            try {
+                const resp = await fetch('/task_status');
+                if (!resp.ok) return;
+                statusData = await resp.json();
+            } catch (e) { return; }
 
-            const tasks = Object.entries(data.results)
-                .map(([taskId, r]) => ({
-                    id: taskId,
-                    status: r.status,
-                    description: r.description || '',
-                    card_title: r.card_title || generateCardTitle(r.description || taskId),
-                    card_stat: r.card_stat || (r.status === 'done' ? 'completed' : 'error'),
-                    completed_at: r.completed_at,
-                    execution_time: r.execution_time_seconds,
-                    actions_taken: r.actions_taken,
-                    output_summary: r.output_summary,
-                    errors: r.errors
-                }))
-                .filter(t => t.status === 'done' || t.status === 'error')
-                .sort((a, b) => (b.completed_at || '') > (a.completed_at || '') ? 1 : -1);
+            if (!statusData || statusData.status === 'error') return;
 
-            // Only re-render if data changed
+            const tasks = (statusData.recent_results || []).map(r => ({
+                id: r.task_id,
+                status: r.status,
+                description: r.description || '',
+                card_title: r.card_title || generateCardTitle(r.description || r.task_id),
+                card_stat: r.card_stat || (r.status === 'done' ? 'completed' : 'error'),
+                completed_at: r.completed_at,
+                execution_time: r.execution_time_seconds,
+                actions_taken: r.actions_taken,
+                output_summary: r.output_summary,
+                errors: r.errors
+            }));
+
             const newTasks = tasks.slice(0, 20);
             const newHash = JSON.stringify(newTasks.map(t => t.id));
             if (newHash !== lastRecentHash) {
@@ -706,17 +689,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Poll staged tasks from backend
         let lastStagedHash = '';
         async function pollStagedTasks() {
-            const data = await fetchJson('/data-nocache/' + STAGED_FILE);
-            if (!data || !Array.isArray(data)) return;
+            const data = await executeTask('claude_assistant', 'get_staged_tasks', {});
+            if (!data || !data.staged_tasks) return;
 
-            const newHash = JSON.stringify(data);
+            const newHash = JSON.stringify(data.staged_tasks);
             if (newHash === lastStagedHash) return;
             lastStagedHash = newHash;
 
-            // Replace backend tasks, keep local-only tasks
             const localOnly = stagedTasks.filter(t => !t.fromBackend);
-            const backendTasks = data.map((t, i) => ({
-                id: 'backend_' + t.staged_at,
+            const backendTasks = data.staged_tasks.map(t => ({
+                id: 'backend_' + (t.staged_at || t.id || Date.now()),
                 text: t.description,
                 preset: t.preset || 'custom',
                 label: presetLabels[t.preset] || 'Custom',
@@ -779,12 +761,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         async function init() {
             await Promise.all([pollActiveTasks(), pollRecentTasks(), pollStagedTasks()]);
 
-            // Poll active tasks every 500ms (fast enough to catch running state)
-            setInterval(pollActiveTasks, 500);
-            // Poll recent tasks every 5s
-            setInterval(pollRecentTasks, 5000);
-            // Poll staged tasks every 3s
-            setInterval(pollStagedTasks, 3000);
+            setInterval(pollActiveTasks, 5000);
+            setInterval(pollRecentTasks, 10000);
+            setInterval(pollStagedTasks, 10000);
         }
 
         init();

@@ -1,0 +1,554 @@
+<script>
+        const API_BASE = '';
+
+        let stagedTasks = [];
+        let activeTasks = [];
+        let recentTasks = [];
+        let completingTasks = [];  // Tasks that just finished - show briefly before moving to done
+        let previousActiveIds = new Set();  // Track IDs from last poll
+        let runningTimers = {};
+        let lastActiveHash = '';
+        let lastRecentHash = '';
+        let isExpanded = false;
+
+        const presetLabels = { custom:'Custom', image:'Images', document:'Document', research:'Research', social:'Social', newsletter:'Newsletter', code:'Code', automation:'Automation', mockup:'Mockup' };
+        const placeholders = {
+            custom: "Write your custom task description...",
+            image: "Enter topic for image generation\n\nExample: sunset landscapes, tech workspace, product mockups",
+            document: "Enter document title and content\n\nExample: Q1 OKRs - sales targets and marketing initiatives",
+            research: "Enter research topic\n\nExample: AI coordination infrastructure market analysis",
+            social: "Enter post topic or theme\n\nExample: Thread on why SaaS is dead, LinkedIn post on AI automation",
+            newsletter: "Enter newsletter subject or theme\n\nExample: Weekly update on OrchestrateOS progress",
+            code: "Describe the coding task\n\nExample: Add webhook endpoint for Stripe payments",
+            automation: "Describe trigger and action in plain English\n\nExample: When a new podcast is added to podcast_index.json, auto-rename the audio file",
+            mockup: "Enter: Site name | purpose\n\nExample: TechStartup | SaaS landing page hero section"
+        };
+
+        function updatePreset() {
+            const sel = document.getElementById("presetSelect");
+            const ta = document.getElementById("taskTextarea");
+            ta.placeholder = placeholders[sel.value] || placeholders.custom;
+        }
+
+        function showToast(msg, type = "success") {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.className = "toast " + type + " show";
+            setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        async function stageTask() {
+            const desc = document.getElementById("taskTextarea").value.trim();
+            if (!desc) return;
+            const preset = document.getElementById("presetSelect").value;
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "stage_task",
+                        params: { description: desc, preset: preset }
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showToast("Task staged", "success");
+                    document.getElementById("taskTextarea").value = "";
+                    await pollStagedTasks();
+                } else {
+                    showToast(data.message || "Failed to stage task", "error");
+                }
+            } catch (err) {
+                showToast("Error: " + err.message, "error");
+            }
+        }
+
+        async function submitTask() {
+            const desc = document.getElementById("taskTextarea").value.trim();
+            if (!desc) return;
+            const preset = document.getElementById("presetSelect").value;
+            const collection = document.getElementById("collectionSelect")?.value || "default";
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "assign_task",
+                        params: { description: desc, preset: preset, collection: collection, auto_execute: true }
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showToast("Task submitted", "success");
+                    document.getElementById("taskTextarea").value = "";
+                    setTimeout(pollActiveTasks, 500);
+                } else {
+                    showToast(data.message || "Failed", "error");
+                }
+            } catch (err) {
+                showToast("Error: " + err.message, "error");
+            }
+        }
+
+        async function executeAll() {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "execute_queue",
+                        params: {}
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showToast("Executing staged tasks", "success");
+                    await pollStagedTasks();
+                    setTimeout(pollActiveTasks, 500);
+                } else {
+                    showToast(data.message || "Failed", "error");
+                }
+            } catch (err) {
+                showToast("Error: " + err.message, "error");
+            }
+        }
+
+        async function clearStaged() {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "clear_staged_tasks",
+                        params: {}
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showToast("Staged tasks cleared", "success");
+                    await pollStagedTasks();
+                } else {
+                    showToast(data.message || "Failed", "error");
+                }
+            } catch (err) {
+                showToast("Error: " + err.message, "error");
+            }
+        }
+
+        async function cancelTask(taskId) {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "cancel_task",
+                        params: { task_id: taskId }
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showToast("Task cancelled", "success");
+                    pollActiveTasks();
+                } else {
+                    showToast(data.message || "Failed", "error");
+                }
+            } catch (err) {
+                showToast("Error: " + err.message, "error");
+            }
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds || seconds < 0) return "0s";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            if (mins > 0) return mins + "m " + secs + "s";
+            return secs + "s";
+        }
+
+        function getStatusBadgeClass(status) {
+            const map = {
+                "in_progress": "status-active",
+                "queued": "status-queued",
+                "done": "status-done",
+                "error": "status-error",
+                "cancelled": "status-cancelled"
+            };
+            return map[status] || "status-queued";
+        }
+
+        function getStatusLabel(status) {
+            const map = {
+                "in_progress": "Running",
+                "queued": "Queued",
+                "done": "Done",
+                "error": "Error",
+                "cancelled": "Cancelled"
+            };
+            return map[status] || status;
+        }
+
+        function renderTaskCard(task, isActive = false) {
+            const statusClass = getStatusBadgeClass(task.status);
+            const statusLabel = getStatusLabel(task.status);
+            const desc = task.description || task.card_title || "Task";
+            const shortDesc = desc.length > 80 ? desc.substring(0, 80) + "..." : desc;
+
+            let timerHtml = "";
+            if (isActive && task.status === "in_progress" && task.started_at) {
+                const elapsed = Math.floor((Date.now() / 1000) - new Date(task.started_at).getTime() / 1000);
+                timerHtml = '<div class="task-timer" id="timer-' + task.task_id + '">' + formatDuration(elapsed) + '</div>';
+            }
+
+            let cancelBtn = "";
+            if (isActive && (task.status === "in_progress" || task.status === "queued")) {
+                cancelBtn = '<button class="cancel-btn" onclick="event.stopPropagation(); cancelTask(\'' + task.task_id + '\')">×</button>';
+            }
+
+            return '<div class="task-card ' + (isActive ? 'active-card' : '') + '" onclick="openTaskModal(\'' + task.task_id + '\')">' +
+                '<div class="task-status ' + statusClass + '">' + statusLabel + '</div>' +
+                '<div class="task-title">' + shortDesc + '</div>' +
+                timerHtml +
+                cancelBtn +
+                '</div>';
+        }
+
+        function renderStagedCard(task, index) {
+            const desc = task.description || "Staged task";
+            const shortDesc = desc.length > 60 ? desc.substring(0, 60) + "..." : desc;
+            return '<div class="staged-card">' +
+                '<span class="staged-num">' + (index + 1) + '</span>' +
+                '<span class="staged-desc">' + shortDesc + '</span>' +
+                '<button class="staged-remove" onclick="removeStagedTask(' + index + ')">×</button>' +
+                '</div>';
+        }
+
+        async function removeStagedTask(index) {
+            showToast("Refresh staged tasks", "info");
+            await pollStagedTasks();
+        }
+
+        function updateActiveSection(tasks) {
+            const section = document.getElementById("activeSection");
+            const track = document.getElementById("activeTrack");
+            const badge = document.getElementById("activeCountBadge");
+
+            if (!tasks || tasks.length === 0) {
+                section.classList.add("hidden");
+                return;
+            }
+
+            section.classList.remove("hidden");
+            badge.textContent = tasks.length;
+
+            const html = tasks.map(function(t) { return renderTaskCard(t, true); }).join("");
+            track.innerHTML = html;
+
+            // Update timers for running tasks
+            tasks.forEach(function(t) {
+                if (t.status === "in_progress" && t.started_at) {
+                    if (runningTimers[t.task_id]) clearInterval(runningTimers[t.task_id]);
+                    runningTimers[t.task_id] = setInterval(function() {
+                        const el = document.getElementById("timer-" + t.task_id);
+                        if (el) {
+                            const elapsed = Math.floor((Date.now() / 1000) - new Date(t.started_at).getTime() / 1000);
+                            el.textContent = formatDuration(elapsed);
+                        }
+                    }, 1000);
+                }
+            });
+
+            // Clean up timers for tasks no longer active
+            Object.keys(runningTimers).forEach(function(id) {
+                if (!tasks.find(function(t) { return t.task_id === id; })) {
+                    clearInterval(runningTimers[id]);
+                    delete runningTimers[id];
+                }
+            });
+        }
+
+        function updateRecentSection(tasks) {
+            const track = document.getElementById("recentTrack");
+            const badge = document.getElementById("recentCountBadge");
+            const allCount = document.getElementById("allCount");
+
+            badge.textContent = tasks.length;
+            if (allCount) allCount.textContent = tasks.length;
+
+            const html = tasks.slice(0, 10).map(function(t) { return renderTaskCard(t, false); }).join("");
+            track.innerHTML = html || '<div class="empty-state">No recent tasks</div>';
+        }
+
+        function updateStagedSection(tasks) {
+            const area = document.getElementById("stagingArea");
+            const list = document.getElementById("stagedList");
+            const countEl = document.getElementById("stagedCount");
+
+            if (!tasks || tasks.length === 0) {
+                area.classList.add("hidden");
+                return;
+            }
+
+            area.classList.remove("hidden");
+            countEl.textContent = tasks.length;
+
+            const html = tasks.map(function(t, i) { return renderStagedCard(t, i); }).join("");
+            list.innerHTML = html;
+        }
+
+        // DB-based polling functions using execute_task API
+        async function pollActiveTasks() {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "get_active_tasks",
+                        params: {}
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    const tasks = data.tasks || [];
+
+                    // Detect task completions
+                    const currentIds = new Set(tasks.map(function(t) { return t.task_id; }));
+                    previousActiveIds.forEach(function(prevId) {
+                        if (!currentIds.has(prevId)) {
+                            // Task completed, refresh recent
+                            pollRecentTasks();
+                        }
+                    });
+                    previousActiveIds = currentIds;
+
+                    activeTasks = tasks;
+                    updateActiveSection(tasks);
+                }
+            } catch (err) {
+                console.error("Failed to poll active tasks:", err);
+            }
+        }
+
+        async function pollRecentTasks() {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "get_recent_tasks",
+                        params: { limit: 20 }
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    recentTasks = data.tasks || [];
+                    updateRecentSection(recentTasks);
+                }
+            } catch (err) {
+                console.error("Failed to poll recent tasks:", err);
+            }
+        }
+
+        async function pollStagedTasks() {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "get_staged_tasks",
+                        params: {}
+                    })
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    stagedTasks = data.tasks || [];
+                    updateStagedSection(stagedTasks);
+                }
+            } catch (err) {
+                console.error("Failed to poll staged tasks:", err);
+            }
+        }
+
+        async function openTaskModal(taskId) {
+            try {
+                const res = await fetch(API_BASE + "/execute_task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tool_name: "claude_assistant",
+                        action: "get_task_result",
+                        params: { task_id: taskId }
+                    })
+                });
+                const data = await res.json();
+
+                const overlay = document.getElementById("modalOverlay");
+                const title = document.getElementById("modalTitle");
+                const content = document.getElementById("modalContent");
+                const badge = document.getElementById("modalBadge");
+
+                if (data.status === "success" && data.task) {
+                    const task = data.task;
+                    title.textContent = task.description || task.card_title || "Task Details";
+                    badge.textContent = getStatusLabel(task.status);
+                    badge.className = "modal-status-badge " + getStatusBadgeClass(task.status);
+
+                    let html = "";
+                    if (task.output_summary) {
+                        html += '<div class="modal-section"><strong>Summary:</strong><p>' + task.output_summary + '</p></div>';
+                    }
+                    if (task.actions_taken && task.actions_taken.length > 0) {
+                        html += '<div class="modal-section"><strong>Actions:</strong><ul>' + task.actions_taken.map(function(a) { return '<li>' + a + '</li>'; }).join("") + '</ul></div>';
+                    }
+                    if (task.errors) {
+                        html += '<div class="modal-section error"><strong>Errors:</strong><p>' + task.errors + '</p></div>';
+                    }
+                    if (task.output) {
+                        const outputPreview = task.output.length > 500 ? task.output.substring(0, 500) + "..." : task.output;
+                        html += '<div class="modal-section"><strong>Output:</strong><pre>' + outputPreview + '</pre></div>';
+                    }
+                    content.innerHTML = html || "<p>No additional details available.</p>";
+                } else {
+                    title.textContent = "Task Details";
+                    badge.textContent = "Unknown";
+                    badge.className = "modal-status-badge";
+                    content.innerHTML = "<p>Could not load task details.</p>";
+                }
+
+                overlay.style.display = "flex";
+            } catch (err) {
+                console.error("Failed to load task details:", err);
+            }
+        }
+
+        function closeModal(e) {
+            if (e && e.target !== e.currentTarget) return;
+            document.getElementById("modalOverlay").style.display = "none";
+        }
+
+        function toggleExpanded() {
+            isExpanded = !isExpanded;
+            const grid = document.getElementById("expandedGrid");
+            const link = document.getElementById("seeAllLink");
+
+            if (isExpanded) {
+                grid.classList.add("show");
+                link.textContent = "Hide";
+                const html = recentTasks.map(function(t) { return renderTaskCard(t, false); }).join("");
+                grid.innerHTML = html;
+            } else {
+                grid.classList.remove("show");
+                link.textContent = "See all (" + recentTasks.length + ")";
+            }
+        }
+
+        // Pagination state
+        let activePage = 0;
+        let recentPage = 0;
+        const pageSize = 4;
+
+        function updatePagination(section, page, total) {
+            const pageEl = document.getElementById(section + "Page");
+            const prevEl = document.getElementById(section + "Prev");
+            const nextEl = document.getElementById(section + "Next");
+
+            const maxPage = Math.ceil(total / pageSize) - 1;
+            if (pageEl) pageEl.textContent = (page + 1) + "/" + (maxPage + 1);
+            if (prevEl) prevEl.classList.toggle("disabled", page <= 0);
+            if (nextEl) nextEl.classList.toggle("disabled", page >= maxPage);
+        }
+
+        function navActive(dir) {
+            const maxPage = Math.ceil(activeTasks.length / pageSize) - 1;
+            activePage = Math.max(0, Math.min(maxPage, activePage + dir));
+            renderActivePage();
+        }
+
+        function navRecent(dir) {
+            const maxPage = Math.ceil(recentTasks.length / pageSize) - 1;
+            recentPage = Math.max(0, Math.min(maxPage, recentPage + dir));
+            renderRecentPage();
+        }
+
+        function renderActivePage() {
+            const track = document.getElementById("activeTrack");
+            const start = activePage * pageSize;
+            const slice = activeTasks.slice(start, start + pageSize);
+            track.innerHTML = slice.map(function(t) { return renderTaskCard(t, true); }).join("");
+            updatePagination("active", activePage, activeTasks.length);
+        }
+
+        function renderRecentPage() {
+            const track = document.getElementById("recentTrack");
+            const start = recentPage * pageSize;
+            const slice = recentTasks.slice(start, start + pageSize);
+            track.innerHTML = slice.map(function(t) { return renderTaskCard(t, false); }).join("");
+            updatePagination("recent", recentPage, recentTasks.length);
+        }
+
+        // Voice input
+        let recognition = null;
+        let isRecording = false;
+
+        function toggleVoice() {
+            if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+                showToast("Speech recognition not supported", "error");
+                return;
+            }
+
+            const btn = document.getElementById("micBtn");
+
+            if (isRecording) {
+                if (recognition) recognition.stop();
+                isRecording = false;
+                btn.classList.remove("recording");
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                isRecording = true;
+                btn.classList.add("recording");
+            };
+
+            recognition.onresult = function(e) {
+                const transcript = e.results[0][0].transcript;
+                document.getElementById("taskTextarea").value = transcript;
+            };
+
+            recognition.onend = function() {
+                isRecording = false;
+                btn.classList.remove("recording");
+            };
+
+            recognition.onerror = function(e) {
+                console.error("Speech error:", e.error);
+                isRecording = false;
+                btn.classList.remove("recording");
+            };
+
+            recognition.start();
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", async function() {
+            // Initial load
+            await Promise.all([pollActiveTasks(), pollRecentTasks(), pollStagedTasks()]);
+
+            // Set up polling intervals - DB-based is more reliable so we can poll less frequently
+            setInterval(pollActiveTasks, 2000);  // Poll active every 2s
+            setInterval(pollRecentTasks, 10000); // Poll recent every 10s
+            setInterval(pollStagedTasks, 5000);  // Poll staged every 5s
+        });
+    </script>

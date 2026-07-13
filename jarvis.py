@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.middleware.cors import CORSMiddleware
 from datetime import datetime
 import sys
@@ -10,8 +10,11 @@ import logging
 import time
 import platform
 import random
+import asyncio
 from collections import defaultdict
 from fastapi.staticfiles import StaticFiles
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 # === BASE DIR ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -31,6 +34,7 @@ UNLOCK_STATUS_PATH = os.path.join(BASE_DIR, "data", "unlock_status.json")
 TOOL_UI_PATH = os.path.join(BASE_DIR, "data", "orchestrate_tool_ui.json")
 NGROK_CONFIG_PATH = os.path.join(BASE_DIR, "data", "ngrok.json")
 EXEC_HUB_PATH = f"{BASE_DIR}/execution_hub.py"
+TASKS_DB_PATH = os.path.join(BASE_DIR, "data", "tasks.db")
 REFERRAL_PATH = os.path.join(BASE_DIR, "container_state", "referrals.json")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -40,7 +44,7 @@ DROPZONE_DIR = os.path.expanduser("~/Documents/Orchestrate/dropzone")
 if os.path.exists(DROPZONE_DIR):
     app.mount("/dropzone", StaticFiles(directory=DROPZONE_DIR), name="dropzone")
 else:
-    logging.warning(f"⚠️ Dropzone directory not found: {DROPZONE_DIR}")
+    logging.warning(f"Warning: Dropzone directory not found: {DROPZONE_DIR}")
 
 # === System Identity Mount ===
 STATE_DIR = "/Library/Application Support/OrchestrateOS"
@@ -49,21 +53,21 @@ if not os.path.exists(STATE_DIR):
 if os.path.exists(STATE_DIR):
     app.mount("/state", StaticFiles(directory=STATE_DIR), name="state")
 else:
-    logging.warning(f"⚠️ State directory not found, skipping mount")
+    logging.warning(f"Warning: State directory not found, skipping mount")
 
 # === Semantic Memory Mount ===
 SEMANTIC_MEMORY_DIR = os.path.join(BASE_DIR, "semantic_memory")
 if os.path.exists(SEMANTIC_MEMORY_DIR):
     app.mount("/semantic_memory", StaticFiles(directory=SEMANTIC_MEMORY_DIR, html=True), name="semantic_memory")
 else:
-    logging.warning(f"⚠️ Semantic memory directory not found: {SEMANTIC_MEMORY_DIR}")
+    logging.warning(f"Warning: Semantic memory directory not found: {SEMANTIC_MEMORY_DIR}")
 
 # === Data Mount ===
 DATA_DIR = os.path.join(BASE_DIR, "data")
 if os.path.exists(DATA_DIR):
     app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
 else:
-    logging.warning(f"⚠️ Data directory not found: {DATA_DIR}")
+    logging.warning(f"Warning: Data directory not found: {DATA_DIR}")
 
 # === URL Aliases ===
 URL_ALIASES_PATH = os.path.join(BASE_DIR, "data", "url_aliases.json")
@@ -103,6 +107,52 @@ def check_rate_limit(endpoint: str, client_id: str = "default"):
 
     rate_limit_state[key].append(now)
     return True
+
+# === File Watcher (SSE) ===
+file_change_event = asyncio.Event()
+image_change_event = asyncio.Event()
+last_file_change = {"timestamp": time.time(), "file": None}
+last_image_change = {"timestamp": time.time(), "filename": None}
+main_event_loop = None
+file_observer = None
+
+class TaskFileHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        if event.src_path.endswith('tasks.db'):
+            last_file_change["timestamp"] = time.time()
+            last_file_change["file"] = "tasks.db"
+            if main_event_loop and main_event_loop.is_running():
+                main_event_loop.call_soon_threadsafe(file_change_event.set)
+
+class ImageFileHandler(FileSystemEventHandler):
+    def on_created(self, event):
+        if event.is_directory:
+            return
+        filename = os.path.basename(event.src_path)
+        if filename.endswith(('.png', '.jpg', '.jpeg', '.webp')) and not filename.startswith('.'):
+            last_image_change["timestamp"] = time.time()
+            last_image_change["filename"] = filename
+            if main_event_loop and main_event_loop.is_running():
+                main_event_loop.call_soon_threadsafe(image_change_event.set)
+
+def start_file_watcher():
+    global file_observer
+    file_observer = Observer()
+    # Task DB watcher
+    file_observer.schedule(TaskFileHandler(), os.path.join(BASE_DIR, "data"), recursive=False)
+    # Public images watcher
+    images_path = os.path.join(BASE_DIR, "semantic_memory", "public_images")
+    if os.path.exists(images_path):
+        file_observer.schedule(ImageFileHandler(), images_path, recursive=False)
+    file_observer.start()
+    logging.info("File watcher started")
+
+def stop_file_watcher():
+    global file_observer
+    if file_observer:
+        file_observer.stop()
+        file_observer.join()
+        logging.info("File watcher stopped")
 
 # === Tool Executor ===
 def run_script(tool_name, action, params):
@@ -154,7 +204,7 @@ def get_supported_actions():
         for entry in entries:
             if entry.get("action") == "__tool__":
                 is_locked = entry.get("locked", True)
-                entry["🔒 Lock State"] = "✅ Unlocked" if not is_locked else "❌ Locked"
+                entry["Lock State"] = "Unlocked" if not is_locked else "Locked"
 
         update_messages_path = os.path.join(BASE_DIR, "data", "update_messages.json")
         update_messages = []
@@ -170,7 +220,7 @@ def get_supported_actions():
         }
 
     except Exception as e:
-        logging.error(f"🚨 Failed to load registry or update messages: {e}")
+        logging.error(f"Failed to load registry or update messages: {e}")
         raise HTTPException(status_code=500, detail="Could not load registry or update messages.")
 
 # === Tool Catalog Endpoint ===
@@ -338,6 +388,23 @@ def get_new_tools():
 @app.get("/")
 def root():
     return {"status": "Jarvis core is online."}
+
+
+@app.get("/task_status")
+async def task_status():
+    import sqlite3
+    try:
+        conn = sqlite3.connect(TASKS_DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT task_id, description, status, priority, agent_id, batch_id, context, card_title, card_stat, pid, created_at, started_at, processing_started_at, updated_at FROM tasks WHERE status IN ('queued', 'in_progress') ORDER BY CASE status WHEN 'in_progress' THEN 0 ELSE 1 END, created_at DESC")
+        active_tasks = [dict(row) for row in cursor.fetchall()]
+        cursor.execute("SELECT task_id, status, description, actions_taken, output, output_summary, errors, execution_time_seconds, card_title, card_stat, test_results, tokens, token_cost, batch_id, batch_position, started_at, processing_started_at, completed_at, source FROM task_results ORDER BY completed_at DESC LIMIT 20")
+        recent_results = [dict(row) for row in cursor.fetchall()]
+        conn.close()
+        return {"status": "success", "active_tasks": active_tasks, "recent_results": recent_results}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.get("/data-nocache/{filename:path}")
 async def get_data_nocache(filename: str):
@@ -601,7 +668,25 @@ async def get_identity():
         return {"status": "error", "message": str(e)}
 
 
-# 🔗 Dynamic URL Aliases - catch-all route (MUST be LAST - after all other routes)
+# === SSE Endpoints ===
+@app.get("/api/image-updates")
+async def image_updates():
+    async def event_generator():
+        while True:
+            try:
+                try:
+                    await asyncio.wait_for(image_change_event.wait(), timeout=30.0)
+                    image_change_event.clear()
+                    yield f"data: {json.dumps({'type': 'image_ready', 'filename': last_image_change.get('filename'), 'timestamp': last_image_change.get('timestamp')})}\n\n"
+                except asyncio.TimeoutError:
+                    yield f"data: {json.dumps({'type': 'heartbeat', 'timestamp': time.time()})}\n\n"
+            except asyncio.CancelledError:
+                break
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "Access-Control-Allow-Origin": "*"})
+
+
+# Dynamic URL Aliases - catch-all route (MUST be LAST - after all other routes)
 @app.api_route("/{alias:path}", methods=["GET"])
 async def dynamic_alias_handler(request: Request, alias: str):
     """Dynamic redirect based on url_aliases.json - preserves query params"""
