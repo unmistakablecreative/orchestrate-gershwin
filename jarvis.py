@@ -39,17 +39,10 @@ REFERRAL_PATH = os.path.join(BASE_DIR, "container_state", "referrals.json")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# === Dropzone Mount ===
-DROPZONE_DIR = os.path.expanduser("~/Documents/Orchestrate/dropzone")
-if os.path.exists(DROPZONE_DIR):
-    app.mount("/dropzone", StaticFiles(directory=DROPZONE_DIR), name="dropzone")
-else:
-    logging.warning(f"Warning: Dropzone directory not found: {DROPZONE_DIR}")
+
 
 # === System Identity Mount ===
-STATE_DIR = "/Library/Application Support/OrchestrateOS"
-if not os.path.exists(STATE_DIR):
-    STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
+STATE_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 if os.path.exists(STATE_DIR):
     app.mount("/state", StaticFiles(directory=STATE_DIR), name="state")
 else:

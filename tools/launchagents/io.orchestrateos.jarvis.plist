@@ -4,26 +4,15 @@
 <dict>
     <key>Label</key>
     <string>io.orchestrateos.jarvis</string>
-    <key>WorkingDirectory</key>
-    <string>/Users/srinivas/Library/Application Support/OrchestrateOS</string>
     <key>ProgramArguments</key>
     <array>
-        <string>python3</string>
-        <string>-m</string>
-        <string>uvicorn</string>
-        <string>jarvis:app</string>
-        <string>--host</string>
-        <string>0.0.0.0</string>
-        <string>--port</string>
-        <string>5004</string>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>cd "$HOME/Library/Application Support/OrchestrateOS" &amp;&amp; python3 -m uvicorn jarvis:app --host 0.0.0.0 --port 5004 &gt;&gt; "$HOME/Library/Logs/OrchestrateOS/jarvis.log" 2&gt;&gt; "$HOME/Library/Logs/OrchestrateOS/jarvis_error.log"</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
-    <key>StandardOutPath</key>
-    <string>/Users/srinivas/Library/Logs/OrchestrateOS/jarvis.log</string>
-    <key>StandardErrorPath</key>
-    <string>/Users/srinivas/Library/Logs/OrchestrateOS/jarvis_error.log</string>
 </dict>
 </plist>
