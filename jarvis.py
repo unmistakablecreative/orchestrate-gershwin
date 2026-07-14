@@ -845,11 +845,13 @@ app.mount(
     name="semantic_memory"
 )
 
-app.mount(
-    "/landing_page_template_thumbnails",
-    StaticFiles(directory=os.path.join(BASE_DIR, "landing_page_template_thumbnails")),
-    name="landing_page_template_thumbnails"
-)
+_lp_thumb_dir = os.path.join(BASE_DIR, "landing_page_template_thumbnails")
+if os.path.exists(_lp_thumb_dir):
+    app.mount(
+        "/landing_page_template_thumbnails",
+        StaticFiles(directory=_lp_thumb_dir),
+        name="landing_page_template_thumbnails"
+    )
 
 app.mount(
     "/data",
@@ -873,13 +875,13 @@ async def get_data_nocache(filename: str):
         }
     )
 
-app.mount(
-    "/dashboard",
-    StaticFiles(directory=os.path.join(BASE_DIR, "semantic_memory/execution_dashboard"), html=True),
-    name="dashboard"
-)
+_dashboard_dir = os.path.join(BASE_DIR, "semantic_memory/execution_dashboard")
+if os.path.exists(_dashboard_dir):
+    app.mount("/dashboard", StaticFiles(directory=_dashboard_dir, html=True), name="dashboard")
 
-app.mount("/tools", StaticFiles(directory=os.path.join(BASE_DIR, "tools")), name="tools")
+_tools_dir = os.path.join(BASE_DIR, "tools")
+if os.path.exists(_tools_dir):
+    app.mount("/tools", StaticFiles(directory=_tools_dir), name="tools")
 
 # 🚦 Rate limiting middleware
 def check_rate_limit(endpoint: str, client_id: str = "default"):
@@ -1948,20 +1950,6 @@ async def slack_events_webhook(request: Request):
     except Exception as e:
         logging.error(f"Slack webhook error: {e}")
         return {'status': 'error', 'message': str(e)}
-
-
-# 🩺 System Health Check
-@app.get("/system_check")
-async def system_check():
-    """Run full Gershwin environment health check. Returns pass/fail per check."""
-    try:
-        result = subprocess.run(
-            ["python3", os.path.join(BASE_DIR, "tools", "gershwin_tester.py"), "run_system_check", "--params", "{}"],
-            capture_output=True, text=True, timeout=30
-        )
-        return json.loads(result.stdout)
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
 
 
 # 🔗 Dynamic URL Aliases - catch-all route (MUST be LAST - after all other routes)
