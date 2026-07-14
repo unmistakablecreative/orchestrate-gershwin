@@ -268,6 +268,119 @@ def run_all_tests(params: Dict) -> Dict:
     }
 
 
+def run_system_check(params: Dict) -> Dict:
+    """
+    Check the health of the Gershwin installation environment.
+    Verifies LaunchAgents, ngrok, identity, Turso, directories, and deps.
+    Returns structured pass/fail per check.
+    """
+    import subprocess
+    import importlib
+
+    checks = []
+    home = os.path.expanduser("~")
+    app_support = os.path.join(home, "Library", "Application Support", "OrchestrateOS")
+    identity_path = os.path.join(app_support, "data", "system_identity.json")
+    ngrok_bin = os.path.join(home, ".local", "bin", "ngrok")
+
+    def check(name, passed, detail=""):
+        checks.append({"name": name, "passed": passed, "detail": detail})
+
+    # 1. Jarvis responding on 5004
+    try:
+        r = requests.get("http://localhost:5004/", timeout=5)
+        check("Jarvis running on :5004", True, f"HTTP {r.status_code}")
+    except Exception as e:
+        check("Jarvis running on :5004", False, str(e))
+
+    # 2. system_identity.json exists and fully populated
+    required_identity_fields = ["user_id", "name", "ngrok_url", "ngrok_authtoken"]
+    if os.path.exists(identity_path):
+        try:
+            with open(identity_path) as f:
+                identity = json.load(f)
+            missing = [k for k in required_identity_fields if not identity.get(k)]
+            if missing:
+                check("system_identity.json populated", False, f"Missing fields: {missing}")
+            else:
+                check("system_identity.json populated", True, f"user_id={identity.get('user_id')}")
+        except Exception as e:
+            check("system_identity.json populated", False, str(e))
+    else:
+        check("system_identity.json exists", False, f"Not found at {identity_path}")
+        identity = {}
+
+    # 3. ngrok binary exists
+    check("ngrok binary at ~/.local/bin/ngrok", os.path.exists(ngrok_bin), ngrok_bin)
+
+    # 4. ngrok process running
+    try:
+        result = subprocess.run(["pgrep", "-x", "ngrok"], capture_output=True, text=True)
+        running = result.returncode == 0
+        check("ngrok process running", running, result.stdout.strip() if running else "not found")
+    except Exception as e:
+        check("ngrok process running", False, str(e))
+
+    # 5. LaunchAgents loaded
+    for agent in ["io.orchestrateos.jarvis", "io.orchestrateos.ngrok"]:
+        try:
+            result = subprocess.run(["launchctl", "list", agent], capture_output=True, text=True)
+            loaded = result.returncode == 0
+            check(f"LaunchAgent: {agent}", loaded, "loaded" if loaded else result.stderr.strip())
+        except Exception as e:
+            check(f"LaunchAgent: {agent}", False, str(e))
+
+    # 6. Required directories exist
+    required_dirs = [
+        os.path.join(app_support, "data"),
+        os.path.join(app_support, "semantic_memory"),
+        os.path.join(home, "Library", "Logs", "OrchestrateOS"),
+    ]
+    for d in required_dirs:
+        check(f"Directory exists: {d.replace(home, '~')}", os.path.exists(d))
+
+    # 7. Critical Python deps importable
+    critical_deps = ["fastapi", "uvicorn", "watchdog", "httpx", "requests", "anthropic"]
+    for dep in critical_deps:
+        try:
+            importlib.import_module(dep)
+            check(f"Python dep: {dep}", True)
+        except ImportError:
+            check(f"Python dep: {dep}", False, "not importable")
+
+    # 8. Turso registration — verify user exists
+    try:
+        user_id = identity.get("user_id", "")
+        if user_id:
+            r = requests.post(
+                "http://localhost:5004/execute_task",
+                json={"tool_name": "account", "action": "get_credits", "params": {}},
+                timeout=10
+            )
+            result = r.json()
+            credits = result.get("credits")
+            check("Turso registration", result.get("status") == "success", f"credits={credits}")
+        else:
+            check("Turso registration", False, "no user_id in identity")
+    except Exception as e:
+        check("Turso registration", False, str(e))
+
+    # Summary
+    passed = sum(1 for c in checks if c["passed"])
+    total = len(checks)
+    all_passed = passed == total
+    timestamp = datetime.now(timezone.utc).isoformat()
+
+    return {
+        "status": "success",
+        "timestamp": timestamp,
+        "all_passed": all_passed,
+        "passed": passed,
+        "total": total,
+        "checks": checks
+    }
+
+
 def run_single_test(params: Dict) -> Dict:
     """
     Run a single test case.
@@ -329,6 +442,8 @@ def main():
         result = run_all_tests(params)
     elif action == "run_single_test":
         result = run_single_test(params)
+    elif action == "run_system_check":
+        result = run_system_check(params)
     else:
         result = {"status": "error", "message": f"Unknown action: {action}"}
 
