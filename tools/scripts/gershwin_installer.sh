@@ -38,6 +38,8 @@ if [ ! -d "$GERSHWIN_DIR" ]; then
     git clone https://github.com/unmistakablecreative/orchestrate-gershwin.git "$GERSHWIN_DIR"
 
     # Copy LaunchAgent plist files
+    mkdir -p ~/Library/LaunchAgents
+    mkdir -p ~/Library/Logs/OrchestrateOS
     cp "$GERSHWIN_DIR/tools/launchagents/"*.plist ~/Library/LaunchAgents/
     launchctl load ~/Library/LaunchAgents/io.orchestrateos.jarvis.plist
     launchctl load ~/Library/LaunchAgents/io.orchestrateos.ngrok.plist
