@@ -41,8 +41,7 @@ if [ ! -d "$GERSHWIN_DIR" ]; then
     mkdir -p ~/Library/LaunchAgents
     mkdir -p ~/Library/Logs/OrchestrateOS
     cp "$GERSHWIN_DIR/tools/launchagents/"*.plist ~/Library/LaunchAgents/
-    launchctl load ~/Library/LaunchAgents/io.orchestrateos.jarvis.plist
-    launchctl load ~/Library/LaunchAgents/io.orchestrateos.ngrok.plist
+    # LaunchAgents will auto-start on next login — do NOT load them now to avoid port conflict during install
 
     # Copy skill file to Documents
     if [ -f "$GERSHWIN_DIR/orchestrate-gershwin.skill" ]; then
