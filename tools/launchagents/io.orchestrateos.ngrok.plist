@@ -8,15 +8,15 @@
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>NGROK_URL=$(python3 -c "import json; d=json.load(open('$HOME/Library/Application Support/OrchestrateOS/data/system_identity.json')); print(d['ngrok_url'])"); NGROK_TOKEN=$(python3 -c "import json; d=json.load(open('$HOME/Library/Application Support/OrchestrateOS/data/system_identity.json')); print(d['ngrok_authtoken'])"); /usr/local/bin/ngrok http 5004 --url="$NGROK_URL" --authtoken="$NGROK_TOKEN"</string>
+        <string>NGROK_URL=$(python3 -c "import json; d=json.load(open('$HOME/Library/Application Support/OrchestrateOS/data/system_identity.json')); print(d['ngrok_url'])"); NGROK_TOKEN=$(python3 -c "import json; d=json.load(open('$HOME/Library/Application Support/OrchestrateOS/data/system_identity.json')); print(d['ngrok_authtoken'])"); $HOME/.local/bin/ngrok http 5004 --url="$NGROK_URL" --authtoken="$NGROK_TOKEN"</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/srinivas/Library/Logs/OrchestrateOS/ngrok.log</string>
+    <string>/tmp/orchestrateos_ngrok.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/srinivas/Library/Logs/OrchestrateOS/ngrok_error.log</string>
+    <string>/tmp/orchestrateos_ngrok_error.log</string>
 </dict>
 </plist>
