@@ -37,7 +37,6 @@ except ImportError:
 
 
 BASE_DIRECTORIES = [
-    os.path.expanduser("~/Documents/Orchestrate/dropzone"),
     "/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/system_docs",
     "/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/data",
     "/Applications/OrchestrateOS.app/Contents/Resources/orchestrate/tools"
