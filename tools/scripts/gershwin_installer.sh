@@ -64,45 +64,11 @@ CONFIG_FILE = os.path.expanduser("~/gershwin_config.json")
 GERSHWIN_DIR = os.path.expanduser("~/Library/Application Support/OrchestrateOS")
 BOOTSTRAP_HTML_PATH = os.path.join(GERSHWIN_DIR, "semantic_memory", "installer_bootstrap.html")
 
-SUCCESS_HTML = """<!DOCTYPE html>
-<html>
-<head>
-    <title>Installing Gershwin...</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background: #1a1a2e; color: #eee;
-               display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #16213e; padding: 40px; border-radius: 12px; text-align: center; }
-        h1 { color: #22c55e; }
-        p { color: #888; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1);
-                   border-top-color: #a855f7; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .steps { text-align: left; margin-top: 20px; }
-        .step { padding: 8px 0; color: #666; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🚀 Installing Gershwin</h1>
-        <div class="spinner"></div>
-        <p>Setting up your OrchestrateOS instance...</p>
-        <div class="steps">
-            <div class="step">✓ Config saved</div>
-            <div class="step">→ Starting Jarvis server</div>
-            <div class="step">→ Connecting ngrok tunnel</div>
-            <div class="step">→ Registering with central server</div>
-            <div class="step">→ Redirecting to first_run.html</div>
-        </div>
-    </div>
-</body>
-</html>"""
-
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        # Serve static HTML file
         with open(BOOTSTRAP_HTML_PATH, 'r') as f:
             self.wfile.write(f.read().encode())
 
@@ -110,7 +76,6 @@ class Handler(BaseHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode()
 
-        # Parse JSON payload
         try:
             data = json.loads(post_data)
         except json.JSONDecodeError:
@@ -121,7 +86,6 @@ class Handler(BaseHTTPRequestHandler):
         ngrok_authtoken = data.get("ngrok_authtoken", "")
         ngrok_url = data.get("ngrok_url", "")
 
-        # Strip protocol if provided
         ngrok_url = ngrok_url.replace("https://", "").replace("http://", "").strip("/")
 
         config = {
@@ -195,8 +159,12 @@ echo ""
 echo "Configuring ngrok authtoken..."
 ngrok config add-authtoken "$NGROK_AUTHTOKEN"
 
-# ========== SECTION 4: Start Jarvis ==========
+# ========== SECTION 4: Kill anything on 5004, then start Jarvis ==========
 echo ""
+echo "Clearing port 5004..."
+lsof -ti :5004 | xargs kill -9 2>/dev/null || true
+sleep 1
+
 echo "Starting Jarvis on port 5004..."
 cd "$GERSHWIN_DIR"
 
@@ -206,8 +174,12 @@ JARVIS_PID=$!
 echo "Waiting for Jarvis to initialize..."
 sleep 3
 
-# ========== SECTION 5: Start Ngrok Tunnel ==========
+# ========== SECTION 5: Kill any existing ngrok tunnel, then start ==========
 echo ""
+echo "Clearing existing ngrok tunnel..."
+pkill -f "ngrok http" 2>/dev/null || true
+sleep 1
+
 echo "Starting ngrok tunnel to port 5004..."
 ngrok http --domain=$TUNNEL_URL 5004 &
 NGROK_PID=$!
