@@ -2710,8 +2710,6 @@ if __name__ == "__main__":
     if "params" in params and isinstance(params["params"], dict):
         params = params["params"]
 
-    # Import verify_backfill from separate module
-    from verify_backfill import verify_backfill
 
     # Use if/elif pattern for execution_hub compatibility (not actions dict)
     if action == "create_doc":
@@ -2764,8 +2762,6 @@ if __name__ == "__main__":
         result = retrieve_doc(**params)
     elif action == "stitch_docs":
         result = stitch_docs(**params)
-    elif action == "verify_backfill":
-        result = verify_backfill(**params)
     elif action == "list_revisions":
         result = list_revisions(**params)
     elif action == "get_revision":

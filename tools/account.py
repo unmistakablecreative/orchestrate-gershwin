@@ -182,8 +182,8 @@ def get_or_create_user(user_id, email=None):
 
     email_arg = {"type": "text", "value": email} if email else {"type": "null"}
     _turso_exec(turso_url, turso_token, [
-        {"type": "execute", "stmt": {"sql": "INSERT INTO users (user_id, email, credits) VALUES (?, ?, 3)", "args": [{"type": "text", "value": user_id}, email_arg]}},
-        {"type": "execute", "stmt": {"sql": "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, 3, 'initial_signup')", "args": [{"type": "text", "value": user_id}]}},
+        {"type": "execute", "stmt": {"sql": "INSERT INTO users (user_id, email, credits) VALUES (?, ?, 50)", "args": [{"type": "text", "value": user_id}, email_arg]}},
+        {"type": "execute", "stmt": {"sql": "INSERT INTO credit_transactions (user_id, amount, reason) VALUES (?, 50, 'initial_signup')", "args": [{"type": "text", "value": user_id}]}},
         {"type": "close"}
     ])
 
