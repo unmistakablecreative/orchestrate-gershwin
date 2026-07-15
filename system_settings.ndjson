@@ -19,10 +19,6 @@
 {"tool": "system_settings", "action": "list_memory_files", "script_path": "tools/system_settings.py"}
 {"tool": "system_settings", "action": "build_working_memory", "script_path": "tools/system_settings.py"}
 {"tool": "system_settings", "action": "refresh_runtime", "script_path": "tools/system_settings.py"}
-{"tool": "unlock_tool", "action": "__tool__", "script_path": "tools/unlock_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Manually unlock tools using credits or referral triggers."}
-{"tool": "unlock_tool", "action": "unlock_tool", "script_path": "tools/unlock_tool.py", "params": ["tool_name"]}
-{"tool": "unlock_tool", "action": "list_marketplace_tools", "script_path": "tools/unlock_tool.py"}
-{"tool": "unlock_tool", "action": "get_credits_balance", "script_path": "tools/unlock_tool.py"}
 {"tool": "terminal", "action": "__tool__", "script_path": "tools/terminal.py", "locked": false, "referral_unlock_cost": 0, "description": "Run safe shell commands, tail logs, or stream live output."}
 {"tool": "terminal", "action": "check_safe", "script_path": "tools/terminal.py"}
 {"tool": "terminal", "action": "ls", "script_path": "tools/terminal.py"}
@@ -35,10 +31,6 @@
 {"tool": "terminal", "action": "write_file", "script_path": "tools/terminal.py", "params": ["content", "filename", "path", "text"]}
 {"tool": "terminal", "action": "append_file", "script_path": "tools/terminal.py", "params": ["content", "filename", "path", "text"]}
 {"tool": "terminal", "action": "move_file", "script_path": "tools/terminal.py", "params": ["destination", "from", "source", "to"]}
-{"tool": "check_credits", "action": "__tool__", "script_path": "tools/check_credits.py", "locked": false, "referral_unlock_cost": 0, "description": "View your remaining unlock credits and tools currently unlocked."}
-{"tool": "check_credits", "action": "check_credits", "script_path": "tools/check_credits.py"}
-{"tool": "refer_user", "action": "__tool__", "script_path": "tools/refer_user.py", "locked": false, "referral_unlock_cost": 0, "description": "Generate a referral package to share with others."}
-{"tool": "refer_user", "action": "refer_user", "script_path": "tools/refer_user.py", "params": ["email", "name"]}
 {"tool": "doc_editor", "action": "__tool__", "script_path": "tools/doc_editor.py", "locked": false, "referral_unlock_cost": 0, "description": "Create, search, and link documents with bidirectional links."}
 {"tool": "doc_editor", "action": "create_doc", "script_path": "tools/doc_editor.py", "params": ["title", "content", "collection", "convert_markdown"]}
 {"tool": "doc_editor", "action": "read_doc", "script_path": "tools/doc_editor.py", "params": ["doc_id"]}
@@ -167,3 +159,49 @@
 {"tool": "account", "action": "list_users", "script_path": "tools/account.py", "params": []}
 {"tool": "account", "action": "add_credits", "script_path": "tools/account.py", "params": ["user_id", "amount", "reason"]}
 {"tool": "account", "action": "get_transactions", "script_path": "tools/account.py", "params": ["user_id", "limit"]}
+{"tool": "gershwin_github", "action": "__tool__", "script_path": "tools/gershwin_github.py", "locked": false, "referral_unlock_cost": 0, "description": "GitHub integration for repos, PRs, branches, and issues."}
+{"tool": "gershwin_github", "action": "create_repo", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "description", "private", "auto_init"]}
+{"tool": "gershwin_github", "action": "list_repos", "script_path": "tools/gershwin_github.py", "params": ["org", "limit"]}
+{"tool": "gershwin_github", "action": "get_repo", "script_path": "tools/gershwin_github.py", "params": ["repo_name"]}
+{"tool": "gershwin_github", "action": "push_code", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "file_path", "branch", "commit_message"]}
+{"tool": "gershwin_github", "action": "commit", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "message", "files"]}
+{"tool": "gershwin_github", "action": "create_branch", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "branch_name", "base_branch"]}
+{"tool": "gershwin_github", "action": "list_branches", "script_path": "tools/gershwin_github.py", "params": ["repo_name"]}
+{"tool": "gershwin_github", "action": "open_pr", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "head_branch", "title", "base_branch", "body"]}
+{"tool": "gershwin_github", "action": "merge_pr", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "pr_number", "merge_method"]}
+{"tool": "gershwin_github", "action": "list_issues", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "state", "labels", "limit"]}
+{"tool": "gershwin_github", "action": "create_issue", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "title", "body", "labels", "assignees"]}
+{"tool": "gershwin_github", "action": "close_issue", "script_path": "tools/gershwin_github.py", "params": ["repo_name", "issue_number", "comment"]}
+{"tool": "nylasinbox", "action": "__tool__", "script_path": "tools/nylasinbox.py", "locked": false, "referral_unlock_cost": 0, "description": "Email operations via Nylas - list, read, send, reply, search, archive."}
+{"tool": "nylasinbox", "action": "list_threads", "script_path": "tools/nylasinbox.py", "params": ["limit", "offset", "folder"]}
+{"tool": "nylasinbox", "action": "read_thread", "script_path": "tools/nylasinbox.py", "params": ["thread_id"]}
+{"tool": "nylasinbox", "action": "read_message", "script_path": "tools/nylasinbox.py", "params": ["message_id"]}
+{"tool": "nylasinbox", "action": "send_email", "script_path": "tools/nylasinbox.py", "params": ["to", "subject", "body", "cc", "bcc", "attachments"]}
+{"tool": "nylasinbox", "action": "reply", "script_path": "tools/nylasinbox.py", "params": ["thread_id", "body", "to"]}
+{"tool": "nylasinbox", "action": "search", "script_path": "tools/nylasinbox.py", "params": ["query", "limit"]}
+{"tool": "nylasinbox", "action": "archive", "script_path": "tools/nylasinbox.py", "params": ["thread_id"]}
+{"tool": "nylasinbox", "action": "sync", "script_path": "tools/nylasinbox.py", "params": []}
+{"tool": "docs_vector_indexer", "action": "__tool__", "script_path": "tools/docs_vector_indexer.py", "locked": false, "referral_unlock_cost": 0, "description": "Build and query semantic doc embeddings with FAISS."}
+{"tool": "docs_vector_indexer", "action": "build_index", "script_path": "tools/docs_vector_indexer.py", "params": []}
+{"tool": "docs_vector_indexer", "action": "semantic_search", "script_path": "tools/docs_vector_indexer.py", "params": ["query", "top_k", "collection"]}
+{"tool": "docs_vector_indexer", "action": "sync_new_docs", "script_path": "tools/docs_vector_indexer.py", "params": []}
+{"tool": "docs_vector_indexer", "action": "warm_embedding_model", "script_path": "tools/docs_vector_indexer.py", "params": []}
+{"tool": "convertkit_tool", "action": "__tool__", "script_path": "tools/convertkit_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "ConvertKit email marketing - broadcasts, subscribers, stats."}
+{"tool": "convertkit_tool", "action": "create_broadcast", "script_path": "tools/convertkit_tool.py", "params": ["subject", "content", "description", "preview_text", "public", "send_at", "email_template_id"]}
+{"tool": "convertkit_tool", "action": "list_broadcasts", "script_path": "tools/convertkit_tool.py", "params": []}
+{"tool": "convertkit_tool", "action": "get_broadcast", "script_path": "tools/convertkit_tool.py", "params": ["id"]}
+{"tool": "convertkit_tool", "action": "get_broadcast_stats", "script_path": "tools/convertkit_tool.py", "params": ["broadcast_id"]}
+{"tool": "convertkit_tool", "action": "create_subscriber", "script_path": "tools/convertkit_tool.py", "params": ["email_address", "first_name", "fields"]}
+{"tool": "convertkit_tool", "action": "get_email_stats", "script_path": "tools/convertkit_tool.py", "params": []}
+{"tool": "writing_linter", "action": "__tool__", "script_path": "tools/writing_linter.py", "locked": false, "referral_unlock_cost": 0, "description": "Auto-fix AI writing pattern errors."}
+{"tool": "writing_linter", "action": "lint", "script_path": "tools/writing_linter.py", "params": ["text"]}
+{"tool": "writing_linter", "action": "fix", "script_path": "tools/writing_linter.py", "params": ["text"]}
+{"tool": "mem_tool", "action": "__tool__", "script_path": "tools/mem_tool.py", "locked": false, "referral_unlock_cost": 0, "description": "Mem.ai integration for notes and collections."}
+{"tool": "mem_tool", "action": "create_note", "script_path": "tools/mem_tool.py", "params": ["content"]}
+{"tool": "mem_tool", "action": "read_note", "script_path": "tools/mem_tool.py", "params": ["note_id"]}
+{"tool": "mem_tool", "action": "delete_note", "script_path": "tools/mem_tool.py", "params": ["note_id"]}
+{"tool": "mem_tool", "action": "mem_it", "script_path": "tools/mem_tool.py", "params": ["input", "instructions"]}
+{"tool": "mem_tool", "action": "create_collection", "script_path": "tools/mem_tool.py", "params": ["title", "description"]}
+{"tool": "mem_tool", "action": "delete_collection", "script_path": "tools/mem_tool.py", "params": ["collection_id"]}
+{"tool": "smart_json_dispatcher", "action": "__tool__", "script_path": "tools/smart_json_dispatcher.py", "locked": false, "referral_unlock_cost": 0, "description": "Smart JSON writing with merge strategies."}
+{"tool": "smart_json_dispatcher", "action": "orchestrate_write", "script_path": "tools/smart_json_dispatcher.py", "params": ["filename", "entry_key", "entry_data", "strategy"]}

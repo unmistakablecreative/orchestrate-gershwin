@@ -318,10 +318,10 @@ def get_tool_catalog():
 
 # === Original Skill File Tools (hardcoded baseline) ===
 ORIGINAL_SKILL_TOOLS = {
-    "account", "buffer_engine", "check_credits", "claude_assistant", "doc_editor",
+    "account", "buffer_engine", "claude_assistant", "doc_editor",
     "docs", "files", "github_tool_universal", "ideogram_tool", "json_manager",
-    "knowledge_vault", "media_manager", "readwise_tool", "refer_user", "session_tool",
-    "slide_designer", "spark_file", "system_settings", "terminal", "todolist", "unlock_tool"
+    "knowledge_vault", "media_manager", "readwise_tool", "session_tool",
+    "slide_designer", "spark_file", "system_settings", "terminal", "todolist"
 }
 
 @app.get("/new_tools")
