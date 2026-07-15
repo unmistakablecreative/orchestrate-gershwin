@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrchestrateOS - Installing Dependencies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+        }
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #8892b0;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        .progress-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .progress-bar-bg {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            height: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            height: 100%;
+            width: 0%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 10px;
+        }
+        .current-package {
+            font-size: 18px;
+            font-weight: 500;
+            color: #e2e8f0;
+            min-height: 28px;
+        }
+        .package-count {
+            font-size: 24px;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-top: 15px;
+        }
+        .status-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+            border: 4px solid rgba(124, 58, 237, 0.2);
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .done-container {
+            display: none;
+        }
+        .done-container.visible {
+            display: block;
+        }
+        .installing-container.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">⚡</div>
+        <h1>OrchestrateOS</h1>
+        <div class="subtitle">Installing Dependencies</div>
+
+        <div class="installing-container" id="installingContainer">
+            <div class="spinner"></div>
+            <div class="progress-container">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="progress-text">Installing package...</div>
+                <div class="current-package" id="currentPackage">Initializing...</div>
+                <div class="package-count" id="packageCount">0 / 0</div>
+            </div>
+        </div>
+
+        <div class="done-container" id="doneContainer">
+            <div class="status-icon">✅</div>
+            <h2>Dependencies Installed</h2>
+            <p style="color: #8892b0; margin-top: 10px;">Continuing installation...</p>
+        </div>
+    </div>
+
+    <script>
+        let config = null;
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config');
+                config = await response.json();
+            } catch (e) {
+                console.log('Config not loaded yet');
+            }
+        }
+
+        async function checkProgress() {
+            try {
+                const response = await fetch('/progress');
+                const data = await response.json();
+
+                const progressBar = document.getElementById('progressBar');
+                const currentPackage = document.getElementById('currentPackage');
+                const packageCount = document.getElementById('packageCount');
+                const installingContainer = document.getElementById('installingContainer');
+                const doneContainer = document.getElementById('doneContainer');
+
+                progressBar.style.width = data.percent + '%';
+                currentPackage.textContent = data.current || 'Initializing...';
+                packageCount.textContent = `${data.index || 0} / ${data.total || 0}`;
+
+                if (data.done) {
+                    installingContainer.classList.add('hidden');
+                    doneContainer.classList.add('visible');
+                }
+            } catch (e) {
+                console.log('Progress not available yet');
+            }
+        }
+
+        loadConfig();
+        setInterval(checkProgress, 500);
+        checkProgress();
+    </script>
+</body>
+</html>

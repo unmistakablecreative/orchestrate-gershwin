@@ -1,0 +1,4199 @@
+{
+  "generated_at": "2026-07-14T13:59:49.953535",
+  "root_path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin",
+  "summary": {
+    "total_files": 221,
+    "total_directories": 33,
+    "files_by_category": {
+      "python": 44,
+      "json": 51,
+      "html": 28,
+      "javascript": 15,
+      "css": 11,
+      "markdown": 5,
+      "database": 13,
+      "config": 1,
+      "other": 53
+    }
+  },
+  "directory_tree": {
+    "name": "orchestrate-gershwin",
+    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin",
+    "type": "directory",
+    "children": [
+      {
+        "name": ".gitignore",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/.gitignore",
+        "type": "file",
+        "size_bytes": 582,
+        "modified": "2026-07-10T11:28:18.050378",
+        "extension": null
+      },
+      {
+        "name": "Orchestrate Engine.app",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Contents",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents",
+            "type": "directory",
+            "children": [
+              {
+                "name": "CodeResources",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/CodeResources",
+                "type": "file",
+                "size_bytes": 1675,
+                "modified": "2026-05-29T18:04:03.439274",
+                "extension": null
+              },
+              {
+                "name": "Info.plist",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Info.plist",
+                "type": "file",
+                "size_bytes": 641,
+                "modified": "2026-05-29T18:04:03.444727",
+                "extension": ".plist"
+              },
+              {
+                "name": "MacOS",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/MacOS",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "Launch Orchestrate",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/MacOS/Launch Orchestrate",
+                    "type": "file",
+                    "size_bytes": 274192,
+                    "modified": "2026-05-29T18:04:03.440701",
+                    "extension": null
+                  }
+                ]
+              },
+              {
+                "name": "Resources",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "AppIcon.icns",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/AppIcon.icns",
+                    "type": "file",
+                    "size_bytes": 373792,
+                    "modified": "2026-05-29T18:04:03.441425",
+                    "extension": ".icns"
+                  },
+                  {
+                    "name": "AppSettings.plist",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/AppSettings.plist",
+                    "type": "file",
+                    "size_bytes": 526,
+                    "modified": "2026-05-29T18:04:03.443777",
+                    "extension": ".plist"
+                  },
+                  {
+                    "name": "MainMenu.nib",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib",
+                    "type": "directory",
+                    "children": [
+                      {
+                        "name": "designable.nib",
+                        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib/designable.nib",
+                        "type": "file",
+                        "size_bytes": 54621,
+                        "modified": "2026-05-29T18:04:03.443403",
+                        "extension": ".nib"
+                      },
+                      {
+                        "name": "keyedobjects-101300.nib",
+                        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects-101300.nib",
+                        "type": "file",
+                        "size_bytes": 37277,
+                        "modified": "2026-05-29T18:04:03.442628",
+                        "extension": ".nib"
+                      },
+                      {
+                        "name": "keyedobjects.nib",
+                        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects.nib",
+                        "type": "file",
+                        "size_bytes": 47425,
+                        "modified": "2026-05-29T18:04:03.442994",
+                        "extension": ".nib"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "entrypoint.sh",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/entrypoint.sh",
+                    "type": "file",
+                    "size_bytes": 4050,
+                    "modified": "2026-07-14T10:06:35.779278",
+                    "extension": ".sh"
+                  },
+                  {
+                    "name": "script",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/script",
+                    "type": "file",
+                    "size_bytes": 7390,
+                    "modified": "2026-05-29T18:04:03.441870",
+                    "extension": null
+                  },
+                  {
+                    "name": "setup_wizard.sh",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/setup_wizard.sh",
+                    "type": "file",
+                    "size_bytes": 8126,
+                    "modified": "2026-05-29T18:04:03.444492",
+                    "extension": ".sh"
+                  }
+                ]
+              },
+              {
+                "name": "_CodeSignature",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/_CodeSignature",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "CodeResources",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/_CodeSignature/CodeResources",
+                    "type": "file",
+                    "size_bytes": 4750,
+                    "modified": "2026-05-29T18:04:03.439973",
+                    "extension": null
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "OrchestrateOS Installer.app",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Contents",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Info.plist",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/Info.plist",
+                "type": "file",
+                "size_bytes": 887,
+                "modified": "2026-07-11T11:10:47.245677",
+                "extension": ".plist"
+              },
+              {
+                "name": "MacOS",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/MacOS",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "launcher",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/MacOS/launcher",
+                    "type": "file",
+                    "size_bytes": 466,
+                    "modified": "2026-07-11T11:10:47.342000",
+                    "extension": null
+                  }
+                ]
+              },
+              {
+                "name": "Resources",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/Resources",
+                "type": "directory",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "OrchestrateOS.app",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Contents",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Info.plist",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/Info.plist",
+                "type": "file",
+                "size_bytes": 755,
+                "modified": "2026-07-11T11:10:31.647803",
+                "extension": ".plist"
+              },
+              {
+                "name": "MacOS",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/MacOS",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "launcher",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/MacOS/launcher",
+                    "type": "file",
+                    "size_bytes": 796,
+                    "modified": "2026-07-11T11:10:37.388475",
+                    "extension": null
+                  }
+                ]
+              },
+              {
+                "name": "Resources",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/Resources",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "AppIcon.icns",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/Resources/AppIcon.icns",
+                    "type": "file",
+                    "size_bytes": 1283106,
+                    "modified": "2026-07-11T11:11:05.695790",
+                    "extension": ".icns"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "accounts.db",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/accounts.db",
+        "type": "file",
+        "size_bytes": 32768,
+        "modified": "2026-07-12T15:30:34.794703",
+        "extension": ".db"
+      },
+      {
+        "name": "accounts.db-info",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/accounts.db-info",
+        "type": "file",
+        "size_bytes": 69,
+        "modified": "2026-07-12T14:37:01.552855",
+        "extension": ".db-info"
+      },
+      {
+        "name": "app",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/app",
+        "type": "directory",
+        "children": []
+      },
+      {
+        "name": "auth",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/auth",
+        "type": "directory",
+        "children": [
+          {
+            "name": "setup_claude_auth.sh",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/auth/setup_claude_auth.sh",
+            "type": "file",
+            "size_bytes": 1679,
+            "modified": "2026-05-29T18:04:03.449206",
+            "extension": ".sh"
+          }
+        ]
+      },
+      {
+        "name": "claude_config_template",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template",
+        "type": "directory",
+        "children": [
+          {
+            "name": "CLAUDE.md",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/CLAUDE.md",
+            "type": "file",
+            "size_bytes": 2720,
+            "modified": "2026-05-31T11:07:45.065793",
+            "extension": ".md"
+          },
+          {
+            "name": "hooks",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/hooks",
+            "type": "directory",
+            "children": [
+              {
+                "name": "inject_schemas.py",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/hooks/inject_schemas.py",
+                "type": "file",
+                "size_bytes": 3412,
+                "modified": "2026-05-29T18:04:03.450372",
+                "extension": ".py"
+              }
+            ]
+          },
+          {
+            "name": "settings.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/settings.json",
+            "type": "file",
+            "size_bytes": 1663,
+            "modified": "2026-05-31T11:07:56.532770",
+            "extension": ".json"
+          }
+        ]
+      },
+      {
+        "name": "data",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data",
+        "type": "directory",
+        "children": [
+          {
+            "name": "accounts.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/accounts.db",
+            "type": "file",
+            "size_bytes": 32768,
+            "modified": "2026-07-12T14:30:29.802390",
+            "extension": ".db"
+          },
+          {
+            "name": "boot_flags.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/boot_flags.json",
+            "type": "file",
+            "size_bytes": 127,
+            "modified": "2026-05-29T18:04:03.468172",
+            "extension": ".json"
+          },
+          {
+            "name": "bullet_journal.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/bullet_journal.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-05-29T18:04:03.455672",
+            "extension": ".lock"
+          },
+          {
+            "name": "collection_aliases.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/collection_aliases.json",
+            "type": "file",
+            "size_bytes": 2108,
+            "modified": "2026-05-29T18:04:03.467389",
+            "extension": ".json"
+          },
+          {
+            "name": "dashboard_index.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/dashboard_index.json",
+            "type": "file",
+            "size_bytes": 1183,
+            "modified": "2026-05-29T18:04:03.464669",
+            "extension": ".json"
+          },
+          {
+            "name": "docs.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/docs.db",
+            "type": "file",
+            "size_bytes": 32768,
+            "modified": "2026-07-13T09:16:48.986301",
+            "extension": ".db"
+          },
+          {
+            "name": "engine_registry.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/engine_registry.json",
+            "type": "file",
+            "size_bytes": 80,
+            "modified": "2026-05-29T18:36:27.847930",
+            "extension": ".json"
+          },
+          {
+            "name": "error_handlers.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/error_handlers.json",
+            "type": "file",
+            "size_bytes": 284,
+            "modified": "2026-07-07T19:00:05.124676",
+            "extension": ".json"
+          },
+          {
+            "name": "execution_log.ndjson",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/execution_log.ndjson",
+            "type": "file",
+            "size_bytes": 757435,
+            "modified": "2026-05-31T10:50:25.694500",
+            "extension": ".ndjson"
+          },
+          {
+            "name": "files.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/files.db",
+            "type": "file",
+            "size_bytes": 40960,
+            "modified": "2026-07-10T08:54:43.358564",
+            "extension": ".db"
+          },
+          {
+            "name": "gershwin_github_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_github_config.json",
+            "type": "file",
+            "size_bytes": 95,
+            "modified": "2026-05-29T18:36:52.551257",
+            "extension": ".json"
+          },
+          {
+            "name": "gershwin_gps.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_gps.json",
+            "type": "file",
+            "size_bytes": 11793,
+            "modified": "2026-05-29T18:36:54.671137",
+            "extension": ".json"
+          },
+          {
+            "name": "gershwin_test_cases.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_cases.json",
+            "type": "file",
+            "size_bytes": 4167,
+            "modified": "2026-07-08T13:16:37.931439",
+            "extension": ".json"
+          },
+          {
+            "name": "gershwin_test_fixture.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_fixture.json",
+            "type": "file",
+            "size_bytes": 129,
+            "modified": "2026-05-29T18:04:03.468912",
+            "extension": ".json"
+          },
+          {
+            "name": "gershwin_test_fixture.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_fixture.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-05-29T18:04:03.458863",
+            "extension": ".lock"
+          },
+          {
+            "name": "gershwin_test_output.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_output.json",
+            "type": "file",
+            "size_bytes": 132,
+            "modified": "2026-07-08T13:39:06.815028",
+            "extension": ".json"
+          },
+          {
+            "name": "gershwin_test_output.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_output.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-07-08T13:39:06.814872",
+            "extension": ".lock"
+          },
+          {
+            "name": "ideogram.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/ideogram.db",
+            "type": "file",
+            "size_bytes": 12288,
+            "modified": "2026-07-11T12:10:31.121201",
+            "extension": ".db"
+          },
+          {
+            "name": "inbox.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/inbox.db",
+            "type": "file",
+            "size_bytes": 57344,
+            "modified": "2026-05-29T18:38:55.337634",
+            "extension": ".db"
+          },
+          {
+            "name": "knowledge_base.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/knowledge_base.db",
+            "type": "file",
+            "size_bytes": 28672,
+            "modified": "2026-05-31T09:28:47.419172",
+            "extension": ".db"
+          },
+          {
+            "name": "last_failed_call.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/last_failed_call.json",
+            "type": "file",
+            "size_bytes": 165,
+            "modified": "2026-07-13T10:44:43.163749",
+            "extension": ".json"
+          },
+          {
+            "name": "log_archive",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/log_archive",
+            "type": "directory",
+            "children": []
+          },
+          {
+            "name": "logs.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/logs.db",
+            "type": "file",
+            "size_bytes": 122880,
+            "modified": "2026-07-13T10:44:43.163459",
+            "extension": ".db"
+          },
+          {
+            "name": "lucide_icons.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/lucide_icons.json",
+            "type": "file",
+            "size_bytes": 518670,
+            "modified": "2026-07-07T19:01:38.061855",
+            "extension": ".json"
+          },
+          {
+            "name": "ngrok.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/ngrok.json",
+            "type": "file",
+            "size_bytes": 27,
+            "modified": "2026-05-29T18:04:03.453867",
+            "extension": ".json"
+          },
+          {
+            "name": "notion_aliases.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/notion_aliases.json",
+            "type": "file",
+            "size_bytes": 3,
+            "modified": "2026-05-29T18:04:03.466184",
+            "extension": ".json"
+          },
+          {
+            "name": "onboarding_sequence.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/onboarding_sequence.json",
+            "type": "file",
+            "size_bytes": 6228,
+            "modified": "2026-07-14T10:07:36.588523",
+            "extension": ".json"
+          },
+          {
+            "name": "orchestrate_app_store.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/orchestrate_app_store.json",
+            "type": "file",
+            "size_bytes": 5880,
+            "modified": "2026-05-29T18:39:55.200996",
+            "extension": ".json"
+          },
+          {
+            "name": "orchestrate_intent_routes.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/orchestrate_intent_routes.json",
+            "type": "file",
+            "size_bytes": 10809,
+            "modified": "2026-05-29T18:37:24.215226",
+            "extension": ".json"
+          },
+          {
+            "name": "readwise_books.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/readwise_books.json",
+            "type": "file",
+            "size_bytes": 2,
+            "modified": "2026-05-29T18:04:03.453546",
+            "extension": ".json"
+          },
+          {
+            "name": "response_messages.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/response_messages.json",
+            "type": "file",
+            "size_bytes": 29417,
+            "modified": "2026-05-30T20:09:34.423197",
+            "extension": ".json"
+          },
+          {
+            "name": "script_output_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/script_output_config.json",
+            "type": "file",
+            "size_bytes": 250,
+            "modified": "2026-07-07T18:48:39.242100",
+            "extension": ".json"
+          },
+          {
+            "name": "secondbrain.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/secondbrain.json",
+            "type": "file",
+            "size_bytes": 1511,
+            "modified": "2026-05-29T18:04:03.461621",
+            "extension": ".json"
+          },
+          {
+            "name": "sheets.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/sheets.db",
+            "type": "file",
+            "size_bytes": 20480,
+            "modified": "2026-07-08T11:49:44.929424",
+            "extension": ".db"
+          },
+          {
+            "name": "sheets_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/sheets_config.json",
+            "type": "file",
+            "size_bytes": 594,
+            "modified": "2026-07-08T11:49:44.929839",
+            "extension": ".json"
+          },
+          {
+            "name": "slide_designer_layouts.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slide_designer_layouts.json",
+            "type": "file",
+            "size_bytes": 54622,
+            "modified": "2026-05-31T14:49:39.158127",
+            "extension": ".json"
+          },
+          {
+            "name": "slide_templates.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slide_templates.json",
+            "type": "file",
+            "size_bytes": 3827,
+            "modified": "2026-03-12T20:11:51.877668",
+            "extension": ".json"
+          },
+          {
+            "name": "slide_themes.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slide_themes.json",
+            "type": "file",
+            "size_bytes": 14556,
+            "modified": "2026-05-17T18:12:14.333096",
+            "extension": ".json"
+          },
+          {
+            "name": "slides.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slides.db",
+            "type": "file",
+            "size_bytes": 28672,
+            "modified": "2026-07-13T09:16:04.890986",
+            "extension": ".db"
+          },
+          {
+            "name": "spark_file.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/spark_file.db",
+            "type": "file",
+            "size_bytes": 65536,
+            "modified": "2026-07-08T13:39:16.492158",
+            "extension": ".db"
+          },
+          {
+            "name": "system_identity.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/system_identity.json",
+            "type": "file",
+            "size_bytes": 188,
+            "modified": "2026-07-13T09:24:11.264545",
+            "extension": ".json"
+          },
+          {
+            "name": "system_identity.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/system_identity.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-07-09T10:39:10.053414",
+            "extension": ".lock"
+          },
+          {
+            "name": "tasks.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/tasks.db",
+            "type": "file",
+            "size_bytes": 20480,
+            "modified": "2026-05-29T18:38:10.695100",
+            "extension": ".db"
+          },
+          {
+            "name": "tasks.db-shm",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/tasks.db-shm",
+            "type": "file",
+            "size_bytes": 32768,
+            "modified": "2026-07-13T08:21:58.078822",
+            "extension": ".db-shm"
+          },
+          {
+            "name": "tasks.db-wal",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/tasks.db-wal",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-07-12T15:34:03.429421",
+            "extension": ".db-wal"
+          },
+          {
+            "name": "test_json.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/test_json.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-07-08T10:07:57.191584",
+            "extension": ".lock"
+          },
+          {
+            "name": "test_json_manager.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/test_json_manager.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-07-07T18:48:19.734252",
+            "extension": ".lock"
+          },
+          {
+            "name": "test_suite_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/test_suite_config.json",
+            "type": "file",
+            "size_bytes": 15572,
+            "modified": "2026-06-06T22:07:20.714386",
+            "extension": ".json"
+          },
+          {
+            "name": "thread_state.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/thread_state.json",
+            "type": "file",
+            "size_bytes": 110,
+            "modified": "2026-07-13T10:44:43.162643",
+            "extension": ".json"
+          },
+          {
+            "name": "todos.db",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/todos.db",
+            "type": "file",
+            "size_bytes": 20480,
+            "modified": "2026-07-08T13:39:25.212072",
+            "extension": ".db"
+          },
+          {
+            "name": "unlock_messages.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/unlock_messages.json",
+            "type": "file",
+            "size_bytes": 21595,
+            "modified": "2026-05-29T18:37:47.939694",
+            "extension": ".json"
+          },
+          {
+            "name": "unlock_nudges.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/unlock_nudges.json",
+            "type": "file",
+            "size_bytes": 7294,
+            "modified": "2026-05-29T18:37:53.762876",
+            "extension": ".json"
+          },
+          {
+            "name": "update_messages.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/update_messages.json",
+            "type": "file",
+            "size_bytes": 200,
+            "modified": "2026-05-29T18:04:03.454224",
+            "extension": ".json"
+          },
+          {
+            "name": "user_state.json.lock",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/user_state.json.lock",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-07-08T13:03:50.066597",
+            "extension": ".lock"
+          },
+          {
+            "name": "whoosh_index",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index",
+            "type": "directory",
+            "children": [
+              {
+                "name": ".last_build_mtime",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/.last_build_mtime",
+                "type": "file",
+                "size_bytes": 18,
+                "modified": "2026-07-08T10:07:53.410881",
+                "extension": null
+              },
+              {
+                "name": "MAIN_WRITELOCK",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/MAIN_WRITELOCK",
+                "type": "file",
+                "size_bytes": 0,
+                "modified": "2026-05-29T18:04:03.458108",
+                "extension": null
+              },
+              {
+                "name": "MAIN_fa5wllzcyyen4gcb.seg",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/MAIN_fa5wllzcyyen4gcb.seg",
+                "type": "file",
+                "size_bytes": 24438,
+                "modified": "2026-07-08T10:07:53.409646",
+                "extension": ".seg"
+              },
+              {
+                "name": "_MAIN_1.toc",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/_MAIN_1.toc",
+                "type": "file",
+                "size_bytes": 2792,
+                "modified": "2026-07-08T10:07:53.410054",
+                "extension": ".toc"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "execution_hub.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/execution_hub.py",
+        "type": "file",
+        "size_bytes": 26548,
+        "modified": "2026-05-31T11:25:01.013249",
+        "extension": ".py"
+      },
+      {
+        "name": "execution_log.json",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/execution_log.json",
+        "type": "file",
+        "size_bytes": 851413,
+        "modified": "2026-05-29T18:04:03.470613",
+        "extension": ".json"
+      },
+      {
+        "name": "generate_system_map.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/generate_system_map.py",
+        "type": "file",
+        "size_bytes": 5699,
+        "modified": "2026-07-14T13:59:47.052673",
+        "extension": ".py"
+      },
+      {
+        "name": "generate_test_suite.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/generate_test_suite.py",
+        "type": "file",
+        "size_bytes": 9662,
+        "modified": "2026-05-29T18:38:21.232112",
+        "extension": ".py"
+      },
+      {
+        "name": "gershwin_test_suite.json",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/gershwin_test_suite.json",
+        "type": "file",
+        "size_bytes": 5591,
+        "modified": "2026-07-08T13:48:19.625689",
+        "extension": ".json"
+      },
+      {
+        "name": "jarvis.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/jarvis.py",
+        "type": "file",
+        "size_bytes": 28366,
+        "modified": "2026-07-14T11:04:57.641955",
+        "extension": ".py"
+      },
+      {
+        "name": "orchestrate-gershwin-skill",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin-skill",
+        "type": "directory",
+        "children": [
+          {
+            "name": "SKILL.md",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin-skill/SKILL.md",
+            "type": "file",
+            "size_bytes": 18261,
+            "modified": "2026-06-07T09:35:32.796129",
+            "extension": ".md"
+          },
+          {
+            "name": "schema.md",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin-skill/schema.md",
+            "type": "file",
+            "size_bytes": 14301,
+            "modified": "2026-06-07T09:34:16.238172",
+            "extension": ".md"
+          }
+        ]
+      },
+      {
+        "name": "orchestrate-gershwin.skill",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin.skill",
+        "type": "file",
+        "size_bytes": 8341,
+        "modified": "2026-06-07T09:35:38.376335",
+        "extension": ".skill"
+      },
+      {
+        "name": "referral_base",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/referral_base",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Launch Orchestrate.command",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/referral_base/Launch Orchestrate.command",
+            "type": "file",
+            "size_bytes": 215,
+            "modified": "2026-05-29T18:04:03.477681",
+            "extension": ".command"
+          },
+          {
+            "name": "entrypoint.sh",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/referral_base/entrypoint.sh",
+            "type": "file",
+            "size_bytes": 3328,
+            "modified": "2026-05-29T18:04:03.477416",
+            "extension": ".sh"
+          }
+        ]
+      },
+      {
+        "name": "requirements.txt",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/requirements.txt",
+        "type": "file",
+        "size_bytes": 510,
+        "modified": "2026-07-13T11:54:13.170664",
+        "extension": ".txt"
+      },
+      {
+        "name": "reset_system.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/reset_system.py",
+        "type": "file",
+        "size_bytes": 3062,
+        "modified": "2026-07-12T15:54:47.952113",
+        "extension": ".py"
+      },
+      {
+        "name": "screenshots",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/screenshots",
+        "type": "directory",
+        "children": [
+          {
+            "name": "claudeskills.png",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/screenshots/claudeskills.png",
+            "type": "file",
+            "size_bytes": 110334,
+            "modified": "2026-07-08T08:17:18.947606",
+            "extension": ".png"
+          },
+          {
+            "name": "claudsettings.png",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/screenshots/claudsettings.png",
+            "type": "file",
+            "size_bytes": 101098,
+            "modified": "2026-07-08T08:53:31.444160",
+            "extension": ".png"
+          }
+        ]
+      },
+      {
+        "name": "semantic_memory",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory",
+        "type": "directory",
+        "children": [
+          {
+            "name": "SKILL.md",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/SKILL.md",
+            "type": "file",
+            "size_bytes": 20703,
+            "modified": "2026-05-29T18:04:03.481836",
+            "extension": ".md"
+          },
+          {
+            "name": "app_store.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store.html",
+            "type": "file",
+            "size_bytes": 18927,
+            "modified": "2026-07-13T09:26:17.982976",
+            "extension": ".html"
+          },
+          {
+            "name": "app_store.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store.js",
+            "type": "file",
+            "size_bytes": 13599,
+            "modified": "2026-07-13T09:29:06.895531",
+            "extension": ".js"
+          },
+          {
+            "name": "app_store.js.bak",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store.js.bak",
+            "type": "file",
+            "size_bytes": 8831,
+            "modified": "2026-07-11T12:58:19.678607",
+            "extension": ".bak"
+          },
+          {
+            "name": "app_store_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store_config.json",
+            "type": "file",
+            "size_bytes": 2464,
+            "modified": "2026-07-12T13:54:48.851435",
+            "extension": ".json"
+          },
+          {
+            "name": "bullet_journal.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal.css",
+            "type": "file",
+            "size_bytes": 6187,
+            "modified": "2026-07-08T08:08:18.593313",
+            "extension": ".css"
+          },
+          {
+            "name": "bullet_journal.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal.html",
+            "type": "file",
+            "size_bytes": 17772,
+            "modified": "2026-05-29T18:04:03.480402",
+            "extension": ".html"
+          },
+          {
+            "name": "bullet_journal.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal.js",
+            "type": "file",
+            "size_bytes": 9656,
+            "modified": "2026-07-08T08:08:18.593048",
+            "extension": ".js"
+          },
+          {
+            "name": "bullet_journal_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal_config.json",
+            "type": "file",
+            "size_bytes": 2503,
+            "modified": "2026-07-08T08:08:18.593199",
+            "extension": ".json"
+          },
+          {
+            "name": "bullet_journal_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal_temp.html",
+            "type": "file",
+            "size_bytes": 2854,
+            "modified": "2026-07-08T08:08:18.592920",
+            "extension": ".html"
+          },
+          {
+            "name": "doc_editor.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/doc_editor.html",
+            "type": "file",
+            "size_bytes": 82757,
+            "modified": "2026-07-07T18:58:00.527349",
+            "extension": ".html"
+          },
+          {
+            "name": "doc_editor.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/doc_editor.js",
+            "type": "file",
+            "size_bytes": 181217,
+            "modified": "2026-07-07T18:58:00.604004",
+            "extension": ".js"
+          },
+          {
+            "name": "doc_editor_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/doc_editor_config.json",
+            "type": "file",
+            "size_bytes": 3016,
+            "modified": "2026-07-07T18:58:00.667764",
+            "extension": ".json"
+          },
+          {
+            "name": "files.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files.css",
+            "type": "file",
+            "size_bytes": 6952,
+            "modified": "2026-07-08T08:08:18.596773",
+            "extension": ".css"
+          },
+          {
+            "name": "files.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files.html",
+            "type": "file",
+            "size_bytes": 21534,
+            "modified": "2026-05-31T14:54:33.713446",
+            "extension": ".html"
+          },
+          {
+            "name": "files.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files.js",
+            "type": "file",
+            "size_bytes": 13070,
+            "modified": "2026-07-08T08:08:18.596592",
+            "extension": ".js"
+          },
+          {
+            "name": "files_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files_config.json",
+            "type": "file",
+            "size_bytes": 299,
+            "modified": "2026-07-08T08:08:18.596696",
+            "extension": ".json"
+          },
+          {
+            "name": "files_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files_temp.html",
+            "type": "file",
+            "size_bytes": 2107,
+            "modified": "2026-07-08T08:08:18.596479",
+            "extension": ".html"
+          },
+          {
+            "name": "first_run.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/first_run.html",
+            "type": "file",
+            "size_bytes": 12184,
+            "modified": "2026-07-13T09:23:08.442638",
+            "extension": ".html"
+          },
+          {
+            "name": "gershwin_home.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/gershwin_home.html",
+            "type": "file",
+            "size_bytes": 5537,
+            "modified": "2026-07-12T14:49:56.520597",
+            "extension": ".html"
+          },
+          {
+            "name": "gershwin_homev2.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/gershwin_homev2.js",
+            "type": "file",
+            "size_bytes": 8395,
+            "modified": "2026-07-13T10:47:05.439516",
+            "extension": ".js"
+          },
+          {
+            "name": "global_nav.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/global_nav.js",
+            "type": "file",
+            "size_bytes": 451,
+            "modified": "2026-07-07T19:01:11.906904",
+            "extension": ".js"
+          },
+          {
+            "name": "html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/html",
+            "type": "directory",
+            "children": []
+          },
+          {
+            "name": "ideogram.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/ideogram.html",
+            "type": "file",
+            "size_bytes": 16017,
+            "modified": "2026-07-11T12:44:29.463156",
+            "extension": ".html"
+          },
+          {
+            "name": "images",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images",
+            "type": "directory",
+            "children": [
+              {
+                "name": "ideogram",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "ideogram_1783797976191.png",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/ideogram_1783797976191.png",
+                    "type": "file",
+                    "size_bytes": 1342803,
+                    "modified": "2026-07-11T12:26:36.558465",
+                    "extension": ".png"
+                  },
+                  {
+                    "name": "ideogram_1783799523013.png",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/ideogram_1783799523013.png",
+                    "type": "file",
+                    "size_bytes": 1566769,
+                    "modified": "2026-07-11T12:52:23.803688",
+                    "extension": ".png"
+                  },
+                  {
+                    "name": "ideogram_1783799523013_thumb.png",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/ideogram_1783799523013_thumb.png",
+                    "type": "file",
+                    "size_bytes": 160905,
+                    "modified": "2026-07-11T12:52:23.889009",
+                    "extension": ".png"
+                  },
+                  {
+                    "name": "test_robot.png",
+                    "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/test_robot.png",
+                    "type": "file",
+                    "size_bytes": 1315489,
+                    "modified": "2026-07-11T12:28:57.549169",
+                    "extension": ".png"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "installer_bootstrap.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/installer_bootstrap.html",
+            "type": "file",
+            "size_bytes": 11309,
+            "modified": "2026-07-11T10:59:43.751718",
+            "extension": ".html"
+          },
+          {
+            "name": "media_manager.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager.css",
+            "type": "file",
+            "size_bytes": 10636,
+            "modified": "2026-07-08T08:08:18.602033",
+            "extension": ".css"
+          },
+          {
+            "name": "media_manager.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager.html",
+            "type": "file",
+            "size_bytes": 29755,
+            "modified": "2026-07-07T19:01:23.637591",
+            "extension": ".html"
+          },
+          {
+            "name": "media_manager.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager.js",
+            "type": "file",
+            "size_bytes": 12867,
+            "modified": "2026-07-08T08:08:18.601838",
+            "extension": ".js"
+          },
+          {
+            "name": "media_manager_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager_config.json",
+            "type": "file",
+            "size_bytes": 454,
+            "modified": "2026-07-08T08:08:18.601949",
+            "extension": ".json"
+          },
+          {
+            "name": "media_manager_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager_temp.html",
+            "type": "file",
+            "size_bytes": 6444,
+            "modified": "2026-07-08T08:08:18.601727",
+            "extension": ".html"
+          },
+          {
+            "name": "orchestrate_home.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.css",
+            "type": "file",
+            "size_bytes": 14859,
+            "modified": "2026-07-08T08:08:18.610188",
+            "extension": ".css"
+          },
+          {
+            "name": "orchestrate_home.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.html",
+            "type": "file",
+            "size_bytes": 34849,
+            "modified": "2026-07-13T09:27:06.290630",
+            "extension": ".html"
+          },
+          {
+            "name": "orchestrate_home.html.bak",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.html.bak",
+            "type": "file",
+            "size_bytes": 28928,
+            "modified": "2026-07-09T11:10:07.674861",
+            "extension": ".bak"
+          },
+          {
+            "name": "orchestrate_home.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.js",
+            "type": "file",
+            "size_bytes": 21006,
+            "modified": "2026-07-13T08:19:54.527538",
+            "extension": ".js"
+          },
+          {
+            "name": "orchestrate_home_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home_config.json",
+            "type": "file",
+            "size_bytes": 5206,
+            "modified": "2026-07-13T08:19:54.527127",
+            "extension": ".json"
+          },
+          {
+            "name": "orchestrate_home_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home_temp.html",
+            "type": "file",
+            "size_bytes": 10112,
+            "modified": "2026-07-08T08:08:18.609901",
+            "extension": ".html"
+          },
+          {
+            "name": "orchestrate_homev2.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2.css",
+            "type": "file",
+            "size_bytes": 21927,
+            "modified": "2026-07-11T11:54:24.615640",
+            "extension": ".css"
+          },
+          {
+            "name": "orchestrate_homev2.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2.html",
+            "type": "file",
+            "size_bytes": 11767,
+            "modified": "2026-07-11T13:00:31.995161",
+            "extension": ".html"
+          },
+          {
+            "name": "orchestrate_homev2.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2.js",
+            "type": "file",
+            "size_bytes": 30972,
+            "modified": "2026-07-11T11:54:36.865077",
+            "extension": ".js"
+          },
+          {
+            "name": "orchestrate_homev2_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2_config.json",
+            "type": "file",
+            "size_bytes": 2340,
+            "modified": "2026-07-11T11:54:36.868528",
+            "extension": ".json"
+          },
+          {
+            "name": "orchestrate_slides.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides.css",
+            "type": "file",
+            "size_bytes": 30387,
+            "modified": "2026-07-08T08:08:18.627305",
+            "extension": ".css"
+          },
+          {
+            "name": "orchestrate_slides.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides.html",
+            "type": "file",
+            "size_bytes": 120377,
+            "modified": "2026-07-08T11:41:27.573679",
+            "extension": ".html"
+          },
+          {
+            "name": "orchestrate_slides.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides.js",
+            "type": "file",
+            "size_bytes": 80794,
+            "modified": "2026-07-08T08:08:18.627053",
+            "extension": ".js"
+          },
+          {
+            "name": "orchestrate_slides_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides_config.json",
+            "type": "file",
+            "size_bytes": 3338,
+            "modified": "2026-07-08T08:08:18.627204",
+            "extension": ".json"
+          },
+          {
+            "name": "orchestrate_slides_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides_temp.html",
+            "type": "file",
+            "size_bytes": 9733,
+            "modified": "2026-07-08T08:08:18.626827",
+            "extension": ".html"
+          },
+          {
+            "name": "replace_script.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/replace_script.py",
+            "type": "file",
+            "size_bytes": 1662,
+            "modified": "2026-07-12T15:11:41.257612",
+            "extension": ".py"
+          },
+          {
+            "name": "sheets.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets.css",
+            "type": "file",
+            "size_bytes": 26744,
+            "modified": "2026-07-08T08:08:18.640601",
+            "extension": ".css"
+          },
+          {
+            "name": "sheets.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets.html",
+            "type": "file",
+            "size_bytes": 89809,
+            "modified": "2026-07-08T11:41:31.358847",
+            "extension": ".html"
+          },
+          {
+            "name": "sheets.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets.js",
+            "type": "file",
+            "size_bytes": 49887,
+            "modified": "2026-07-08T08:08:18.640366",
+            "extension": ".js"
+          },
+          {
+            "name": "sheets_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets_config.json",
+            "type": "file",
+            "size_bytes": 1593,
+            "modified": "2026-07-08T08:08:18.640490",
+            "extension": ".json"
+          },
+          {
+            "name": "sheets_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets_temp.html",
+            "type": "file",
+            "size_bytes": 12895,
+            "modified": "2026-07-08T08:08:18.640211",
+            "extension": ".html"
+          },
+          {
+            "name": "slides",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/slides",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Gershwin Test Deck.html",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/slides/Gershwin Test Deck.html",
+                "type": "file",
+                "size_bytes": 10253,
+                "modified": "2026-07-08T13:39:07.620982",
+                "extension": ".html"
+              }
+            ]
+          },
+          {
+            "name": "spark_file.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file.css",
+            "type": "file",
+            "size_bytes": 8616,
+            "modified": "2026-07-08T08:08:18.643542",
+            "extension": ".css"
+          },
+          {
+            "name": "spark_file.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file.html",
+            "type": "file",
+            "size_bytes": 19197,
+            "modified": "2026-05-30T12:05:13.777877",
+            "extension": ".html"
+          },
+          {
+            "name": "spark_file.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file.js",
+            "type": "file",
+            "size_bytes": 9022,
+            "modified": "2026-07-08T08:08:18.643349",
+            "extension": ".js"
+          },
+          {
+            "name": "spark_file_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file_config.json",
+            "type": "file",
+            "size_bytes": 280,
+            "modified": "2026-07-08T08:08:18.643453",
+            "extension": ".json"
+          },
+          {
+            "name": "spark_file_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file_temp.html",
+            "type": "file",
+            "size_bytes": 2207,
+            "modified": "2026-07-08T08:08:18.643237",
+            "extension": ".html"
+          },
+          {
+            "name": "task_board.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board.css",
+            "type": "file",
+            "size_bytes": 15898,
+            "modified": "2026-07-08T08:08:18.654903",
+            "extension": ".css"
+          },
+          {
+            "name": "task_board.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board.html",
+            "type": "file",
+            "size_bytes": 63219,
+            "modified": "2026-07-12T15:13:20.913878",
+            "extension": ".html"
+          },
+          {
+            "name": "task_board.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board.js",
+            "type": "file",
+            "size_bytes": 41128,
+            "modified": "2026-07-12T15:27:57.286092",
+            "extension": ".js"
+          },
+          {
+            "name": "task_board_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board_config.json",
+            "type": "file",
+            "size_bytes": 3399,
+            "modified": "2026-07-08T08:08:18.654802",
+            "extension": ".json"
+          },
+          {
+            "name": "task_board_db_script.txt",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board_db_script.txt",
+            "type": "file",
+            "size_bytes": 23985,
+            "modified": "2026-07-12T15:11:29.924797",
+            "extension": ".txt"
+          },
+          {
+            "name": "task_board_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board_temp.html",
+            "type": "file",
+            "size_bytes": 5322,
+            "modified": "2026-07-08T08:08:18.654348",
+            "extension": ".html"
+          },
+          {
+            "name": "todolist.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist.css",
+            "type": "file",
+            "size_bytes": 6600,
+            "modified": "2026-07-08T08:08:18.657422",
+            "extension": ".css"
+          },
+          {
+            "name": "todolist.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist.html",
+            "type": "file",
+            "size_bytes": 15162,
+            "modified": "2026-05-30T12:05:32.427358",
+            "extension": ".html"
+          },
+          {
+            "name": "todolist.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist.js",
+            "type": "file",
+            "size_bytes": 7791,
+            "modified": "2026-07-08T08:08:18.657228",
+            "extension": ".js"
+          },
+          {
+            "name": "todolist_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist_config.json",
+            "type": "file",
+            "size_bytes": 835,
+            "modified": "2026-07-08T08:08:18.657335",
+            "extension": ".json"
+          },
+          {
+            "name": "todolist_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist_temp.html",
+            "type": "file",
+            "size_bytes": 1663,
+            "modified": "2026-07-08T08:08:18.657144",
+            "extension": ".html"
+          },
+          {
+            "name": "tool_dashboard.css",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard.css",
+            "type": "file",
+            "size_bytes": 13518,
+            "modified": "2026-07-08T08:08:18.662143",
+            "extension": ".css"
+          },
+          {
+            "name": "tool_dashboard.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard.html",
+            "type": "file",
+            "size_bytes": 32190,
+            "modified": "2026-06-04T09:38:32.984292",
+            "extension": ".html"
+          },
+          {
+            "name": "tool_dashboard.js",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard.js",
+            "type": "file",
+            "size_bytes": 14880,
+            "modified": "2026-07-08T08:08:18.661953",
+            "extension": ".js"
+          },
+          {
+            "name": "tool_dashboard_config.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard_config.json",
+            "type": "file",
+            "size_bytes": 1030,
+            "modified": "2026-07-08T08:08:18.662065",
+            "extension": ".json"
+          },
+          {
+            "name": "tool_dashboard_temp.html",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard_temp.html",
+            "type": "file",
+            "size_bytes": 4560,
+            "modified": "2026-07-08T08:08:18.661844",
+            "extension": ".html"
+          }
+        ]
+      },
+      {
+        "name": "system_docs",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_docs",
+        "type": "directory",
+        "children": [
+          {
+            "name": "orchestrate_os_protocol.md",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_docs/orchestrate_os_protocol.md",
+            "type": "file",
+            "size_bytes": 5762,
+            "modified": "2026-05-29T18:04:03.483100",
+            "extension": ".md"
+          }
+        ]
+      },
+      {
+        "name": "system_guard.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_guard.py",
+        "type": "file",
+        "size_bytes": 3484,
+        "modified": "2026-05-29T18:04:03.483441",
+        "extension": ".py"
+      },
+      {
+        "name": "system_settings.ndjson",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_settings.ndjson",
+        "type": "file",
+        "size_bytes": 23516,
+        "modified": "2026-07-14T10:19:58.149523",
+        "extension": ".ndjson"
+      },
+      {
+        "name": "system_settings.ndjson.bak",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_settings.ndjson.bak",
+        "type": "file",
+        "size_bytes": 12286,
+        "modified": "2026-05-29T18:04:03.484998",
+        "extension": ".bak"
+      },
+      {
+        "name": "test_suite.py",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/test_suite.py",
+        "type": "file",
+        "size_bytes": 10108,
+        "modified": "2026-05-31T11:30:38.968846",
+        "extension": ".py"
+      },
+      {
+        "name": "tools",
+        "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools",
+        "type": "directory",
+        "children": [
+          {
+            "name": "__init__.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/__init__.py",
+            "type": "file",
+            "size_bytes": 0,
+            "modified": "2026-05-29T18:04:03.494841",
+            "extension": ".py"
+          },
+          {
+            "name": "account.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/account.py",
+            "type": "file",
+            "size_bytes": 23480,
+            "modified": "2026-07-13T09:33:39.091605",
+            "extension": ".py"
+          },
+          {
+            "name": "account.py.bak",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/account.py.bak",
+            "type": "file",
+            "size_bytes": 21935,
+            "modified": "2026-07-12T19:29:39.128253",
+            "extension": ".bak"
+          },
+          {
+            "name": "account_backup.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/account_backup.py",
+            "type": "file",
+            "size_bytes": 28050,
+            "modified": "2026-06-07T09:33:23.902965",
+            "extension": ".py"
+          },
+          {
+            "name": "buffer_engine.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/buffer_engine.py",
+            "type": "file",
+            "size_bytes": 4517,
+            "modified": "2026-05-29T18:04:03.504485",
+            "extension": ".py"
+          },
+          {
+            "name": "claude_assistant.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/claude_assistant.py",
+            "type": "file",
+            "size_bytes": 104156,
+            "modified": "2026-05-29T18:39:11.766381",
+            "extension": ".py"
+          },
+          {
+            "name": "convertkit_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/convertkit_tool.py",
+            "type": "file",
+            "size_bytes": 4868,
+            "modified": "2026-05-29T18:04:03.489646",
+            "extension": ".py"
+          },
+          {
+            "name": "credentials.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/credentials.json",
+            "type": "file",
+            "size_bytes": 2969,
+            "modified": "2026-07-12T20:03:38.470294",
+            "extension": ".json"
+          },
+          {
+            "name": "doc_editor.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/doc_editor.py",
+            "type": "file",
+            "size_bytes": 91434,
+            "modified": "2026-07-08T13:41:31.892417",
+            "extension": ".py"
+          },
+          {
+            "name": "docs_vector_indexer.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/docs_vector_indexer.py",
+            "type": "file",
+            "size_bytes": 16239,
+            "modified": "2026-05-29T18:04:03.502591",
+            "extension": ".py"
+          },
+          {
+            "name": "files.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/files.py",
+            "type": "file",
+            "size_bytes": 13143,
+            "modified": "2026-07-09T10:44:15.726659",
+            "extension": ".py"
+          },
+          {
+            "name": "gamma_engine.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/gamma_engine.py",
+            "type": "file",
+            "size_bytes": 6296,
+            "modified": "2026-05-29T18:04:03.494658",
+            "extension": ".py"
+          },
+          {
+            "name": "generate_skill.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/generate_skill.py",
+            "type": "file",
+            "size_bytes": 8592,
+            "modified": "2026-05-29T18:04:03.495794",
+            "extension": ".py"
+          },
+          {
+            "name": "gershwin_github.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/gershwin_github.py",
+            "type": "file",
+            "size_bytes": 24037,
+            "modified": "2026-05-30T20:09:25.935815",
+            "extension": ".py"
+          },
+          {
+            "name": "gershwin_tester.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/gershwin_tester.py",
+            "type": "file",
+            "size_bytes": 15235,
+            "modified": "2026-07-14T10:14:30.999995",
+            "extension": ".py"
+          },
+          {
+            "name": "github_tool_universal.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/github_tool_universal.py",
+            "type": "file",
+            "size_bytes": 4952,
+            "modified": "2026-05-29T18:04:03.490700",
+            "extension": ".py"
+          },
+          {
+            "name": "ideogram_generate.sh",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/ideogram_generate.sh",
+            "type": "file",
+            "size_bytes": 1782,
+            "modified": "2026-03-12T20:11:57.303699",
+            "extension": ".sh"
+          },
+          {
+            "name": "ideogram_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/ideogram_tool.py",
+            "type": "file",
+            "size_bytes": 7193,
+            "modified": "2026-07-11T12:35:33.843292",
+            "extension": ".py"
+          },
+          {
+            "name": "json_manager.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/json_manager.py",
+            "type": "file",
+            "size_bytes": 41505,
+            "modified": "2026-05-31T11:09:59.578721",
+            "extension": ".py"
+          },
+          {
+            "name": "knowledge_vault.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/knowledge_vault.py",
+            "type": "file",
+            "size_bytes": 20315,
+            "modified": "2026-05-30T20:10:44.906948",
+            "extension": ".py"
+          },
+          {
+            "name": "launchagents",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/launchagents",
+            "type": "directory",
+            "children": [
+              {
+                "name": "io.orchestrateos.jarvis.plist",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/launchagents/io.orchestrateos.jarvis.plist",
+                "type": "file",
+                "size_bytes": 711,
+                "modified": "2026-07-14T10:07:13.810383",
+                "extension": ".plist"
+              },
+              {
+                "name": "io.orchestrateos.ngrok.plist",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/launchagents/io.orchestrateos.ngrok.plist",
+                "type": "file",
+                "size_bytes": 1045,
+                "modified": "2026-07-14T10:06:53.567166",
+                "extension": ".plist"
+              }
+            ]
+          },
+          {
+            "name": "media_manager.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/media_manager.py",
+            "type": "file",
+            "size_bytes": 5657,
+            "modified": "2026-05-30T20:13:16.581248",
+            "extension": ".py"
+          },
+          {
+            "name": "mem_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/mem_tool.py",
+            "type": "file",
+            "size_bytes": 3296,
+            "modified": "2026-05-29T18:04:03.507169",
+            "extension": ".py"
+          },
+          {
+            "name": "notion_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/notion_tool.py",
+            "type": "file",
+            "size_bytes": 4190,
+            "modified": "2026-05-29T18:04:03.496189",
+            "extension": ".py"
+          },
+          {
+            "name": "nylasinbox.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/nylasinbox.py",
+            "type": "file",
+            "size_bytes": 38326,
+            "modified": "2026-05-30T20:11:23.296419",
+            "extension": ".py"
+          },
+          {
+            "name": "readwise_books.json",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/readwise_books.json",
+            "type": "file",
+            "size_bytes": 382927,
+            "modified": "2026-05-29T18:04:03.489114",
+            "extension": ".json"
+          },
+          {
+            "name": "readwise_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/readwise_tool.py",
+            "type": "file",
+            "size_bytes": 2831,
+            "modified": "2026-05-29T18:04:03.504950",
+            "extension": ".py"
+          },
+          {
+            "name": "response_helper.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/response_helper.py",
+            "type": "file",
+            "size_bytes": 7303,
+            "modified": "2026-05-30T20:01:19.162027",
+            "extension": ".py"
+          },
+          {
+            "name": "response_sanitizer.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/response_sanitizer.py",
+            "type": "file",
+            "size_bytes": 3826,
+            "modified": "2026-05-29T18:36:24.383710",
+            "extension": ".py"
+          },
+          {
+            "name": "scripts",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts",
+            "type": "directory",
+            "children": [
+              {
+                "name": "gershwin_install_test.sh",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts/gershwin_install_test.sh",
+                "type": "file",
+                "size_bytes": 7319,
+                "modified": "2026-07-10T09:12:49.160985",
+                "extension": ".sh"
+              },
+              {
+                "name": "gershwin_installer.sh",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts/gershwin_installer.sh",
+                "type": "file",
+                "size_bytes": 6703,
+                "modified": "2026-07-14T12:17:23.690896",
+                "extension": ".sh"
+              },
+              {
+                "name": "gershwin_macbook_test.sh",
+                "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts/gershwin_macbook_test.sh",
+                "type": "file",
+                "size_bytes": 10825,
+                "modified": "2026-07-10T19:02:54.809853",
+                "extension": ".sh"
+              }
+            ]
+          },
+          {
+            "name": "session_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/session_tool.py",
+            "type": "file",
+            "size_bytes": 966,
+            "modified": "2026-05-29T18:04:03.495316",
+            "extension": ".py"
+          },
+          {
+            "name": "setup_script_runner.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/setup_script_runner.py",
+            "type": "file",
+            "size_bytes": 2509,
+            "modified": "2026-05-29T18:04:03.501812",
+            "extension": ".py"
+          },
+          {
+            "name": "sheets_tool.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/sheets_tool.py",
+            "type": "file",
+            "size_bytes": 20240,
+            "modified": "2026-06-01T09:54:37.283335",
+            "extension": ".py"
+          },
+          {
+            "name": "slide_designer.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/slide_designer.py",
+            "type": "file",
+            "size_bytes": 45102,
+            "modified": "2026-07-08T13:36:13.367085",
+            "extension": ".py"
+          },
+          {
+            "name": "smart_json_dispatcher.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/smart_json_dispatcher.py",
+            "type": "file",
+            "size_bytes": 2491,
+            "modified": "2026-05-29T18:04:03.501392",
+            "extension": ".py"
+          },
+          {
+            "name": "spark_file.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/spark_file.py",
+            "type": "file",
+            "size_bytes": 10119,
+            "modified": "2026-05-30T20:09:34.829937",
+            "extension": ".py"
+          },
+          {
+            "name": "system_settings.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/system_settings.py",
+            "type": "file",
+            "size_bytes": 22890,
+            "modified": "2026-07-08T10:00:43.951413",
+            "extension": ".py"
+          },
+          {
+            "name": "terminal.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/terminal.py",
+            "type": "file",
+            "size_bytes": 21650,
+            "modified": "2026-07-14T10:07:05.863815",
+            "extension": ".py"
+          },
+          {
+            "name": "todolist.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/todolist.py",
+            "type": "file",
+            "size_bytes": 6961,
+            "modified": "2026-05-30T20:08:59.028023",
+            "extension": ".py"
+          },
+          {
+            "name": "verify_backfill.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/verify_backfill.py",
+            "type": "file",
+            "size_bytes": 4494,
+            "modified": "2026-05-29T18:04:03.492929",
+            "extension": ".py"
+          },
+          {
+            "name": "writing_linter.py",
+            "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/writing_linter.py",
+            "type": "file",
+            "size_bytes": 16833,
+            "modified": "2026-05-31T09:23:44.999316",
+            "extension": ".py"
+          }
+        ]
+      }
+    ]
+  },
+  "all_files": [
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/execution_log.json",
+      "relative_path": "execution_log.json",
+      "name": "execution_log.json",
+      "size_bytes": 851413,
+      "modified": "2026-05-29T18:04:03.470613",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/gershwin_test_suite.json",
+      "relative_path": "gershwin_test_suite.json",
+      "name": "gershwin_test_suite.json",
+      "size_bytes": 5591,
+      "modified": "2026-07-08T13:48:19.625689",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/requirements.txt",
+      "relative_path": "requirements.txt",
+      "name": "requirements.txt",
+      "size_bytes": 510,
+      "modified": "2026-07-13T11:54:13.170664",
+      "extension": ".txt"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/generate_test_suite.py",
+      "relative_path": "generate_test_suite.py",
+      "name": "generate_test_suite.py",
+      "size_bytes": 9662,
+      "modified": "2026-05-29T18:38:21.232112",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/execution_hub.py",
+      "relative_path": "execution_hub.py",
+      "name": "execution_hub.py",
+      "size_bytes": 26548,
+      "modified": "2026-05-31T11:25:01.013249",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_settings.ndjson.bak",
+      "relative_path": "system_settings.ndjson.bak",
+      "name": "system_settings.ndjson.bak",
+      "size_bytes": 12286,
+      "modified": "2026-05-29T18:04:03.484998",
+      "extension": ".bak"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin.skill",
+      "relative_path": "orchestrate-gershwin.skill",
+      "name": "orchestrate-gershwin.skill",
+      "size_bytes": 8341,
+      "modified": "2026-06-07T09:35:38.376335",
+      "extension": ".skill"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/jarvis.py",
+      "relative_path": "jarvis.py",
+      "name": "jarvis.py",
+      "size_bytes": 28366,
+      "modified": "2026-07-14T11:04:57.641955",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/generate_system_map.py",
+      "relative_path": "generate_system_map.py",
+      "name": "generate_system_map.py",
+      "size_bytes": 5699,
+      "modified": "2026-07-14T13:59:47.052673",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/accounts.db",
+      "relative_path": "accounts.db",
+      "name": "accounts.db",
+      "size_bytes": 32768,
+      "modified": "2026-07-12T15:30:34.794703",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/.gitignore",
+      "relative_path": ".gitignore",
+      "name": ".gitignore",
+      "size_bytes": 582,
+      "modified": "2026-07-10T11:28:18.050378",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/reset_system.py",
+      "relative_path": "reset_system.py",
+      "name": "reset_system.py",
+      "size_bytes": 3062,
+      "modified": "2026-07-12T15:54:47.952113",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/test_suite.py",
+      "relative_path": "test_suite.py",
+      "name": "test_suite.py",
+      "size_bytes": 10108,
+      "modified": "2026-05-31T11:30:38.968846",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_guard.py",
+      "relative_path": "system_guard.py",
+      "name": "system_guard.py",
+      "size_bytes": 3484,
+      "modified": "2026-05-29T18:04:03.483441",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_settings.ndjson",
+      "relative_path": "system_settings.ndjson",
+      "name": "system_settings.ndjson",
+      "size_bytes": 23516,
+      "modified": "2026-07-14T10:19:58.149523",
+      "extension": ".ndjson"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/accounts.db-info",
+      "relative_path": "accounts.db-info",
+      "name": "accounts.db-info",
+      "size_bytes": 69,
+      "modified": "2026-07-12T14:37:01.552855",
+      "extension": ".db-info"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/spark_file.py",
+      "relative_path": "tools/spark_file.py",
+      "name": "spark_file.py",
+      "size_bytes": 10119,
+      "modified": "2026-05-30T20:09:34.829937",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/json_manager.py",
+      "relative_path": "tools/json_manager.py",
+      "name": "json_manager.py",
+      "size_bytes": 41505,
+      "modified": "2026-05-31T11:09:59.578721",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/nylasinbox.py",
+      "relative_path": "tools/nylasinbox.py",
+      "name": "nylasinbox.py",
+      "size_bytes": 38326,
+      "modified": "2026-05-30T20:11:23.296419",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/readwise_books.json",
+      "relative_path": "tools/readwise_books.json",
+      "name": "readwise_books.json",
+      "size_bytes": 382927,
+      "modified": "2026-05-29T18:04:03.489114",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/files.py",
+      "relative_path": "tools/files.py",
+      "name": "files.py",
+      "size_bytes": 13143,
+      "modified": "2026-07-09T10:44:15.726659",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/convertkit_tool.py",
+      "relative_path": "tools/convertkit_tool.py",
+      "name": "convertkit_tool.py",
+      "size_bytes": 4868,
+      "modified": "2026-05-29T18:04:03.489646",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/github_tool_universal.py",
+      "relative_path": "tools/github_tool_universal.py",
+      "name": "github_tool_universal.py",
+      "size_bytes": 4952,
+      "modified": "2026-05-29T18:04:03.490700",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/media_manager.py",
+      "relative_path": "tools/media_manager.py",
+      "name": "media_manager.py",
+      "size_bytes": 5657,
+      "modified": "2026-05-30T20:13:16.581248",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/terminal.py",
+      "relative_path": "tools/terminal.py",
+      "name": "terminal.py",
+      "size_bytes": 21650,
+      "modified": "2026-07-14T10:07:05.863815",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/verify_backfill.py",
+      "relative_path": "tools/verify_backfill.py",
+      "name": "verify_backfill.py",
+      "size_bytes": 4494,
+      "modified": "2026-05-29T18:04:03.492929",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/account_backup.py",
+      "relative_path": "tools/account_backup.py",
+      "name": "account_backup.py",
+      "size_bytes": 28050,
+      "modified": "2026-06-07T09:33:23.902965",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/gershwin_github.py",
+      "relative_path": "tools/gershwin_github.py",
+      "name": "gershwin_github.py",
+      "size_bytes": 24037,
+      "modified": "2026-05-30T20:09:25.935815",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/writing_linter.py",
+      "relative_path": "tools/writing_linter.py",
+      "name": "writing_linter.py",
+      "size_bytes": 16833,
+      "modified": "2026-05-31T09:23:44.999316",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/gamma_engine.py",
+      "relative_path": "tools/gamma_engine.py",
+      "name": "gamma_engine.py",
+      "size_bytes": 6296,
+      "modified": "2026-05-29T18:04:03.494658",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/__init__.py",
+      "relative_path": "tools/__init__.py",
+      "name": "__init__.py",
+      "size_bytes": 0,
+      "modified": "2026-05-29T18:04:03.494841",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/session_tool.py",
+      "relative_path": "tools/session_tool.py",
+      "name": "session_tool.py",
+      "size_bytes": 966,
+      "modified": "2026-05-29T18:04:03.495316",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/generate_skill.py",
+      "relative_path": "tools/generate_skill.py",
+      "name": "generate_skill.py",
+      "size_bytes": 8592,
+      "modified": "2026-05-29T18:04:03.495794",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/notion_tool.py",
+      "relative_path": "tools/notion_tool.py",
+      "name": "notion_tool.py",
+      "size_bytes": 4190,
+      "modified": "2026-05-29T18:04:03.496189",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/todolist.py",
+      "relative_path": "tools/todolist.py",
+      "name": "todolist.py",
+      "size_bytes": 6961,
+      "modified": "2026-05-30T20:08:59.028023",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/knowledge_vault.py",
+      "relative_path": "tools/knowledge_vault.py",
+      "name": "knowledge_vault.py",
+      "size_bytes": 20315,
+      "modified": "2026-05-30T20:10:44.906948",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/smart_json_dispatcher.py",
+      "relative_path": "tools/smart_json_dispatcher.py",
+      "name": "smart_json_dispatcher.py",
+      "size_bytes": 2491,
+      "modified": "2026-05-29T18:04:03.501392",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/gershwin_tester.py",
+      "relative_path": "tools/gershwin_tester.py",
+      "name": "gershwin_tester.py",
+      "size_bytes": 15235,
+      "modified": "2026-07-14T10:14:30.999995",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/account.py.bak",
+      "relative_path": "tools/account.py.bak",
+      "name": "account.py.bak",
+      "size_bytes": 21935,
+      "modified": "2026-07-12T19:29:39.128253",
+      "extension": ".bak"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/slide_designer.py",
+      "relative_path": "tools/slide_designer.py",
+      "name": "slide_designer.py",
+      "size_bytes": 45102,
+      "modified": "2026-07-08T13:36:13.367085",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/setup_script_runner.py",
+      "relative_path": "tools/setup_script_runner.py",
+      "name": "setup_script_runner.py",
+      "size_bytes": 2509,
+      "modified": "2026-05-29T18:04:03.501812",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/ideogram_tool.py",
+      "relative_path": "tools/ideogram_tool.py",
+      "name": "ideogram_tool.py",
+      "size_bytes": 7193,
+      "modified": "2026-07-11T12:35:33.843292",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/docs_vector_indexer.py",
+      "relative_path": "tools/docs_vector_indexer.py",
+      "name": "docs_vector_indexer.py",
+      "size_bytes": 16239,
+      "modified": "2026-05-29T18:04:03.502591",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/response_helper.py",
+      "relative_path": "tools/response_helper.py",
+      "name": "response_helper.py",
+      "size_bytes": 7303,
+      "modified": "2026-05-30T20:01:19.162027",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/claude_assistant.py",
+      "relative_path": "tools/claude_assistant.py",
+      "name": "claude_assistant.py",
+      "size_bytes": 104156,
+      "modified": "2026-05-29T18:39:11.766381",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/doc_editor.py",
+      "relative_path": "tools/doc_editor.py",
+      "name": "doc_editor.py",
+      "size_bytes": 91434,
+      "modified": "2026-07-08T13:41:31.892417",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/credentials.json",
+      "relative_path": "tools/credentials.json",
+      "name": "credentials.json",
+      "size_bytes": 2969,
+      "modified": "2026-07-12T20:03:38.470294",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/sheets_tool.py",
+      "relative_path": "tools/sheets_tool.py",
+      "name": "sheets_tool.py",
+      "size_bytes": 20240,
+      "modified": "2026-06-01T09:54:37.283335",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/buffer_engine.py",
+      "relative_path": "tools/buffer_engine.py",
+      "name": "buffer_engine.py",
+      "size_bytes": 4517,
+      "modified": "2026-05-29T18:04:03.504485",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/readwise_tool.py",
+      "relative_path": "tools/readwise_tool.py",
+      "name": "readwise_tool.py",
+      "size_bytes": 2831,
+      "modified": "2026-05-29T18:04:03.504950",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/system_settings.py",
+      "relative_path": "tools/system_settings.py",
+      "name": "system_settings.py",
+      "size_bytes": 22890,
+      "modified": "2026-07-08T10:00:43.951413",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/ideogram_generate.sh",
+      "relative_path": "tools/ideogram_generate.sh",
+      "name": "ideogram_generate.sh",
+      "size_bytes": 1782,
+      "modified": "2026-03-12T20:11:57.303699",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/account.py",
+      "relative_path": "tools/account.py",
+      "name": "account.py",
+      "size_bytes": 23480,
+      "modified": "2026-07-13T09:33:39.091605",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/response_sanitizer.py",
+      "relative_path": "tools/response_sanitizer.py",
+      "name": "response_sanitizer.py",
+      "size_bytes": 3826,
+      "modified": "2026-05-29T18:36:24.383710",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/mem_tool.py",
+      "relative_path": "tools/mem_tool.py",
+      "name": "mem_tool.py",
+      "size_bytes": 3296,
+      "modified": "2026-05-29T18:04:03.507169",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts/gershwin_installer.sh",
+      "relative_path": "tools/scripts/gershwin_installer.sh",
+      "name": "gershwin_installer.sh",
+      "size_bytes": 6703,
+      "modified": "2026-07-14T12:17:23.690896",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts/gershwin_macbook_test.sh",
+      "relative_path": "tools/scripts/gershwin_macbook_test.sh",
+      "name": "gershwin_macbook_test.sh",
+      "size_bytes": 10825,
+      "modified": "2026-07-10T19:02:54.809853",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts/gershwin_install_test.sh",
+      "relative_path": "tools/scripts/gershwin_install_test.sh",
+      "name": "gershwin_install_test.sh",
+      "size_bytes": 7319,
+      "modified": "2026-07-10T09:12:49.160985",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/launchagents/io.orchestrateos.ngrok.plist",
+      "relative_path": "tools/launchagents/io.orchestrateos.ngrok.plist",
+      "name": "io.orchestrateos.ngrok.plist",
+      "size_bytes": 1045,
+      "modified": "2026-07-14T10:06:53.567166",
+      "extension": ".plist"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/launchagents/io.orchestrateos.jarvis.plist",
+      "relative_path": "tools/launchagents/io.orchestrateos.jarvis.plist",
+      "name": "io.orchestrateos.jarvis.plist",
+      "size_bytes": 711,
+      "modified": "2026-07-14T10:07:13.810383",
+      "extension": ".plist"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/screenshots/claudsettings.png",
+      "relative_path": "screenshots/claudsettings.png",
+      "name": "claudsettings.png",
+      "size_bytes": 101098,
+      "modified": "2026-07-08T08:53:31.444160",
+      "extension": ".png"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/screenshots/claudeskills.png",
+      "relative_path": "screenshots/claudeskills.png",
+      "name": "claudeskills.png",
+      "size_bytes": 110334,
+      "modified": "2026-07-08T08:17:18.947606",
+      "extension": ".png"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/auth/setup_claude_auth.sh",
+      "relative_path": "auth/setup_claude_auth.sh",
+      "name": "setup_claude_auth.sh",
+      "size_bytes": 1679,
+      "modified": "2026-05-29T18:04:03.449206",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.css",
+      "relative_path": "semantic_memory/orchestrate_home.css",
+      "name": "orchestrate_home.css",
+      "size_bytes": 14859,
+      "modified": "2026-07-08T08:08:18.610188",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files.css",
+      "relative_path": "semantic_memory/files.css",
+      "name": "files.css",
+      "size_bytes": 6952,
+      "modified": "2026-07-08T08:08:18.596773",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal_config.json",
+      "relative_path": "semantic_memory/bullet_journal_config.json",
+      "name": "bullet_journal_config.json",
+      "size_bytes": 2503,
+      "modified": "2026-07-08T08:08:18.593199",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file_temp.html",
+      "relative_path": "semantic_memory/spark_file_temp.html",
+      "name": "spark_file_temp.html",
+      "size_bytes": 2207,
+      "modified": "2026-07-08T08:08:18.643237",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/doc_editor.html",
+      "relative_path": "semantic_memory/doc_editor.html",
+      "name": "doc_editor.html",
+      "size_bytes": 82757,
+      "modified": "2026-07-07T18:58:00.527349",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files_temp.html",
+      "relative_path": "semantic_memory/files_temp.html",
+      "name": "files_temp.html",
+      "size_bytes": 2107,
+      "modified": "2026-07-08T08:08:18.596479",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets_config.json",
+      "relative_path": "semantic_memory/sheets_config.json",
+      "name": "sheets_config.json",
+      "size_bytes": 1593,
+      "modified": "2026-07-08T08:08:18.640490",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist.js",
+      "relative_path": "semantic_memory/todolist.js",
+      "name": "todolist.js",
+      "size_bytes": 7791,
+      "modified": "2026-07-08T08:08:18.657228",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/first_run.html",
+      "relative_path": "semantic_memory/first_run.html",
+      "name": "first_run.html",
+      "size_bytes": 12184,
+      "modified": "2026-07-13T09:23:08.442638",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal.html",
+      "relative_path": "semantic_memory/bullet_journal.html",
+      "name": "bullet_journal.html",
+      "size_bytes": 17772,
+      "modified": "2026-05-29T18:04:03.480402",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store_config.json",
+      "relative_path": "semantic_memory/app_store_config.json",
+      "name": "app_store_config.json",
+      "size_bytes": 2464,
+      "modified": "2026-07-12T13:54:48.851435",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/doc_editor_config.json",
+      "relative_path": "semantic_memory/doc_editor_config.json",
+      "name": "doc_editor_config.json",
+      "size_bytes": 3016,
+      "modified": "2026-07-07T18:58:00.667764",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2.css",
+      "relative_path": "semantic_memory/orchestrate_homev2.css",
+      "name": "orchestrate_homev2.css",
+      "size_bytes": 21927,
+      "modified": "2026-07-11T11:54:24.615640",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/gershwin_homev2.js",
+      "relative_path": "semantic_memory/gershwin_homev2.js",
+      "name": "gershwin_homev2.js",
+      "size_bytes": 8395,
+      "modified": "2026-07-13T10:47:05.439516",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets.css",
+      "relative_path": "semantic_memory/sheets.css",
+      "name": "sheets.css",
+      "size_bytes": 26744,
+      "modified": "2026-07-08T08:08:18.640601",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files.js",
+      "relative_path": "semantic_memory/files.js",
+      "name": "files.js",
+      "size_bytes": 13070,
+      "modified": "2026-07-08T08:08:18.596592",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist_temp.html",
+      "relative_path": "semantic_memory/todolist_temp.html",
+      "name": "todolist_temp.html",
+      "size_bytes": 1663,
+      "modified": "2026-07-08T08:08:18.657144",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist_config.json",
+      "relative_path": "semantic_memory/todolist_config.json",
+      "name": "todolist_config.json",
+      "size_bytes": 835,
+      "modified": "2026-07-08T08:08:18.657335",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard.js",
+      "relative_path": "semantic_memory/tool_dashboard.js",
+      "name": "tool_dashboard.js",
+      "size_bytes": 14880,
+      "modified": "2026-07-08T08:08:18.661953",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file.js",
+      "relative_path": "semantic_memory/spark_file.js",
+      "name": "spark_file.js",
+      "size_bytes": 9022,
+      "modified": "2026-07-08T08:08:18.643349",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.html",
+      "relative_path": "semantic_memory/orchestrate_home.html",
+      "name": "orchestrate_home.html",
+      "size_bytes": 34849,
+      "modified": "2026-07-13T09:27:06.290630",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager.js",
+      "relative_path": "semantic_memory/media_manager.js",
+      "name": "media_manager.js",
+      "size_bytes": 12867,
+      "modified": "2026-07-08T08:08:18.601838",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home_temp.html",
+      "relative_path": "semantic_memory/orchestrate_home_temp.html",
+      "name": "orchestrate_home_temp.html",
+      "size_bytes": 10112,
+      "modified": "2026-07-08T08:08:18.609901",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board.js",
+      "relative_path": "semantic_memory/task_board.js",
+      "name": "task_board.js",
+      "size_bytes": 41128,
+      "modified": "2026-07-12T15:27:57.286092",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files.html",
+      "relative_path": "semantic_memory/files.html",
+      "name": "files.html",
+      "size_bytes": 21534,
+      "modified": "2026-05-31T14:54:33.713446",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets.js",
+      "relative_path": "semantic_memory/sheets.js",
+      "name": "sheets.js",
+      "size_bytes": 49887,
+      "modified": "2026-07-08T08:08:18.640366",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store.js",
+      "relative_path": "semantic_memory/app_store.js",
+      "name": "app_store.js",
+      "size_bytes": 13599,
+      "modified": "2026-07-13T09:29:06.895531",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file.css",
+      "relative_path": "semantic_memory/spark_file.css",
+      "name": "spark_file.css",
+      "size_bytes": 8616,
+      "modified": "2026-07-08T08:08:18.643542",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist.css",
+      "relative_path": "semantic_memory/todolist.css",
+      "name": "todolist.css",
+      "size_bytes": 6600,
+      "modified": "2026-07-08T08:08:18.657422",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard.html",
+      "relative_path": "semantic_memory/tool_dashboard.html",
+      "name": "tool_dashboard.html",
+      "size_bytes": 32190,
+      "modified": "2026-06-04T09:38:32.984292",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board.css",
+      "relative_path": "semantic_memory/task_board.css",
+      "name": "task_board.css",
+      "size_bytes": 15898,
+      "modified": "2026-07-08T08:08:18.654903",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/replace_script.py",
+      "relative_path": "semantic_memory/replace_script.py",
+      "name": "replace_script.py",
+      "size_bytes": 1662,
+      "modified": "2026-07-12T15:11:41.257612",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal_temp.html",
+      "relative_path": "semantic_memory/bullet_journal_temp.html",
+      "name": "bullet_journal_temp.html",
+      "size_bytes": 2854,
+      "modified": "2026-07-08T08:08:18.592920",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal.js",
+      "relative_path": "semantic_memory/bullet_journal.js",
+      "name": "bullet_journal.js",
+      "size_bytes": 9656,
+      "modified": "2026-07-08T08:08:18.593048",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager.html",
+      "relative_path": "semantic_memory/media_manager.html",
+      "name": "media_manager.html",
+      "size_bytes": 29755,
+      "modified": "2026-07-07T19:01:23.637591",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home_config.json",
+      "relative_path": "semantic_memory/orchestrate_home_config.json",
+      "name": "orchestrate_home_config.json",
+      "size_bytes": 5206,
+      "modified": "2026-07-13T08:19:54.527127",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard_config.json",
+      "relative_path": "semantic_memory/tool_dashboard_config.json",
+      "name": "tool_dashboard_config.json",
+      "size_bytes": 1030,
+      "modified": "2026-07-08T08:08:18.662065",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides.js",
+      "relative_path": "semantic_memory/orchestrate_slides.js",
+      "name": "orchestrate_slides.js",
+      "size_bytes": 80794,
+      "modified": "2026-07-08T08:08:18.627053",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager_config.json",
+      "relative_path": "semantic_memory/media_manager_config.json",
+      "name": "media_manager_config.json",
+      "size_bytes": 454,
+      "modified": "2026-07-08T08:08:18.601949",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board_temp.html",
+      "relative_path": "semantic_memory/task_board_temp.html",
+      "name": "task_board_temp.html",
+      "size_bytes": 5322,
+      "modified": "2026-07-08T08:08:18.654348",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager_temp.html",
+      "relative_path": "semantic_memory/media_manager_temp.html",
+      "name": "media_manager_temp.html",
+      "size_bytes": 6444,
+      "modified": "2026-07-08T08:08:18.601727",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/todolist.html",
+      "relative_path": "semantic_memory/todolist.html",
+      "name": "todolist.html",
+      "size_bytes": 15162,
+      "modified": "2026-05-30T12:05:32.427358",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/SKILL.md",
+      "relative_path": "semantic_memory/SKILL.md",
+      "name": "SKILL.md",
+      "size_bytes": 20703,
+      "modified": "2026-05-29T18:04:03.481836",
+      "extension": ".md"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard_temp.html",
+      "relative_path": "semantic_memory/tool_dashboard_temp.html",
+      "name": "tool_dashboard_temp.html",
+      "size_bytes": 4560,
+      "modified": "2026-07-08T08:08:18.661844",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/ideogram.html",
+      "relative_path": "semantic_memory/ideogram.html",
+      "name": "ideogram.html",
+      "size_bytes": 16017,
+      "modified": "2026-07-11T12:44:29.463156",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store.html",
+      "relative_path": "semantic_memory/app_store.html",
+      "name": "app_store.html",
+      "size_bytes": 18927,
+      "modified": "2026-07-13T09:26:17.982976",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/gershwin_home.html",
+      "relative_path": "semantic_memory/gershwin_home.html",
+      "name": "gershwin_home.html",
+      "size_bytes": 5537,
+      "modified": "2026-07-12T14:49:56.520597",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides_temp.html",
+      "relative_path": "semantic_memory/orchestrate_slides_temp.html",
+      "name": "orchestrate_slides_temp.html",
+      "size_bytes": 9733,
+      "modified": "2026-07-08T08:08:18.626827",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets_temp.html",
+      "relative_path": "semantic_memory/sheets_temp.html",
+      "name": "sheets_temp.html",
+      "size_bytes": 12895,
+      "modified": "2026-07-08T08:08:18.640211",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides_config.json",
+      "relative_path": "semantic_memory/orchestrate_slides_config.json",
+      "name": "orchestrate_slides_config.json",
+      "size_bytes": 3338,
+      "modified": "2026-07-08T08:08:18.627204",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/tool_dashboard.css",
+      "relative_path": "semantic_memory/tool_dashboard.css",
+      "name": "tool_dashboard.css",
+      "size_bytes": 13518,
+      "modified": "2026-07-08T08:08:18.662143",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.js",
+      "relative_path": "semantic_memory/orchestrate_home.js",
+      "name": "orchestrate_home.js",
+      "size_bytes": 21006,
+      "modified": "2026-07-13T08:19:54.527538",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2.js",
+      "relative_path": "semantic_memory/orchestrate_homev2.js",
+      "name": "orchestrate_homev2.js",
+      "size_bytes": 30972,
+      "modified": "2026-07-11T11:54:36.865077",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/bullet_journal.css",
+      "relative_path": "semantic_memory/bullet_journal.css",
+      "name": "bullet_journal.css",
+      "size_bytes": 6187,
+      "modified": "2026-07-08T08:08:18.593313",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides.css",
+      "relative_path": "semantic_memory/orchestrate_slides.css",
+      "name": "orchestrate_slides.css",
+      "size_bytes": 30387,
+      "modified": "2026-07-08T08:08:18.627305",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/files_config.json",
+      "relative_path": "semantic_memory/files_config.json",
+      "name": "files_config.json",
+      "size_bytes": 299,
+      "modified": "2026-07-08T08:08:18.596696",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board_config.json",
+      "relative_path": "semantic_memory/task_board_config.json",
+      "name": "task_board_config.json",
+      "size_bytes": 3399,
+      "modified": "2026-07-08T08:08:18.654802",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_home.html.bak",
+      "relative_path": "semantic_memory/orchestrate_home.html.bak",
+      "name": "orchestrate_home.html.bak",
+      "size_bytes": 28928,
+      "modified": "2026-07-09T11:10:07.674861",
+      "extension": ".bak"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board_db_script.txt",
+      "relative_path": "semantic_memory/task_board_db_script.txt",
+      "name": "task_board_db_script.txt",
+      "size_bytes": 23985,
+      "modified": "2026-07-12T15:11:29.924797",
+      "extension": ".txt"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_slides.html",
+      "relative_path": "semantic_memory/orchestrate_slides.html",
+      "name": "orchestrate_slides.html",
+      "size_bytes": 120377,
+      "modified": "2026-07-08T11:41:27.573679",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file_config.json",
+      "relative_path": "semantic_memory/spark_file_config.json",
+      "name": "spark_file_config.json",
+      "size_bytes": 280,
+      "modified": "2026-07-08T08:08:18.643453",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2.html",
+      "relative_path": "semantic_memory/orchestrate_homev2.html",
+      "name": "orchestrate_homev2.html",
+      "size_bytes": 11767,
+      "modified": "2026-07-11T13:00:31.995161",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/spark_file.html",
+      "relative_path": "semantic_memory/spark_file.html",
+      "name": "spark_file.html",
+      "size_bytes": 19197,
+      "modified": "2026-05-30T12:05:13.777877",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/media_manager.css",
+      "relative_path": "semantic_memory/media_manager.css",
+      "name": "media_manager.css",
+      "size_bytes": 10636,
+      "modified": "2026-07-08T08:08:18.602033",
+      "extension": ".css"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/task_board.html",
+      "relative_path": "semantic_memory/task_board.html",
+      "name": "task_board.html",
+      "size_bytes": 63219,
+      "modified": "2026-07-12T15:13:20.913878",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/app_store.js.bak",
+      "relative_path": "semantic_memory/app_store.js.bak",
+      "name": "app_store.js.bak",
+      "size_bytes": 8831,
+      "modified": "2026-07-11T12:58:19.678607",
+      "extension": ".bak"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/sheets.html",
+      "relative_path": "semantic_memory/sheets.html",
+      "name": "sheets.html",
+      "size_bytes": 89809,
+      "modified": "2026-07-08T11:41:31.358847",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/global_nav.js",
+      "relative_path": "semantic_memory/global_nav.js",
+      "name": "global_nav.js",
+      "size_bytes": 451,
+      "modified": "2026-07-07T19:01:11.906904",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/doc_editor.js",
+      "relative_path": "semantic_memory/doc_editor.js",
+      "name": "doc_editor.js",
+      "size_bytes": 181217,
+      "modified": "2026-07-07T18:58:00.604004",
+      "extension": ".js"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/orchestrate_homev2_config.json",
+      "relative_path": "semantic_memory/orchestrate_homev2_config.json",
+      "name": "orchestrate_homev2_config.json",
+      "size_bytes": 2340,
+      "modified": "2026-07-11T11:54:36.868528",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/installer_bootstrap.html",
+      "relative_path": "semantic_memory/installer_bootstrap.html",
+      "name": "installer_bootstrap.html",
+      "size_bytes": 11309,
+      "modified": "2026-07-11T10:59:43.751718",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/ideogram_1783799523013.png",
+      "relative_path": "semantic_memory/images/ideogram/ideogram_1783799523013.png",
+      "name": "ideogram_1783799523013.png",
+      "size_bytes": 1566769,
+      "modified": "2026-07-11T12:52:23.803688",
+      "extension": ".png"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/test_robot.png",
+      "relative_path": "semantic_memory/images/ideogram/test_robot.png",
+      "name": "test_robot.png",
+      "size_bytes": 1315489,
+      "modified": "2026-07-11T12:28:57.549169",
+      "extension": ".png"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/ideogram_1783799523013_thumb.png",
+      "relative_path": "semantic_memory/images/ideogram/ideogram_1783799523013_thumb.png",
+      "name": "ideogram_1783799523013_thumb.png",
+      "size_bytes": 160905,
+      "modified": "2026-07-11T12:52:23.889009",
+      "extension": ".png"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram/ideogram_1783797976191.png",
+      "relative_path": "semantic_memory/images/ideogram/ideogram_1783797976191.png",
+      "name": "ideogram_1783797976191.png",
+      "size_bytes": 1342803,
+      "modified": "2026-07-11T12:26:36.558465",
+      "extension": ".png"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/slides/Gershwin Test Deck.html",
+      "relative_path": "semantic_memory/slides/Gershwin Test Deck.html",
+      "name": "Gershwin Test Deck.html",
+      "size_bytes": 10253,
+      "modified": "2026-07-08T13:39:07.620982",
+      "extension": ".html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_docs/orchestrate_os_protocol.md",
+      "relative_path": "system_docs/orchestrate_os_protocol.md",
+      "name": "orchestrate_os_protocol.md",
+      "size_bytes": 5762,
+      "modified": "2026-05-29T18:04:03.483100",
+      "extension": ".md"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/Info.plist",
+      "relative_path": "OrchestrateOS.app/Contents/Info.plist",
+      "name": "Info.plist",
+      "size_bytes": 755,
+      "modified": "2026-07-11T11:10:31.647803",
+      "extension": ".plist"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/MacOS/launcher",
+      "relative_path": "OrchestrateOS.app/Contents/MacOS/launcher",
+      "name": "launcher",
+      "size_bytes": 796,
+      "modified": "2026-07-11T11:10:37.388475",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/Resources/AppIcon.icns",
+      "relative_path": "OrchestrateOS.app/Contents/Resources/AppIcon.icns",
+      "name": "AppIcon.icns",
+      "size_bytes": 1283106,
+      "modified": "2026-07-11T11:11:05.695790",
+      "extension": ".icns"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/referral_base/entrypoint.sh",
+      "relative_path": "referral_base/entrypoint.sh",
+      "name": "entrypoint.sh",
+      "size_bytes": 3328,
+      "modified": "2026-05-29T18:04:03.477416",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/referral_base/Launch Orchestrate.command",
+      "relative_path": "referral_base/Launch Orchestrate.command",
+      "name": "Launch Orchestrate.command",
+      "size_bytes": 215,
+      "modified": "2026-05-29T18:04:03.477681",
+      "extension": ".command"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin-skill/schema.md",
+      "relative_path": "orchestrate-gershwin-skill/schema.md",
+      "name": "schema.md",
+      "size_bytes": 14301,
+      "modified": "2026-06-07T09:34:16.238172",
+      "extension": ".md"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin-skill/SKILL.md",
+      "relative_path": "orchestrate-gershwin-skill/SKILL.md",
+      "name": "SKILL.md",
+      "size_bytes": 18261,
+      "modified": "2026-06-07T09:35:32.796129",
+      "extension": ".md"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/Info.plist",
+      "relative_path": "OrchestrateOS Installer.app/Contents/Info.plist",
+      "name": "Info.plist",
+      "size_bytes": 887,
+      "modified": "2026-07-11T11:10:47.245677",
+      "extension": ".plist"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/MacOS/launcher",
+      "relative_path": "OrchestrateOS Installer.app/Contents/MacOS/launcher",
+      "name": "launcher",
+      "size_bytes": 466,
+      "modified": "2026-07-11T11:10:47.342000",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/settings.json",
+      "relative_path": "claude_config_template/settings.json",
+      "name": "settings.json",
+      "size_bytes": 1663,
+      "modified": "2026-05-31T11:07:56.532770",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/CLAUDE.md",
+      "relative_path": "claude_config_template/CLAUDE.md",
+      "name": "CLAUDE.md",
+      "size_bytes": 2720,
+      "modified": "2026-05-31T11:07:45.065793",
+      "extension": ".md"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/hooks/inject_schemas.py",
+      "relative_path": "claude_config_template/hooks/inject_schemas.py",
+      "name": "inject_schemas.py",
+      "size_bytes": 3412,
+      "modified": "2026-05-29T18:04:03.450372",
+      "extension": ".py"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/last_failed_call.json",
+      "relative_path": "data/last_failed_call.json",
+      "name": "last_failed_call.json",
+      "size_bytes": 165,
+      "modified": "2026-07-13T10:44:43.163749",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/unlock_nudges.json",
+      "relative_path": "data/unlock_nudges.json",
+      "name": "unlock_nudges.json",
+      "size_bytes": 7294,
+      "modified": "2026-05-29T18:37:53.762876",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_output.json",
+      "relative_path": "data/gershwin_test_output.json",
+      "name": "gershwin_test_output.json",
+      "size_bytes": 132,
+      "modified": "2026-07-08T13:39:06.815028",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/readwise_books.json",
+      "relative_path": "data/readwise_books.json",
+      "name": "readwise_books.json",
+      "size_bytes": 2,
+      "modified": "2026-05-29T18:04:03.453546",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/ngrok.json",
+      "relative_path": "data/ngrok.json",
+      "name": "ngrok.json",
+      "size_bytes": 27,
+      "modified": "2026-05-29T18:04:03.453867",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/inbox.db",
+      "relative_path": "data/inbox.db",
+      "name": "inbox.db",
+      "size_bytes": 57344,
+      "modified": "2026-05-29T18:38:55.337634",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/system_identity.json.lock",
+      "relative_path": "data/system_identity.json.lock",
+      "name": "system_identity.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-07-09T10:39:10.053414",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/response_messages.json",
+      "relative_path": "data/response_messages.json",
+      "name": "response_messages.json",
+      "size_bytes": 29417,
+      "modified": "2026-05-30T20:09:34.423197",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/test_json_manager.json.lock",
+      "relative_path": "data/test_json_manager.json.lock",
+      "name": "test_json_manager.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-07-07T18:48:19.734252",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slides.db",
+      "relative_path": "data/slides.db",
+      "name": "slides.db",
+      "size_bytes": 28672,
+      "modified": "2026-07-13T09:16:04.890986",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/script_output_config.json",
+      "relative_path": "data/script_output_config.json",
+      "name": "script_output_config.json",
+      "size_bytes": 250,
+      "modified": "2026-07-07T18:48:39.242100",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/update_messages.json",
+      "relative_path": "data/update_messages.json",
+      "name": "update_messages.json",
+      "size_bytes": 200,
+      "modified": "2026-05-29T18:04:03.454224",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/sheets_config.json",
+      "relative_path": "data/sheets_config.json",
+      "name": "sheets_config.json",
+      "size_bytes": 594,
+      "modified": "2026-07-08T11:49:44.929839",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/execution_log.ndjson",
+      "relative_path": "data/execution_log.ndjson",
+      "name": "execution_log.ndjson",
+      "size_bytes": 757435,
+      "modified": "2026-05-31T10:50:25.694500",
+      "extension": ".ndjson"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/bullet_journal.json.lock",
+      "relative_path": "data/bullet_journal.json.lock",
+      "name": "bullet_journal.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-05-29T18:04:03.455672",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/lucide_icons.json",
+      "relative_path": "data/lucide_icons.json",
+      "name": "lucide_icons.json",
+      "size_bytes": 518670,
+      "modified": "2026-07-07T19:01:38.061855",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/logs.db",
+      "relative_path": "data/logs.db",
+      "name": "logs.db",
+      "size_bytes": 122880,
+      "modified": "2026-07-13T10:44:43.163459",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_fixture.json.lock",
+      "relative_path": "data/gershwin_test_fixture.json.lock",
+      "name": "gershwin_test_fixture.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-05-29T18:04:03.458863",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_github_config.json",
+      "relative_path": "data/gershwin_github_config.json",
+      "name": "gershwin_github_config.json",
+      "size_bytes": 95,
+      "modified": "2026-05-29T18:36:52.551257",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/onboarding_sequence.json",
+      "relative_path": "data/onboarding_sequence.json",
+      "name": "onboarding_sequence.json",
+      "size_bytes": 6228,
+      "modified": "2026-07-14T10:07:36.588523",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/orchestrate_intent_routes.json",
+      "relative_path": "data/orchestrate_intent_routes.json",
+      "name": "orchestrate_intent_routes.json",
+      "size_bytes": 10809,
+      "modified": "2026-05-29T18:37:24.215226",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/ideogram.db",
+      "relative_path": "data/ideogram.db",
+      "name": "ideogram.db",
+      "size_bytes": 12288,
+      "modified": "2026-07-11T12:10:31.121201",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/unlock_messages.json",
+      "relative_path": "data/unlock_messages.json",
+      "name": "unlock_messages.json",
+      "size_bytes": 21595,
+      "modified": "2026-05-29T18:37:47.939694",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/user_state.json.lock",
+      "relative_path": "data/user_state.json.lock",
+      "name": "user_state.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-07-08T13:03:50.066597",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/secondbrain.json",
+      "relative_path": "data/secondbrain.json",
+      "name": "secondbrain.json",
+      "size_bytes": 1511,
+      "modified": "2026-05-29T18:04:03.461621",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/tasks.db",
+      "relative_path": "data/tasks.db",
+      "name": "tasks.db",
+      "size_bytes": 20480,
+      "modified": "2026-05-29T18:38:10.695100",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_output.json.lock",
+      "relative_path": "data/gershwin_test_output.json.lock",
+      "name": "gershwin_test_output.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-07-08T13:39:06.814872",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/knowledge_base.db",
+      "relative_path": "data/knowledge_base.db",
+      "name": "knowledge_base.db",
+      "size_bytes": 28672,
+      "modified": "2026-05-31T09:28:47.419172",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/sheets.db",
+      "relative_path": "data/sheets.db",
+      "name": "sheets.db",
+      "size_bytes": 20480,
+      "modified": "2026-07-08T11:49:44.929424",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/accounts.db",
+      "relative_path": "data/accounts.db",
+      "name": "accounts.db",
+      "size_bytes": 32768,
+      "modified": "2026-07-12T14:30:29.802390",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/test_suite_config.json",
+      "relative_path": "data/test_suite_config.json",
+      "name": "test_suite_config.json",
+      "size_bytes": 15572,
+      "modified": "2026-06-06T22:07:20.714386",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/todos.db",
+      "relative_path": "data/todos.db",
+      "name": "todos.db",
+      "size_bytes": 20480,
+      "modified": "2026-07-08T13:39:25.212072",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/spark_file.db",
+      "relative_path": "data/spark_file.db",
+      "name": "spark_file.db",
+      "size_bytes": 65536,
+      "modified": "2026-07-08T13:39:16.492158",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/tasks.db-wal",
+      "relative_path": "data/tasks.db-wal",
+      "name": "tasks.db-wal",
+      "size_bytes": 0,
+      "modified": "2026-07-12T15:34:03.429421",
+      "extension": ".db-wal"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/dashboard_index.json",
+      "relative_path": "data/dashboard_index.json",
+      "name": "dashboard_index.json",
+      "size_bytes": 1183,
+      "modified": "2026-05-29T18:04:03.464669",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/tasks.db-shm",
+      "relative_path": "data/tasks.db-shm",
+      "name": "tasks.db-shm",
+      "size_bytes": 32768,
+      "modified": "2026-07-13T08:21:58.078822",
+      "extension": ".db-shm"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/files.db",
+      "relative_path": "data/files.db",
+      "name": "files.db",
+      "size_bytes": 40960,
+      "modified": "2026-07-10T08:54:43.358564",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/system_identity.json",
+      "relative_path": "data/system_identity.json",
+      "name": "system_identity.json",
+      "size_bytes": 188,
+      "modified": "2026-07-13T09:24:11.264545",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slide_themes.json",
+      "relative_path": "data/slide_themes.json",
+      "name": "slide_themes.json",
+      "size_bytes": 14556,
+      "modified": "2026-05-17T18:12:14.333096",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/docs.db",
+      "relative_path": "data/docs.db",
+      "name": "docs.db",
+      "size_bytes": 32768,
+      "modified": "2026-07-13T09:16:48.986301",
+      "extension": ".db"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/error_handlers.json",
+      "relative_path": "data/error_handlers.json",
+      "name": "error_handlers.json",
+      "size_bytes": 284,
+      "modified": "2026-07-07T19:00:05.124676",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slide_templates.json",
+      "relative_path": "data/slide_templates.json",
+      "name": "slide_templates.json",
+      "size_bytes": 3827,
+      "modified": "2026-03-12T20:11:51.877668",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/notion_aliases.json",
+      "relative_path": "data/notion_aliases.json",
+      "name": "notion_aliases.json",
+      "size_bytes": 3,
+      "modified": "2026-05-29T18:04:03.466184",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/slide_designer_layouts.json",
+      "relative_path": "data/slide_designer_layouts.json",
+      "name": "slide_designer_layouts.json",
+      "size_bytes": 54622,
+      "modified": "2026-05-31T14:49:39.158127",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/orchestrate_app_store.json",
+      "relative_path": "data/orchestrate_app_store.json",
+      "name": "orchestrate_app_store.json",
+      "size_bytes": 5880,
+      "modified": "2026-05-29T18:39:55.200996",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/collection_aliases.json",
+      "relative_path": "data/collection_aliases.json",
+      "name": "collection_aliases.json",
+      "size_bytes": 2108,
+      "modified": "2026-05-29T18:04:03.467389",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/engine_registry.json",
+      "relative_path": "data/engine_registry.json",
+      "name": "engine_registry.json",
+      "size_bytes": 80,
+      "modified": "2026-05-29T18:36:27.847930",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/boot_flags.json",
+      "relative_path": "data/boot_flags.json",
+      "name": "boot_flags.json",
+      "size_bytes": 127,
+      "modified": "2026-05-29T18:04:03.468172",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/thread_state.json",
+      "relative_path": "data/thread_state.json",
+      "name": "thread_state.json",
+      "size_bytes": 110,
+      "modified": "2026-07-13T10:44:43.162643",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_fixture.json",
+      "relative_path": "data/gershwin_test_fixture.json",
+      "name": "gershwin_test_fixture.json",
+      "size_bytes": 129,
+      "modified": "2026-05-29T18:04:03.468912",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/test_json.json.lock",
+      "relative_path": "data/test_json.json.lock",
+      "name": "test_json.json.lock",
+      "size_bytes": 0,
+      "modified": "2026-07-08T10:07:57.191584",
+      "extension": ".lock"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_test_cases.json",
+      "relative_path": "data/gershwin_test_cases.json",
+      "name": "gershwin_test_cases.json",
+      "size_bytes": 4167,
+      "modified": "2026-07-08T13:16:37.931439",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/gershwin_gps.json",
+      "relative_path": "data/gershwin_gps.json",
+      "name": "gershwin_gps.json",
+      "size_bytes": 11793,
+      "modified": "2026-05-29T18:36:54.671137",
+      "extension": ".json"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/_MAIN_1.toc",
+      "relative_path": "data/whoosh_index/_MAIN_1.toc",
+      "name": "_MAIN_1.toc",
+      "size_bytes": 2792,
+      "modified": "2026-07-08T10:07:53.410054",
+      "extension": ".toc"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/.last_build_mtime",
+      "relative_path": "data/whoosh_index/.last_build_mtime",
+      "name": ".last_build_mtime",
+      "size_bytes": 18,
+      "modified": "2026-07-08T10:07:53.410881",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/MAIN_fa5wllzcyyen4gcb.seg",
+      "relative_path": "data/whoosh_index/MAIN_fa5wllzcyyen4gcb.seg",
+      "name": "MAIN_fa5wllzcyyen4gcb.seg",
+      "size_bytes": 24438,
+      "modified": "2026-07-08T10:07:53.409646",
+      "extension": ".seg"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index/MAIN_WRITELOCK",
+      "relative_path": "data/whoosh_index/MAIN_WRITELOCK",
+      "name": "MAIN_WRITELOCK",
+      "size_bytes": 0,
+      "modified": "2026-05-29T18:04:03.458108",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/CodeResources",
+      "relative_path": "Orchestrate Engine.app/Contents/CodeResources",
+      "name": "CodeResources",
+      "size_bytes": 1675,
+      "modified": "2026-05-29T18:04:03.439274",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Info.plist",
+      "relative_path": "Orchestrate Engine.app/Contents/Info.plist",
+      "name": "Info.plist",
+      "size_bytes": 641,
+      "modified": "2026-05-29T18:04:03.444727",
+      "extension": ".plist"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/_CodeSignature/CodeResources",
+      "relative_path": "Orchestrate Engine.app/Contents/_CodeSignature/CodeResources",
+      "name": "CodeResources",
+      "size_bytes": 4750,
+      "modified": "2026-05-29T18:04:03.439973",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/MacOS/Launch Orchestrate",
+      "relative_path": "Orchestrate Engine.app/Contents/MacOS/Launch Orchestrate",
+      "name": "Launch Orchestrate",
+      "size_bytes": 274192,
+      "modified": "2026-05-29T18:04:03.440701",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/AppIcon.icns",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/AppIcon.icns",
+      "name": "AppIcon.icns",
+      "size_bytes": 373792,
+      "modified": "2026-05-29T18:04:03.441425",
+      "extension": ".icns"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/script",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/script",
+      "name": "script",
+      "size_bytes": 7390,
+      "modified": "2026-05-29T18:04:03.441870",
+      "extension": null
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/AppSettings.plist",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/AppSettings.plist",
+      "name": "AppSettings.plist",
+      "size_bytes": 526,
+      "modified": "2026-05-29T18:04:03.443777",
+      "extension": ".plist"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/entrypoint.sh",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/entrypoint.sh",
+      "name": "entrypoint.sh",
+      "size_bytes": 4050,
+      "modified": "2026-07-14T10:06:35.779278",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/setup_wizard.sh",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/setup_wizard.sh",
+      "name": "setup_wizard.sh",
+      "size_bytes": 8126,
+      "modified": "2026-05-29T18:04:03.444492",
+      "extension": ".sh"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects-101300.nib",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects-101300.nib",
+      "name": "keyedobjects-101300.nib",
+      "size_bytes": 37277,
+      "modified": "2026-05-29T18:04:03.442628",
+      "extension": ".nib"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects.nib",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects.nib",
+      "name": "keyedobjects.nib",
+      "size_bytes": 47425,
+      "modified": "2026-05-29T18:04:03.442994",
+      "extension": ".nib"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib/designable.nib",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/MainMenu.nib/designable.nib",
+      "name": "designable.nib",
+      "size_bytes": 54621,
+      "modified": "2026-05-29T18:04:03.443403",
+      "extension": ".nib"
+    }
+  ],
+  "all_directories": [
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools",
+      "relative_path": "tools",
+      "name": "tools"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/scripts",
+      "relative_path": "tools/scripts",
+      "name": "scripts"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/tools/launchagents",
+      "relative_path": "tools/launchagents",
+      "name": "launchagents"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/screenshots",
+      "relative_path": "screenshots",
+      "name": "screenshots"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/app",
+      "relative_path": "app",
+      "name": "app"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/auth",
+      "relative_path": "auth",
+      "name": "auth"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory",
+      "relative_path": "semantic_memory",
+      "name": "semantic_memory"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images",
+      "relative_path": "semantic_memory/images",
+      "name": "images"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/images/ideogram",
+      "relative_path": "semantic_memory/images/ideogram",
+      "name": "ideogram"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/html",
+      "relative_path": "semantic_memory/html",
+      "name": "html"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/semantic_memory/slides",
+      "relative_path": "semantic_memory/slides",
+      "name": "slides"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/system_docs",
+      "relative_path": "system_docs",
+      "name": "system_docs"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app",
+      "relative_path": "OrchestrateOS.app",
+      "name": "OrchestrateOS.app"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents",
+      "relative_path": "OrchestrateOS.app/Contents",
+      "name": "Contents"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/MacOS",
+      "relative_path": "OrchestrateOS.app/Contents/MacOS",
+      "name": "MacOS"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS.app/Contents/Resources",
+      "relative_path": "OrchestrateOS.app/Contents/Resources",
+      "name": "Resources"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/referral_base",
+      "relative_path": "referral_base",
+      "name": "referral_base"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/orchestrate-gershwin-skill",
+      "relative_path": "orchestrate-gershwin-skill",
+      "name": "orchestrate-gershwin-skill"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app",
+      "relative_path": "OrchestrateOS Installer.app",
+      "name": "OrchestrateOS Installer.app"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents",
+      "relative_path": "OrchestrateOS Installer.app/Contents",
+      "name": "Contents"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/MacOS",
+      "relative_path": "OrchestrateOS Installer.app/Contents/MacOS",
+      "name": "MacOS"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/OrchestrateOS Installer.app/Contents/Resources",
+      "relative_path": "OrchestrateOS Installer.app/Contents/Resources",
+      "name": "Resources"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template",
+      "relative_path": "claude_config_template",
+      "name": "claude_config_template"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/claude_config_template/hooks",
+      "relative_path": "claude_config_template/hooks",
+      "name": "hooks"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data",
+      "relative_path": "data",
+      "name": "data"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/log_archive",
+      "relative_path": "data/log_archive",
+      "name": "log_archive"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/data/whoosh_index",
+      "relative_path": "data/whoosh_index",
+      "name": "whoosh_index"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app",
+      "relative_path": "Orchestrate Engine.app",
+      "name": "Orchestrate Engine.app"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents",
+      "relative_path": "Orchestrate Engine.app/Contents",
+      "name": "Contents"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/_CodeSignature",
+      "relative_path": "Orchestrate Engine.app/Contents/_CodeSignature",
+      "name": "_CodeSignature"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/MacOS",
+      "relative_path": "Orchestrate Engine.app/Contents/MacOS",
+      "name": "MacOS"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources",
+      "name": "Resources"
+    },
+    {
+      "path": "/Users/srinivas/Orchestrate Github/orchestrate-gershwin/Orchestrate Engine.app/Contents/Resources/MainMenu.nib",
+      "relative_path": "Orchestrate Engine.app/Contents/Resources/MainMenu.nib",
+      "name": "MainMenu.nib"
+    }
+  ],
+  "files_by_category": {
+    "python": [
+      "generate_test_suite.py",
+      "execution_hub.py",
+      "jarvis.py",
+      "generate_system_map.py",
+      "reset_system.py",
+      "test_suite.py",
+      "system_guard.py",
+      "tools/spark_file.py",
+      "tools/json_manager.py",
+      "tools/nylasinbox.py",
+      "tools/files.py",
+      "tools/convertkit_tool.py",
+      "tools/github_tool_universal.py",
+      "tools/media_manager.py",
+      "tools/terminal.py",
+      "tools/verify_backfill.py",
+      "tools/account_backup.py",
+      "tools/gershwin_github.py",
+      "tools/writing_linter.py",
+      "tools/gamma_engine.py",
+      "tools/__init__.py",
+      "tools/session_tool.py",
+      "tools/generate_skill.py",
+      "tools/notion_tool.py",
+      "tools/todolist.py",
+      "tools/knowledge_vault.py",
+      "tools/smart_json_dispatcher.py",
+      "tools/gershwin_tester.py",
+      "tools/slide_designer.py",
+      "tools/setup_script_runner.py",
+      "tools/ideogram_tool.py",
+      "tools/docs_vector_indexer.py",
+      "tools/response_helper.py",
+      "tools/claude_assistant.py",
+      "tools/doc_editor.py",
+      "tools/sheets_tool.py",
+      "tools/buffer_engine.py",
+      "tools/readwise_tool.py",
+      "tools/system_settings.py",
+      "tools/account.py",
+      "tools/response_sanitizer.py",
+      "tools/mem_tool.py",
+      "semantic_memory/replace_script.py",
+      "claude_config_template/hooks/inject_schemas.py"
+    ],
+    "json": [
+      "execution_log.json",
+      "gershwin_test_suite.json",
+      "system_settings.ndjson",
+      "tools/readwise_books.json",
+      "tools/credentials.json",
+      "semantic_memory/bullet_journal_config.json",
+      "semantic_memory/sheets_config.json",
+      "semantic_memory/app_store_config.json",
+      "semantic_memory/doc_editor_config.json",
+      "semantic_memory/todolist_config.json",
+      "semantic_memory/orchestrate_home_config.json",
+      "semantic_memory/tool_dashboard_config.json",
+      "semantic_memory/media_manager_config.json",
+      "semantic_memory/orchestrate_slides_config.json",
+      "semantic_memory/files_config.json",
+      "semantic_memory/task_board_config.json",
+      "semantic_memory/spark_file_config.json",
+      "semantic_memory/orchestrate_homev2_config.json",
+      "claude_config_template/settings.json",
+      "data/last_failed_call.json",
+      "data/unlock_nudges.json",
+      "data/gershwin_test_output.json",
+      "data/readwise_books.json",
+      "data/ngrok.json",
+      "data/response_messages.json",
+      "data/script_output_config.json",
+      "data/update_messages.json",
+      "data/sheets_config.json",
+      "data/execution_log.ndjson",
+      "data/lucide_icons.json",
+      "data/gershwin_github_config.json",
+      "data/onboarding_sequence.json",
+      "data/orchestrate_intent_routes.json",
+      "data/unlock_messages.json",
+      "data/secondbrain.json",
+      "data/test_suite_config.json",
+      "data/dashboard_index.json",
+      "data/system_identity.json",
+      "data/slide_themes.json",
+      "data/error_handlers.json",
+      "data/slide_templates.json",
+      "data/notion_aliases.json",
+      "data/slide_designer_layouts.json",
+      "data/orchestrate_app_store.json",
+      "data/collection_aliases.json",
+      "data/engine_registry.json",
+      "data/boot_flags.json",
+      "data/thread_state.json",
+      "data/gershwin_test_fixture.json",
+      "data/gershwin_test_cases.json",
+      "data/gershwin_gps.json"
+    ],
+    "html": [
+      "semantic_memory/spark_file_temp.html",
+      "semantic_memory/doc_editor.html",
+      "semantic_memory/files_temp.html",
+      "semantic_memory/first_run.html",
+      "semantic_memory/bullet_journal.html",
+      "semantic_memory/todolist_temp.html",
+      "semantic_memory/orchestrate_home.html",
+      "semantic_memory/orchestrate_home_temp.html",
+      "semantic_memory/files.html",
+      "semantic_memory/tool_dashboard.html",
+      "semantic_memory/bullet_journal_temp.html",
+      "semantic_memory/media_manager.html",
+      "semantic_memory/task_board_temp.html",
+      "semantic_memory/media_manager_temp.html",
+      "semantic_memory/todolist.html",
+      "semantic_memory/tool_dashboard_temp.html",
+      "semantic_memory/ideogram.html",
+      "semantic_memory/app_store.html",
+      "semantic_memory/gershwin_home.html",
+      "semantic_memory/orchestrate_slides_temp.html",
+      "semantic_memory/sheets_temp.html",
+      "semantic_memory/orchestrate_slides.html",
+      "semantic_memory/orchestrate_homev2.html",
+      "semantic_memory/spark_file.html",
+      "semantic_memory/task_board.html",
+      "semantic_memory/sheets.html",
+      "semantic_memory/installer_bootstrap.html",
+      "semantic_memory/slides/Gershwin Test Deck.html"
+    ],
+    "javascript": [
+      "semantic_memory/todolist.js",
+      "semantic_memory/gershwin_homev2.js",
+      "semantic_memory/files.js",
+      "semantic_memory/tool_dashboard.js",
+      "semantic_memory/spark_file.js",
+      "semantic_memory/media_manager.js",
+      "semantic_memory/task_board.js",
+      "semantic_memory/sheets.js",
+      "semantic_memory/app_store.js",
+      "semantic_memory/bullet_journal.js",
+      "semantic_memory/orchestrate_slides.js",
+      "semantic_memory/orchestrate_home.js",
+      "semantic_memory/orchestrate_homev2.js",
+      "semantic_memory/global_nav.js",
+      "semantic_memory/doc_editor.js"
+    ],
+    "css": [
+      "semantic_memory/orchestrate_home.css",
+      "semantic_memory/files.css",
+      "semantic_memory/orchestrate_homev2.css",
+      "semantic_memory/sheets.css",
+      "semantic_memory/spark_file.css",
+      "semantic_memory/todolist.css",
+      "semantic_memory/task_board.css",
+      "semantic_memory/tool_dashboard.css",
+      "semantic_memory/bullet_journal.css",
+      "semantic_memory/orchestrate_slides.css",
+      "semantic_memory/media_manager.css"
+    ],
+    "markdown": [
+      "semantic_memory/SKILL.md",
+      "system_docs/orchestrate_os_protocol.md",
+      "orchestrate-gershwin-skill/schema.md",
+      "orchestrate-gershwin-skill/SKILL.md",
+      "claude_config_template/CLAUDE.md"
+    ],
+    "database": [
+      "accounts.db",
+      "data/inbox.db",
+      "data/slides.db",
+      "data/logs.db",
+      "data/ideogram.db",
+      "data/tasks.db",
+      "data/knowledge_base.db",
+      "data/sheets.db",
+      "data/accounts.db",
+      "data/todos.db",
+      "data/spark_file.db",
+      "data/files.db",
+      "data/docs.db"
+    ],
+    "config": [
+      ".gitignore"
+    ],
+    "other": [
+      "requirements.txt",
+      "system_settings.ndjson.bak",
+      "orchestrate-gershwin.skill",
+      "accounts.db-info",
+      "tools/account.py.bak",
+      "tools/ideogram_generate.sh",
+      "tools/scripts/gershwin_installer.sh",
+      "tools/scripts/gershwin_macbook_test.sh",
+      "tools/scripts/gershwin_install_test.sh",
+      "tools/launchagents/io.orchestrateos.ngrok.plist",
+      "tools/launchagents/io.orchestrateos.jarvis.plist",
+      "screenshots/claudsettings.png",
+      "screenshots/claudeskills.png",
+      "auth/setup_claude_auth.sh",
+      "semantic_memory/orchestrate_home.html.bak",
+      "semantic_memory/task_board_db_script.txt",
+      "semantic_memory/app_store.js.bak",
+      "semantic_memory/images/ideogram/ideogram_1783799523013.png",
+      "semantic_memory/images/ideogram/test_robot.png",
+      "semantic_memory/images/ideogram/ideogram_1783799523013_thumb.png",
+      "semantic_memory/images/ideogram/ideogram_1783797976191.png",
+      "OrchestrateOS.app/Contents/Info.plist",
+      "OrchestrateOS.app/Contents/MacOS/launcher",
+      "OrchestrateOS.app/Contents/Resources/AppIcon.icns",
+      "referral_base/entrypoint.sh",
+      "referral_base/Launch Orchestrate.command",
+      "OrchestrateOS Installer.app/Contents/Info.plist",
+      "OrchestrateOS Installer.app/Contents/MacOS/launcher",
+      "data/system_identity.json.lock",
+      "data/test_json_manager.json.lock",
+      "data/bullet_journal.json.lock",
+      "data/gershwin_test_fixture.json.lock",
+      "data/user_state.json.lock",
+      "data/gershwin_test_output.json.lock",
+      "data/tasks.db-wal",
+      "data/tasks.db-shm",
+      "data/test_json.json.lock",
+      "data/whoosh_index/_MAIN_1.toc",
+      "data/whoosh_index/.last_build_mtime",
+      "data/whoosh_index/MAIN_fa5wllzcyyen4gcb.seg",
+      "data/whoosh_index/MAIN_WRITELOCK",
+      "Orchestrate Engine.app/Contents/CodeResources",
+      "Orchestrate Engine.app/Contents/Info.plist",
+      "Orchestrate Engine.app/Contents/_CodeSignature/CodeResources",
+      "Orchestrate Engine.app/Contents/MacOS/Launch Orchestrate",
+      "Orchestrate Engine.app/Contents/Resources/AppIcon.icns",
+      "Orchestrate Engine.app/Contents/Resources/script",
+      "Orchestrate Engine.app/Contents/Resources/AppSettings.plist",
+      "Orchestrate Engine.app/Contents/Resources/entrypoint.sh",
+      "Orchestrate Engine.app/Contents/Resources/setup_wizard.sh",
+      "Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects-101300.nib",
+      "Orchestrate Engine.app/Contents/Resources/MainMenu.nib/keyedobjects.nib",
+      "Orchestrate Engine.app/Contents/Resources/MainMenu.nib/designable.nib"
+    ]
+  }
+}

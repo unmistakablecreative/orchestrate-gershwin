@@ -1,0 +1,18 @@
+{
+  "title": "Gershwin Setup",
+  "subtitle": "Installing dependencies...",
+  "complete_title": "Installation Complete",
+  "complete_sub": "All dependencies installed successfully",
+  "packages": [
+    {"name": "fastapi", "message": "Building the nervous system..."},
+    {"name": "uvicorn", "message": "Spinning up the engine room..."},
+    {"name": "anthropic", "message": "Teaching your Mac to think..."},
+    {"name": "requests", "message": "Opening communication channels..."},
+    {"name": "watchdog", "message": "Training the guard dog..."},
+    {"name": "numpy", "message": "Crunching numbers at light speed..."},
+    {"name": "sentence-transformers", "message": "Downloading brain cells..."},
+    {"name": "whoosh", "message": "Building the search index..."},
+    {"name": "pillow", "message": "Polishing the pixels..."},
+    {"name": "rich", "message": "Making things pretty..."}
+  ]
+}

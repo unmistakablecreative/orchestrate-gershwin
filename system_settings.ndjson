@@ -95,10 +95,6 @@
 {"tool": "todolist", "action": "complete_task", "script_path": "tools/todolist.py", "params": ["id"]}
 {"tool": "todolist", "action": "delete_task", "script_path": "tools/todolist.py", "params": ["id"]}
 {"tool": "todolist", "action": "list_tasks", "script_path": "tools/todolist.py", "params": ["show_completed"]}
-{"tool": "account", "action": "__tool__", "script_path": "tools/account.py", "locked": false, "referral_unlock_cost": 0, "description": "Manage credits, referrals, and tool unlocking."}
-{"tool": "account", "action": "check", "script_path": "tools/account.py", "params": []}
-{"tool": "account", "action": "refer", "script_path": "tools/account.py", "params": ["name", "email"]}
-{"tool": "account", "action": "unlock", "script_path": "tools/account.py", "params": ["tool_name"]}
 {"tool": "media_manager", "action": "__tool__", "script_path": "tools/media_manager.py", "locked": false, "referral_unlock_cost": 0, "description": "Convert, resize, compress media and images."}
 {"tool": "media_manager", "action": "compress_image", "script_path": "tools/media_manager.py", "params": ["filename"]}
 {"tool": "media_manager", "action": "convert_file", "script_path": "tools/media_manager.py", "params": ["filename", "from_format", "to_format"]}
@@ -134,10 +130,6 @@
 {"tool": "slide_designer", "action": "export_pdf", "script_path": "tools/slide_designer.py", "params": ["deck_id"]}
 {"tool": "slide_designer", "action": "list_layouts", "script_path": "tools/slide_designer.py", "params": []}
 {"tool": "slide_designer", "action": "list_themes", "script_path": "tools/slide_designer.py", "params": []}
-{"tool": "account", "action": "add_user", "script_path": "tools/account.py", "params": ["user_id", "name", "credits"]}
-{"tool": "account", "action": "list_users", "script_path": "tools/account.py", "params": []}
-{"tool": "account", "action": "grant_credits", "script_path": "tools/account.py", "params": ["user_id", "amount"]}
-{"tool": "account", "action": "delete_user", "script_path": "tools/account.py", "params": ["user_id"]}
 {"tool": "knowledge_vault", "action": "__tool__", "script_path": "tools/knowledge_vault.py", "locked": false, "referral_unlock_cost": 0, "description": "Personal knowledge graph with semantic search."}
 {"tool": "knowledge_vault", "action": "get_stats", "script_path": "tools/knowledge_vault.py", "params": []}
 {"tool": "knowledge_vault", "action": "search_knowledge", "script_path": "tools/knowledge_vault.py", "params": ["query"]}
@@ -167,3 +159,11 @@
 {"tool": "gershwin_tester", "action": "run_all_tests", "script_path": "tools/gershwin_tester.py", "params": [], "example": {"tool_name": "gershwin_tester", "action": "run_all_tests", "params": {}}}
 {"tool": "gershwin_tester", "action": "run_single_test", "script_path": "tools/gershwin_tester.py", "params": ["tool_name", "action", "params"], "example": {"tool_name": "gershwin_tester", "action": "run_single_test", "params": {"tool_name": "docs", "action": "list_docs", "params": {}}}}
 {"tool": "gershwin_tester", "action": "run_system_check", "script_path": "tools/gershwin_tester.py", "params": [], "example": {"tool_name": "gershwin_tester", "action": "run_system_check", "params": {}}}
+{"tool": "account", "action": "__tool__", "script_path": "tools/account.py", "locked": false, "referral_unlock_cost": 0, "description": "Manage credits, referrals, and tool unlocking."}
+{"tool": "account", "action": "check", "script_path": "tools/account.py", "params": ["user_id"]}
+{"tool": "account", "action": "refer", "script_path": "tools/account.py", "params": ["user_id", "emails"]}
+{"tool": "account", "action": "unlock", "script_path": "tools/account.py", "params": ["user_id", "tool_id"]}
+{"tool": "account", "action": "add_user", "script_path": "tools/account.py", "params": ["user_id", "email", "credits"]}
+{"tool": "account", "action": "list_users", "script_path": "tools/account.py", "params": []}
+{"tool": "account", "action": "add_credits", "script_path": "tools/account.py", "params": ["user_id", "amount", "reason"]}
+{"tool": "account", "action": "get_transactions", "script_path": "tools/account.py", "params": ["user_id", "limit"]}

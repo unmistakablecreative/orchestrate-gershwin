@@ -286,14 +286,7 @@ def run_system_check(params: Dict) -> Dict:
     def check(name, passed, detail=""):
         checks.append({"name": name, "passed": passed, "detail": detail})
 
-    # 1. Jarvis responding on 5004
-    try:
-        r = requests.get("http://localhost:5004/", timeout=5)
-        check("Jarvis running on :5004", True, f"HTTP {r.status_code}")
-    except Exception as e:
-        check("Jarvis running on :5004", False, str(e))
-
-    # 2. system_identity.json exists and fully populated
+    # 1. system_identity.json exists and fully populated
     required_identity_fields = ["user_id", "name", "ngrok_url", "ngrok_authtoken"]
     if os.path.exists(identity_path):
         try:
