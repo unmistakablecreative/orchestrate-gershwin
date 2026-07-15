@@ -126,9 +126,9 @@ function renderTools(tools, filter = 'all') {
 
     grid.innerHTML = filtered.map(tool => {
         const statusClass = tool.preInstalled ? 'pre-installed' : (tool.locked ? 'locked' : 'unlocked');
-        const statusText = tool.preInstalled ? 'Open' : (tool.locked ? 'Locked' : 'Unlocked');
+        const statusText = tool.preInstalled ? 'Open' : (tool.locked ? 'Locked' : 'Open');
         const statusIcon = tool.preInstalled ? '✓' : (tool.locked ? '🔒' : '✓');
-        const badgeClickable = tool.open_url ? `onclick="window.parent.postMessage({type:'open_url',url:'${tool.open_url}'},'*')" style="cursor:pointer"` : '';
+        const badgeClickable = (!tool.locked || tool.preInstalled) && tool.open_url ? `onclick="window.parent.postMessage({type:'open_url',url:'${tool.open_url}'},'*')" style="cursor:pointer"` : '';
 
         let unlockSection = '';
         if (tool.locked && !tool.preInstalled) {

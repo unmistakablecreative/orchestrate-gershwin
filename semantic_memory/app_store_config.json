@@ -15,91 +15,94 @@
     "unlock_tool",
     "check_credits",
     "refer_user",
-    "account"
+    "account",
+    "docs_vector_indexer",
+    "smart_json_dispatcher",
+    "writing_linter"
   ],
   "displayInfo": {
     "doc_editor": {
       "name": "Docs",
-      "icon": "📄",
+      "icon": "\ud83d\udcc4",
       "iconClass": "icon-blue",
       "open_url": "/docs"
     },
     "docs": {
       "name": "Docs",
-      "icon": "📄",
+      "icon": "\ud83d\udcc4",
       "iconClass": "icon-blue",
       "open_url": "/docs"
     },
     "sheets_tool": {
       "name": "Sheets",
-      "icon": "📊",
+      "icon": "\ud83d\udcca",
       "iconClass": "icon-green",
       "open_url": "/sheets"
     },
     "slide_designer": {
       "name": "Slides",
-      "icon": "📽️",
+      "icon": "\ud83d\udcfd\ufe0f",
       "iconClass": "icon-orange",
       "open_url": "/slides"
     },
     "todolist": {
       "name": "Todolist",
-      "icon": "✅",
+      "icon": "\u2705",
       "iconClass": "icon-teal",
       "open_url": "/todo"
     },
     "spark_file": {
       "name": "Spark File",
-      "icon": "⚡",
+      "icon": "\u26a1",
       "iconClass": "icon-purple",
       "open_url": "/spark"
     },
     "json_manager": {
       "name": "JSON Manager",
-      "icon": "🗂️",
+      "icon": "\ud83d\uddc2\ufe0f",
       "iconClass": "icon-gray"
     },
     "terminal": {
       "name": "Terminal",
-      "icon": "💻",
+      "icon": "\ud83d\udcbb",
       "iconClass": "icon-gray"
     },
     "account": {
       "name": "Account",
-      "icon": "👤",
+      "icon": "\ud83d\udc64",
       "iconClass": "icon-blue"
     },
     "media_manager": {
       "name": "Media Manager",
-      "icon": "🎨",
+      "icon": "\ud83c\udfa8",
       "iconClass": "icon-pink",
       "open_url": "/media"
     },
     "files": {
       "name": "Files",
-      "icon": "📁",
+      "icon": "\ud83d\udcc1",
       "iconClass": "icon-teal"
     },
     "readwise_tool": {
       "name": "Readwise",
-      "icon": "📚",
+      "icon": "\ud83d\udcda",
       "iconClass": "icon-orange",
       "requires_api_key": true,
       "api_key_field": "readwise_api_key"
     },
     "buffer_engine": {
       "name": "Buffer Engine",
-      "icon": "📢",
+      "icon": "\ud83d\udce2",
       "iconClass": "icon-blue"
     },
     "github_tool_universal": {
       "name": "GitHub",
-      "icon": "🐙",
+      "icon": "\ud83d\udc19",
       "iconClass": "icon-gray"
     },
     "ideogram_tool": {
       "name": "Ideogram",
-      "icon": "🎨",
+      "icon": "\ud83c\udfa8",
       "iconClass": "icon-purple",
       "open_url": "/semantic_memory/ideogram.html",
       "requires_api_key": true,
@@ -107,7 +110,7 @@
     },
     "claude_assistant": {
       "name": "Claude Assistant",
-      "icon": "🤖",
+      "icon": "\ud83e\udd16",
       "iconClass": "icon-orange"
     }
   }

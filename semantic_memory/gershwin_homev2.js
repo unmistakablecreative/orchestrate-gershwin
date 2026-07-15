@@ -233,3 +233,37 @@ function stopGershwinProgressAnimation() {
         gershwinProgressInterval = null;
     }
 }
+
+
+// PostMessage listeners for tool unlocks and URL navigation
+window.addEventListener("message", function(event) {
+    const data = event.data;
+    if (\!data || \!data.type) return;
+
+    if (data.type === "tool_unlocked") {
+        // Add new sidebar icon for unlocked tool
+        const sidebar = document.querySelector(".gershwin-sidebar");
+        if (\!sidebar) return;
+
+        const iconEntry = document.createElement("div");
+        iconEntry.className = "gershwin-sidebar-icon";
+        if (data.icon_class) iconEntry.classList.add(data.icon_class);
+        iconEntry.innerHTML = data.icon || "🔧";
+        iconEntry.title = data.display_name || data.tool_name;
+        iconEntry.setAttribute("data-tool", data.tool_name);
+        iconEntry.onclick = function() {
+            if (data.open_url) {
+                const iframe = document.getElementById("gershwin-content-frame");
+                if (iframe) iframe.src = data.open_url;
+            }
+        };
+        sidebar.appendChild(iconEntry);
+    }
+
+    if (data.type === "open_url") {
+        const iframe = document.getElementById("gershwin-content-frame");
+        if (iframe && data.url) {
+            iframe.src = data.url;
+        }
+    }
+});
